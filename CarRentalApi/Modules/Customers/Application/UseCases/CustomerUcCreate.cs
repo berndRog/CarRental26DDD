@@ -30,7 +30,7 @@ public sealed class CustomerUcCreate(
          ) {
          var addressResult = Address.Create(street, postalCode, city);
          if (addressResult.IsFailure)
-            return Result<Customer>.Failure(addressResult.Error!);
+            return Result<Customer>.Failure(addressResult.Error);
          address = addressResult.Value;
       }
 
@@ -38,7 +38,7 @@ public sealed class CustomerUcCreate(
       // Domain factory: enforces domain invariants.
       var result = Customer.Create(firstName, lastName, email, id, address);
       if (result.IsFailure)
-         return Result<Customer>.Failure(result.Error!);
+         return Result<Customer>.Failure(result.Error);
      
       var customer = result.Value!;
       _repository.Add(customer);

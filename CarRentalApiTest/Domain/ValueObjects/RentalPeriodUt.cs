@@ -18,7 +18,7 @@ public sealed class RentalPeriodTests
       var result = RentalPeriod.Create(start, end);
 
       Assert.True(result.IsFailure);
-      Assert.Equal(ReservationErrors.InvalidPeriod.Code, result.Error!.Code);
+      Assert.Equal(ReservationErrors.InvalidPeriod.Code, result.Error.Code);
    }
 
    [Fact]

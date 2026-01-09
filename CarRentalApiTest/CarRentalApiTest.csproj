@@ -24,7 +24,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Modules\Customers\Domain\" />
+    <Folder Include="Modules\Customers\Application\" />
+    <Folder Include="Modules\Customers\Infrastructure\" />
+    <Folder Include="Modules\Employees\Application\" />
+    <Folder Include="Modules\Employees\Domain\" />
+    <Folder Include="Modules\Employees\Infrastructure\" />
+    <Folder Include="Modules\Rentals\Application\" />
+    <Folder Include="Modules\Rentals\Domain\" />
+    <Folder Include="Modules\Rentals\Infrastructure\" />
+    <Folder Include="Modules\Reservations\Application\" />
+    <Folder Include="Modules\Reservations\Infrastructure\" />
   </ItemGroup>
 
 </Project>

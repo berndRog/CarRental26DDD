@@ -23,14 +23,14 @@ public sealed class Result {
 
    public bool IsSuccess { get; }
    public bool IsFailure => !IsSuccess;
-   public DomainErrors? Error { get; }
+   public DomainErrors Error { get; }
 
-   private Result(bool isSuccess, DomainErrors? error) {
+   private Result(bool isSuccess, DomainErrors error) {
       IsSuccess = isSuccess;
       Error = error;
    }
 
-   public static Result Success() => new(true, null);
+   public static Result Success() => new(true, DomainErrors.None);
    public static Result Failure(DomainErrors error) => new(false, error);
 }
 
@@ -52,11 +52,8 @@ public sealed class Result<T> {
       Error = error;
    }
 
-   public static Result<T> Success(T value) =>
-      new(false, value, DomainErrors.None);
-
-   public static Result<T> Failure(DomainErrors error) =>
-      new(true, default!, error);
+   public static Result<T> Success(T value) => new(false, value, DomainErrors.None);
+   public static Result<T> Failure(DomainErrors error) => new(true, default!, error);
    
    public T GetValueOrDefault(T defaultValue = default!) {
       return IsSuccess && Value is not null ? Value : defaultValue;

@@ -6,13 +6,7 @@ namespace CarRentalApi.Modules.Cars.Domain.Errors;
 /// Domain-level errors used by Cars read queries.
 /// </summary>
 public static class CarsReadErrors {
-
-   public static readonly DomainErrors InvalidPeriod =
-      new(
-         ErrorCode.BadReqest,
-         Title: "Invalid Rental Period",
-         Message: "The Rental Period Is Invalid: The Start Date Must Be Earlier Than The End Date."
-      );
+   
    public static readonly DomainErrors InvalidLimit =
       new(
          ErrorCode.BadReqest,

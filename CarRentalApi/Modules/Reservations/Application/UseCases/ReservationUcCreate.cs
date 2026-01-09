@@ -45,8 +45,8 @@ public sealed class ReservationUcCreate(
       if (result.IsFailure) {
          _logger.LogWarning(
             "ReservationUcCreateDraft rejected errorCode={code} message={message}",
-            result.Error!.Code, result.Error!.Message);
-         return Result<Reservation>.Failure(result.Error!);
+            result.Error.Code, result.Error.Message);
+         return Result<Reservation>.Failure(result.Error);
       }
 
       var reservation = result.Value!;

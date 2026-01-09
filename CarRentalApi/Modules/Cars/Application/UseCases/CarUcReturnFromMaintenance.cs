@@ -27,7 +27,7 @@ public sealed class CarUcReturnFromMaintenance(
       var result = car.ReturnFromMaintenance();
       if (result.IsFailure) {
          _logger.LogWarning("CarUcReturnFromMaintenance rejected carId={id} errorCode={code}",
-            carId, result.Error!.Code);
+            carId, result.Error.Code);
          return result;
       }
       

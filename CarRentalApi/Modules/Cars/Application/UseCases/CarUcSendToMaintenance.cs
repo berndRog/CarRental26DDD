@@ -26,7 +26,7 @@ public sealed class CarUcSendToMaintenance(
       var result = car.SendToMaintenance();
       if (result.IsFailure) {
          _logger.LogWarning("CarUcSendToMaintenance rejected carId={id} errorCode={code}",
-            carId, result.Error!.Code);
+            carId, result.Error.Code);
          return result;
       }
 

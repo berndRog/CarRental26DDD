@@ -35,7 +35,7 @@ public sealed class CarUcRetire(
       var result = car.Retire();
       if (result.IsFailure) {
          _logger.LogWarning("CarUcRetire rejected carId={id} errorCode={code}",
-            carId, result.Error!.Code);
+            carId, result.Error.Code);
          return result;
       }
 

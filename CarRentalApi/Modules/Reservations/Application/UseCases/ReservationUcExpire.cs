@@ -27,7 +27,7 @@ public sealed class ReservationUcExpire(
          if (result.IsFailure) {
             _logger.LogWarning(
                "ReservationUcExpire skip reservationId={reservationId} errorCode={code} message={message}",
-               reservation.Id, result.Error!.Code, result.Error!.Message);
+               reservation.Id, result.Error.Code, result.Error.Message);
             continue;
          }
          expiredCount++;

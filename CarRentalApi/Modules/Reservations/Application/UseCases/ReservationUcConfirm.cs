@@ -48,7 +48,7 @@ public sealed class ReservationUcConfirm(
       if (result.IsFailure) {
          _logger.LogWarning(
             "ReservationUcConfirm rejected reservationId={id} errorCode={code}",
-            reservationId, result.Error!.Code
+            reservationId, result.Error.Code
          );
          return result;
       }

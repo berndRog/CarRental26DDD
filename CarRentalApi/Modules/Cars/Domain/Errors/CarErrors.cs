@@ -21,6 +21,12 @@ public static class CarErrors {
          Message: "The Provided Car Id Is Invalid."
       );
 
+   public static readonly DomainErrors IdAlreadyExists = new(
+      ErrorCode.Conflict,
+      "Car.IdAlreadyExists",
+      "A car with this ID already exists."
+   );
+   
    public static readonly DomainErrors CategoryIsRequired =
       new(
          ErrorCode.BadReqest,

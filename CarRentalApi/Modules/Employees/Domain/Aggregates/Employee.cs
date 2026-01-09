@@ -46,14 +46,14 @@ public class Employee: Person {
       
       var baseValidation = ValidatePersonData(firstName, lastName, email);
       if (baseValidation.IsFailure)
-         return Result<Employee>.Failure(baseValidation.Error!);
+         return Result<Employee>.Failure(baseValidation.Error);
 
       if (string.IsNullOrWhiteSpace(personnelNumber))
          return Result<Employee>.Failure(EmployeeErrors.PersonnelNumberIsRequired);
 
       var result = EntityId.Resolve(id, PersonErrors.InvalidId);
       if (result.IsFailure)
-         return Result<Employee>.Failure(result.Error!);
+         return Result<Employee>.Failure(result.Error);
       var employeeId = result.Value;
       
       var employee = new Employee(

@@ -29,7 +29,7 @@ public sealed class ReservationUcCancel(
       if (result.IsFailure) {
          _logger.LogWarning(
             "ReservationUcCancel rejected reservationId={Id} message={message}",
-            reservationId, result.Error!.Message);
+            reservationId, result.Error.Message);
          return result;
       }
 

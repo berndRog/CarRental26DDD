@@ -1,4 +1,5 @@
 using CarRentalApi.BuildingBlocks;
+using CarRentalApi.BuildingBlocks.Domain.Entities;
 using CarRentalApi.BuildingBlocks.Enums;
 using CarRentalApi.BuildingBlocks.Persistence;
 using CarRentalApi.Modules.Cars.Domain.Aggregates;
@@ -20,24 +21,25 @@ public sealed class CarUcCreate(
       string? id,
       CancellationToken ct
    ) {
-      _logger.LogInformation(
-         "CarUcCreate start category={cat} licensePlate={plate}",
-         category, licensePlate
-      );
-
-      // Use-case rule: license plate must be unique.
-      var exists = await _repository.ExistsLicensePlateAsync(licensePlate.Trim(), ct);
-      if (exists)
-         return Result<Car>.Failure(CarErrors.LicensePlateMustBeUnique);
-
       var result = Car.Create(category, manufacturer, model, licensePlate, id);
       if (result.IsFailure)
-         return Result<Car>.Failure(result.Error!);
-
-      _repository.Add(result.Value!);
+         return Result<Car>.Failure(result.Error);
+      var car = result.Value!;
+      
+      // Use-case rule: Check if ID already exists
+      var existing = await _repository.FindByIdAsync(car.Id, ct);
+      if (existing != null) 
+         return Result<Car>.Failure(CarErrors.IdAlreadyExists); 
+      
+      // Use-case rule: License plate must be unique.
+      var exists = await _repository.ExistsLicensePlateAsync(car.LicensePlate, ct);
+      if (exists)
+         return Result<Car>.Failure(CarErrors.LicensePlateMustBeUnique);
+      
+      _repository.Add(car);
       await _unitOfWork.SaveAllChangesAsync("Car added", ct);
 
-      _logger.LogInformation("CarUcCreate done carId={id}", result.Value!.Id);
+      _logger.LogInformation("CarUcCreate done carId={id}", car.Id);
       return Result<Car>.Success(result.Value!);
    }
 }

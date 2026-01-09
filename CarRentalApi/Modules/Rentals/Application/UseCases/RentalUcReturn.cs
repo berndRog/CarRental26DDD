@@ -33,7 +33,7 @@ public sealed class RentalUcReturn(
          kmIn: kmIn
       );
       if (result.IsFailure)
-         return Result<Rental>.Failure(result.Error!);
+         return Result<Rental>.Failure(result.Error);
 
       // no update method needed if using EF Core tracking
       // _rentalRepo.Update(rental);

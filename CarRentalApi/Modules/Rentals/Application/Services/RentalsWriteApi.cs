@@ -34,8 +34,8 @@ namespace CarRentalApi.Modules.Rentals.Application.Services;
 public sealed class RentalsWriteService(
    IReservationsReadApi _reservationsRead,
    IReservationsWriteApi _reservationsWrite,
-   ICarsReadApi _carsRead,
-   ICarsWriteApi? _carsWrite, // optional
+   ICarReadApi carRead,
+   ICarWriteApi? _carsWrite, // optional
    IRentalRepository _rentalRepository,
    IUnitOfWork _unitOfWork,
    IClock _clock
@@ -57,7 +57,7 @@ public sealed class RentalsWriteService(
       }
 
       // 2) Find a suitable available car (Cars BC)
-      var carResult = await _carsRead.FindAvailableCarAsync(
+      var carResult = await carRead.FindAvailableCarAsync(
          reservationDto.Category,
          reservationDto.Start,
          reservationDto.End,
@@ -65,7 +65,7 @@ public sealed class RentalsWriteService(
       );
 
       if (carResult.IsFailure) {
-         return Result<Guid>.Failure(carResult.Error!);
+         return Result<Guid>.Failure(carResult.Error);
       }
 
       if (carResult.Value is null) {
@@ -90,7 +90,7 @@ public sealed class RentalsWriteService(
       );
 
       if (rentalResult.IsFailure) {
-         return Result<Guid>.Failure(rentalResult.Error!);
+         return Result<Guid>.Failure(rentalResult.Error);
       }
 
       var rental = rentalResult.Value!;
@@ -101,14 +101,14 @@ public sealed class RentalsWriteService(
       // 5) Mark reservation as rented/used (Reservations BC)
       var resResult = await _reservationsWrite.MarkAsRentedAsync(reservationId, ct);
       if (resResult.IsFailure) {
-         return Result<Guid>.Failure(resResult.Error!);
+         return Result<Guid>.Failure(resResult.Error);
       }
 
       // 6) Optional: mark car as rented (Cars BC)
       if (_carsWrite is not null) {
          var carWriteResult = await _carsWrite.MarkAsRentedAsync(carResult.Value.Id, ct);
          if (carWriteResult.IsFailure) {
-            return Result<Guid>.Failure(carWriteResult.Error!);
+            return Result<Guid>.Failure(carWriteResult.Error);
          }
       }
 
@@ -153,7 +153,7 @@ public sealed class RentalsWriteService(
       if (_carsWrite is not null) {
          var carWriteResult = await _carsWrite.MarkAvailableAsync(rental.CarId, ct);
          if (carWriteResult.IsFailure) {
-            return Result.Failure(carWriteResult.Error!);
+            return Result.Failure(carWriteResult.Error);
          }
       }
 

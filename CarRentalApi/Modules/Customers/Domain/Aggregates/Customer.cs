@@ -53,11 +53,11 @@ public sealed class Customer : Person {
       
       var baseValidation = ValidatePersonData(firstName, lastName, email);
       if (baseValidation.IsFailure)
-         return Result<Customer>.Failure(baseValidation.Error!);
+         return Result<Customer>.Failure(baseValidation.Error);
       
       var result = EntityId.Resolve(id, PersonErrors.InvalidId);
       if (result.IsFailure)
-         return Result<Customer>.Failure(result.Error!);
+         return Result<Customer>.Failure(result.Error);
       var customerId = result.Value;
 
       var customer = new Customer(
