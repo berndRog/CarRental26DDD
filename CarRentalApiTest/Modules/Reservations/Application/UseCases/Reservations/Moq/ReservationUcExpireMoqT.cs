@@ -4,7 +4,6 @@ using CarRentalApi.Modules.Reservations.Application.UseCases;
 using CarRentalApi.Modules.Reservations.Domain.Aggregates;
 using CarRentalApi.Modules.Reservations.Domain.Enums;
 using CarRentalApi.Modules.Reservations.Infrastructure;
-using CarRentalApiTest.Domain.Utils;
 using Microsoft.Extensions.Logging;
 using Moq;
 namespace CarRentalApiTest.Modules.Reservations.Application.UseCases.Reservations.Moq;
@@ -17,7 +16,7 @@ public sealed class ReservationUcExpireMoqT {
 
    public ReservationUcExpireMoqT() {
       var seed = new TestSeed();
-      _clock = new FakeClock(seed.Now);
+      _clock = new FakeClock(seed.FixedNow);
    }
 
    [Fact]

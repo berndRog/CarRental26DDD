@@ -6,8 +6,11 @@ using CarRentalApi.Modules.Customers.Application.Contracts.Dto;
 using Microsoft.AspNetCore.Mvc;
 namespace CarRentalApi.Modules.Customers.Presentation.Controllers;
 
+[Route("carrentalapi/v1/")]
 [ApiController]
-[Route("api/v1")]
+[Consumes("application/json")] //default
+[Produces("application/json")] //default
+
 public sealed class CustomersController(
    ICustomerReadApi _customerReadApi,
    ICustomerUseCases _customerUseCases,
@@ -15,7 +18,7 @@ public sealed class CustomersController(
 ) : ControllerBase {
 
 
-   [HttpGet("/customers/{id:guid}", Name = "GetCustomerById")]
+   [HttpGet("customers/{id:guid}", Name = "GetCustomerById")]
    [EndpointSummary("Get a customer by Id")]
    [ProducesResponseType<CustomerDto>(StatusCodes.Status200OK)]
    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")]
@@ -32,7 +35,7 @@ public sealed class CustomersController(
       );
    }
 
-   [HttpGet("/customers/email/{email}")]
+   [HttpGet("customers/email/{email}")]
    [EndpointSummary("Get a customer by email")]
    [ProducesResponseType<CustomerDto>(StatusCodes.Status200OK)]
    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")]
@@ -49,7 +52,7 @@ public sealed class CustomersController(
       );
    }
 
-   [HttpGet("/customers/name")]
+   [HttpGet("customers/name")]
    [EndpointSummary("Get customers by name")]
    [ProducesResponseType<IReadOnlyList<CustomerDto>>(StatusCodes.Status200OK)]
    public async Task<ActionResult<IReadOnlyList<CustomerDto>>> GetCustomersByName(
@@ -66,7 +69,7 @@ public sealed class CustomersController(
       );
    }
 
-   [HttpGet("/customers")]
+   [HttpGet("customers")]
    [EndpointSummary("Filter customers")]
    [ProducesResponseType<IReadOnlyList<CustomerDto>>(StatusCodes.Status200OK)]
    public async Task<ActionResult<IReadOnlyList<CustomerDto>>> FilterCustomers(
@@ -82,7 +85,7 @@ public sealed class CustomersController(
       );
    }
    
-   [HttpPost("/customers")]
+   [HttpPost("customers")]
    [EndpointSummary("Create a new customer")]
    [ProducesResponseType(StatusCodes.Status201Created)]
    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
@@ -96,6 +99,7 @@ public sealed class CustomersController(
          customerDto.FirstName,
          customerDto.LastName,
          customerDto.Email,
+         customerDto.CreatedAt,
          customerDto.Street,
          customerDto.PostalCode,
          customerDto.City,

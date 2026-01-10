@@ -34,9 +34,6 @@ public sealed class Result {
    public static Result Failure(DomainErrors error) => new(false, error);
 }
 
-
-
-
 // Generisches Result<T>:  Echte binäres Zustände
 public sealed class Result<T> {
    

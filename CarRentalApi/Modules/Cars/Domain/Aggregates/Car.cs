@@ -35,7 +35,12 @@ public sealed class Car: Entity<Guid> {
    // CarCategory is used for booking and capacity calculation.
    public CarCategory Category { get; private set; }
    public CarStatus Status { get; private set; }
-
+   
+   public DateTimeOffset CreatedAt { get; private set; }
+   public DateTimeOffset? RetiredAt { get; private set; }
+   public bool IsInMaintenance => Status == CarStatus.Maintenance;
+   public bool IsRetired => Status == CarStatus.Retired;
+   
    // EF Core ctor
    private Car() { }
 

@@ -1,3 +1,4 @@
+using CarRentalApi.BuildingBlocks;
 using CarRentalApi.Modules.Common.Domain.Errors;
 using CarRentalApi.Modules.Customers.Domain.Aggregates;
 using CarRentalApi.Modules.Customers.Domain.ValueObjects;
@@ -6,40 +7,56 @@ namespace CarRentalApiTest.Modules.Customers.Domain;
 public class CustomerUt {
 
    private readonly TestSeed _seed = new();
+   private readonly IClock _clock = new FakeClock();
 
    [Fact]
    public void Create_WithValidDataAndAddress_ShouldSucceed() {
       // Arrange
+      var firstName = _seed.Customer1.FirstName;
+      var lastName = _seed.Customer1.LastName;
+      var email = _seed.Customer1.Email;
+      var createdAt = _seed.Customer1.CreatedAt;
       var address = Address.Create("Teststr. 1", "12345", "TestCity").GetValueOrThrow();
-
       // Act
       var result = Customer.Create(
-         "John",
-         "Doe",
-         "john.doe@example.com",
+         firstName,
+         lastName,
+         email,
+         createdAt,
          Guid.NewGuid().ToString(),
          address
       );
-
       // Assert
       Assert.True(result.IsSuccess);
-      Assert.Equal("John", result.Value.FirstName);
-      Assert.Equal("Doe", result.Value.LastName);
-      Assert.Equal("john.doe@example.com", result.Value.Email);
-      Assert.Equal(address, result.Value.Address);
+      var customer = result.Value;
+      Assert.Equal(firstName, customer.FirstName);
+      Assert.Equal(lastName, customer.LastName);
+      Assert.Equal(email, customer.Email);
+      Assert.Equal(createdAt, customer.CreatedAt);
+      Assert.Equal(address, customer.Address);
    }
 
    [Fact]
    public void Create_WithoutAddress_ShouldSucceed() {
+      // Arrange
+      var firstName = _seed.Customer1.FirstName;
+      var lastName = _seed.Customer1.LastName;
+      var email = _seed.Customer1.Email;
+      var createdAt = _seed.Customer1.CreatedAt;
       // Act
       var result = Customer.Create(
-         "Max",
-         "Mustermann",
-         "m.mustermann@gmail.com"
+         firstName,
+         lastName,
+         email,
+         createdAt
       );
-
       // Assert
       Assert.True(result.IsSuccess);
+      var customer = result.Value;
+      Assert.Equal(firstName, customer.FirstName);
+      Assert.Equal(lastName, customer.LastName);
+      Assert.Equal(email, customer.Email);
+      Assert.Equal(createdAt, customer.CreatedAt);
       Assert.Null(result.Value.Address);
    }
 
@@ -53,7 +70,7 @@ public class CustomerUt {
       string email
    ) {
       // Act
-      var result = Customer.Create(firstName, lastName, email);
+      var result = Customer.Create(firstName, lastName, email, _clock.UtcNow);
 
       // Assert
       Assert.True(result.IsFailure);
@@ -69,7 +86,8 @@ public class CustomerUt {
       var result = Customer.Create(
          "Erika",
          "Mustermann",
-         email
+         email,
+         _clock.UtcNow
       );
 
       // Assert
@@ -117,6 +135,7 @@ public class CustomerUt {
          "Different",
          "Name",
          "different@email.com",
+         _clock.UtcNow,
          _seed.Customer1Id
       ).GetValueOrThrow();
 

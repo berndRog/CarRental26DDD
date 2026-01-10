@@ -11,28 +11,7 @@ public static class CustomerErrors {
          Title: "Invalid customer id",
          Message: "The provided customer id is invalid."
       );
-
-   public static readonly DomainErrors NotFound =
-      new(
-         ErrorCode.NotFound,
-         Title: "Customer not found",
-         Message: "The requested customer does not exist."
-      );
-
-   public static readonly DomainErrors EmailIsRequired =
-      new(
-         ErrorCode.UnprocessableEntity,
-         Title: "Email is required",
-         Message: "An email address must be provided."
-      );
-
-   public static readonly DomainErrors EmailNotFound =
-      new(
-         ErrorCode.NotFound,
-         Title: "Customer not found",
-         Message: "No customer with the given email address exists."
-      );
-
+   
    public static readonly DomainErrors FirstNameIsRequired =
       new(
          ErrorCode.UnprocessableEntity,
@@ -46,4 +25,38 @@ public static class CustomerErrors {
          Title: "Last Name Is Required",
          Message: "A Last Name Must Be Provided."
       );
+   
+   public static readonly DomainErrors EmailIsRequired =
+      new(
+         ErrorCode.UnprocessableEntity,
+         Title: "Email is required",
+         Message: "An email address must be provided."
+      );
+   public static readonly DomainErrors InvalidEmail =
+      new(
+         ErrorCode.BadReqest,
+         Title: "Invalid email address",
+         Message: "The provided email address is not valid."
+      );
+   public static readonly DomainErrors EmailNotFound =
+      new(
+         ErrorCode.NotFound,
+         Title: "Customer not found",
+         Message: "No customer with the given email address exists."
+      );
+   
+   public static readonly DomainErrors NotFound =
+      new(
+         ErrorCode.NotFound,
+         Title: "Customer not found",
+         Message: "The requested customer does not exist."
+      );
+   
+   public static readonly DomainErrors AlreadyBlocked =
+      new(
+         ErrorCode.Conflict,
+         Title: "Customer already blocked",
+         Message: "The customer is already blocked and cannot be blocked again."
+      );
+   
 }

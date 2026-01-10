@@ -3,8 +3,6 @@ using CarRentalApi.BuildingBlocks.Domain.Entities;
 using CarRentalApi.Modules.Common.Domain.Errors;
 using CarRentalApi.Modules.Customers.Domain.Errors;
 using CarRentalApi.Modules.Customers.Domain.ValueObjects;
-using CarRentalApi.Modules.Rentals.Domain.Aggregates;
-using CarRentalApi.Modules.Reservations.Domain.Aggregates;
 namespace CarRentalApi.Modules.Customers.Domain.Aggregates;
 
 public sealed class Customer : Person {
@@ -26,6 +24,10 @@ public sealed class Customer : Person {
    #error "Define either OOP_MODE or DDD_MODE in .csproj"
 #endif
    
+   public DateTimeOffset CreatedAt { get; private set; }
+   public DateTimeOffset? BlockedAt { get; private set; }
+   public bool IsBlocked => BlockedAt is not null;
+   
    // EF Core ctor
    private Customer() { }
 
@@ -35,14 +37,18 @@ public sealed class Customer : Person {
       string firstName,
       string lastName,
       string email,
+      DateTimeOffset createdAt,
       Address? address
-   ) : base(id, firstName, lastName, email, address) { }
+   ) : base(id, firstName, lastName, email, address) {
+      CreatedAt = createdAt;
+   }
 
    // ---------- Factory (Result-based) ----------
    public static Result<Customer> Create(
       string firstName,
       string lastName,
       string email,
+      DateTimeOffset createdAt,
       string? id = null,
       Address? address = null
    ) {
@@ -65,28 +71,14 @@ public sealed class Customer : Person {
          firstName,
          lastName,
          email,
+         createdAt,
          address
       );
 
       return Result<Customer>.Success(customer);
    }
-
-   // public Result ChangeName(
-   //    string firstName,
-   //    string lastName
-   // ) {
-   //    // Email bleibt unverändert -> eigene minimale Validierung
-   //    if (string.IsNullOrWhiteSpace(firstName))
-   //       return Result.Failure(PersonErrors.FirstNameIsRequired);
-   //
-   //    if (string.IsNullOrWhiteSpace(lastName))
-   //       return Result.Failure(PersonErrors.LastNameIsRequired);
-   //
-   //    FirstName = firstName.Trim();
-   //    LastName  = lastName.Trim();
-   //    return Result.Success();
-   // }
-
+   
+   // ---------- Behavior methods ----------
    public Result ChangeEmail(string email) {
       var validation = ValidatePersonData(FirstName, LastName, email);
       if (validation.IsFailure)
@@ -95,4 +87,15 @@ public sealed class Customer : Person {
       Email = email.Trim();
       return Result.Success();
    }
+   
+   public Result Block(
+      DateTimeOffset blockedAt
+   ) {
+      if (IsBlocked)
+         return Result.Failure(CustomerErrors.AlreadyBlocked);
+
+      BlockedAt = blockedAt;
+      return Result.Success();
+   }
+
 }

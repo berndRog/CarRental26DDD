@@ -1,4 +1,6 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003ADateTimeOffset_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003F_002E_002E_003FLibrary_003FApplication_0020Support_003FJetBrains_003FRider2025_002E3_003Fresharper_002Dhost_003FSourcesCache_003Fc39cab6b733f0aefe27819e314b165e153420ce4c762070d78313a974a5334e_003FDateTimeOffset_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AEqualityAsserts_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003F_002E_002E_003FLibrary_003FApplication_0020Support_003FJetBrains_003FRider2025_002E3_003Fresharper_002Dhost_003FSourcesCache_003Fad8b2779652854276d03ec153d51377686c7193799d1688e119272770d0cf_003FEqualityAsserts_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=dcde0067_002D376b_002D4329_002D8eb0_002D1304c094dcfb/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Domain" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;Or&gt;
     &lt;ProjectFolder&gt;A807D959-88B0-4BC5-8D63-4481F626ED8C/d:Domain&lt;/ProjectFolder&gt;
@@ -21,6 +23,7 @@
       &lt;TestId&gt;xUnit::A807D959-88B0-4BC5-8D63-4481F626ED8C::net10.0::CarRentalApiTest.Modules.Reservations.Application.UseCases.Reservations.Moq.ReservationUcExpireMoqT&lt;/TestId&gt;
       &lt;TestId&gt;xUnit::A807D959-88B0-4BC5-8D63-4481F626ED8C::net10.0::CarRentalApiTest.Modules.Reservations.Application.UseCases.Reservations.ReservationUcCancelIntT&lt;/TestId&gt;
       &lt;TestId&gt;xUnit::A807D959-88B0-4BC5-8D63-4481F626ED8C::net10.0::CarRentalApiTest.Domain.UseCases.Reservations.ReservationUcCreateDraftIntT&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::A807D959-88B0-4BC5-8D63-4481F626ED8C::net10.0::CarRentalApiTest.Modules.Reservations.Domain.ValueObjects.RentalPeriodTests&lt;/TestId&gt;
     &lt;/TestAncestor&gt;
     &lt;ProjectFile&gt;A807D959-88B0-4BC5-8D63-4481F626ED8C/d:Modules/d:Cars/d:Application/d:UseCases/f:CarUcRetireIntT.cs&lt;/ProjectFile&gt;
     &lt;ProjectFile&gt;A807D959-88B0-4BC5-8D63-4481F626ED8C/d:Modules/d:Reservations/d:Application/d:UseCases/d:Reservations/f:ReservationUcConfirmIntT.cs&lt;/ProjectFile&gt;

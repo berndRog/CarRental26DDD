@@ -9,7 +9,6 @@ using CarRentalApi.Modules.Reservations.Domain.Enums;
 using CarRentalApi.Modules.Reservations.Domain.Errors;
 using CarRentalApi.Modules.Reservations.Infrastructure;
 using CarRentalApi.Modules.Reservations.Infrastructure.Repositories;
-using CarRentalApiTest.Domain.Utils;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApiTest.Domain.UseCases.Reservations;
@@ -47,7 +46,7 @@ public sealed class ReservationUcCreateDraftIntT : TestBase, IAsyncLifetime {
       _repository = new ReservationRepository(_dbContext, CreateLogger<ReservationRepository>());
       _unitOfWork = new UnitOfWork(_dbContext, CreateLogger<UnitOfWork>());
 
-      _clock = new FakeClock(_seed.Now);
+      _clock = new FakeClock(_seed.FixedNow);
 
       _sut = new ReservationUcCreate(
          _repository: _repository,

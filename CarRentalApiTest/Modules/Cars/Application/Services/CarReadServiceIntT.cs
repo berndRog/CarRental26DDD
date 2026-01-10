@@ -60,7 +60,7 @@ public sealed class CarReadService_IntT  : TestBase, IAsyncLifetime {
       TestSeed seed
    ) {
       ICarAvailabilityReadModel availability = new CarAvailabilityReadModel(db);
-      IClock clock = new FakeClock(seed.Now);
+      IClock clock = new FakeClock(seed.FixedNow);
       return new CarReadService(db, availability, clock);
    }
 
@@ -85,8 +85,8 @@ public sealed class CarReadService_IntT  : TestBase, IAsyncLifetime {
       
       var sut = CreateSut(_dbContext, _seed);
 
-      var start = _seed.Now.AddMinutes(-1); // start < now => must fail
-      var end = _seed.Now.AddHours(1);
+      var start = _seed.FixedNow.AddMinutes(-1); // start < now => must fail
+      var end = _seed.FixedNow.AddHours(1);
 
       var result = await sut.FindAvailableCarAsync(
          category: CarCategory.Compact,
@@ -124,7 +124,7 @@ public sealed class CarReadService_IntT  : TestBase, IAsyncLifetime {
       await ConfirmReservationsAsync(
          _dbContext,
          new[] { _seed.Reservation1, _seed.Reservation2, _seed.Reservation3 },
-         now: _seed.Now
+         now: _seed.FixedNow
       );
 
       var sut = CreateSut(_dbContext, _seed);
@@ -150,7 +150,7 @@ public sealed class CarReadService_IntT  : TestBase, IAsyncLifetime {
       await ConfirmReservationsAsync(
          _dbContext,
          new[] { _seed.Reservation1, _seed.Reservation2, _seed.Reservation3 },
-         now: _seed.Now
+         now: _seed.FixedNow
       );
 
       var sut = CreateSut(_dbContext, _seed);
@@ -179,7 +179,7 @@ public sealed class CarReadService_IntT  : TestBase, IAsyncLifetime {
       await ConfirmReservationsAsync(
          _dbContext,
          new[] { _seed.Reservation1, _seed.Reservation2, _seed.Reservation3 },
-         now: _seed.Now
+         now: _seed.FixedNow
       );
 
       // Block also Car9 and Car10 by creating additional active rentals
@@ -187,7 +187,7 @@ public sealed class CarReadService_IntT  : TestBase, IAsyncLifetime {
       await ConfirmReservationsAsync(
          _dbContext,
          new[] { _seed.Reservation4, _seed.Reservation5 },
-         now: _seed.Now
+         now: _seed.FixedNow
       );
 
       var extraRental4 = Rental.CreateAtPickup(

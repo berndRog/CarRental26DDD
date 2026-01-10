@@ -246,7 +246,7 @@ public sealed class ReservationRepositoryIt : TestBase, IAsyncLifetime {
       await _unitOfWork.SaveAllChangesAsync("confirm for test", CancellationToken.None);
       _unitOfWork.ClearChangeTracker();
 
-      var now = _seed.Now;
+      var now = _seed.FixedNow;
 
       // Act
       var drafts = await _repository.SelectDraftsToExpireAsync(now, CancellationToken.None);
@@ -273,7 +273,7 @@ public sealed class ReservationRepositoryIt : TestBase, IAsyncLifetime {
       }
       await _unitOfWork.SaveAllChangesAsync();
    
-      var now = _seed.Now;
+      var now = _seed.FixedNow;
    
       // Act
       var drafts = await _repository.SelectDraftsToExpireAsync(now, CancellationToken.None);

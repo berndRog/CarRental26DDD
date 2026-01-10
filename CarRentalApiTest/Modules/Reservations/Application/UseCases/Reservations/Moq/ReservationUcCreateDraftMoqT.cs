@@ -6,7 +6,6 @@ using CarRentalApi.Modules.Reservations.Domain.Aggregates;
 using CarRentalApi.Modules.Reservations.Domain.Enums;
 using CarRentalApi.Modules.Reservations.Domain.Errors;
 using CarRentalApi.Modules.Reservations.Infrastructure;
-using CarRentalApiTest.Domain.Utils;
 using Microsoft.Extensions.Logging;
 using Moq;
 namespace CarRentalApiTest.Modules.Reservations.Application.UseCases.Reservations.Moq;
@@ -20,7 +19,7 @@ public sealed class ReservationUcCreateDraftUt {
    public async Task ExecuteAsync_returns_StartDateInPast_when_start_is_not_in_future() {
       // Arrange
       var seed = new TestSeed();
-      var clock = new FakeClock(seed.Now);
+      var clock = new FakeClock(seed.FixedNow);
 
       var sut = new ReservationUcCreate(
          _repository: _repo.Object,
@@ -57,7 +56,7 @@ public sealed class ReservationUcCreateDraftUt {
    public async Task ExecuteAsync_returns_InvalidPeriod_when_end_is_not_after_start() {
       // Arrange
       var seed = new TestSeed();
-      var clock = new FakeClock(seed.Now);
+      var clock = new FakeClock(seed.FixedNow);
 
       var sut = new ReservationUcCreate(
          _repository: _repo.Object,
@@ -94,7 +93,7 @@ public sealed class ReservationUcCreateDraftUt {
    public async Task ExecuteAsync_success_adds_reservation_and_saves() {
       // Arrange
       var seed = new TestSeed();
-      var clock = new FakeClock(seed.Now);
+      var clock = new FakeClock(seed.FixedNow);
 
       _repo.Setup(r => r.Add(It.IsAny<Reservation>()));
 

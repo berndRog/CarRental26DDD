@@ -1,9 +1,40 @@
 using CarRentalApi.BuildingBlocks.Enums;
 using Microsoft.AspNetCore.Mvc;
-
 namespace CarRentalApi.BuildingBlocks;
 
 public static class ResultApiExtensions {
+
+   public static ActionResult ToActionResult(
+      this ControllerBase controller,
+      Result result,
+      ILogger logger,
+      string context,
+      object? args = null
+   ) {
+      // Success -> NoContent 204 (typisch für Commands ohne Body)
+      if (result.IsSuccess) return controller.NoContent();
+
+      // Failure -> log and map DomainErrors to HTTP StatusCodes
+      result.LogIfFailure(logger, context, args);
+
+      var error = result.Error;
+      var problemDetails = new ProblemDetails {
+         Title = error.Title,
+         Detail = error.Message,
+         Status = error.Code.ToHttpStatusCode()
+      };
+
+      return error.Code switch {
+         ErrorCode.BadReqest => controller.BadRequest(problemDetails),
+         ErrorCode.Unauthorized => controller.Unauthorized(problemDetails),
+         ErrorCode.Forbidden => new ObjectResult(problemDetails) { StatusCode = 403 },
+         ErrorCode.NotFound => controller.NotFound(problemDetails),
+         ErrorCode.Conflict => controller.Conflict(problemDetails),
+         ErrorCode.UnsupportedMediaType => controller.StatusCode(415, problemDetails),
+         ErrorCode.UnprocessableEntity => controller.UnprocessableEntity(problemDetails),
+         _ => controller.BadRequest(problemDetails)
+      };
+   }
 
    public static ActionResult ToActionResult<T>(
       this ControllerBase controller,
@@ -12,27 +43,26 @@ public static class ResultApiExtensions {
       string context,
       object? args = null
    ) {
-      // Success -> Ok StatusCode 200
       if (result.IsSuccess) return controller.Ok(result.Value);
-    
-      // Failure -> log and map DomainErrors to HTTP StatusCodes
-      result.LogIfFailure<T>(logger, context, args);
+
+      result.LogIfFailure(logger, context, args);
+
       var error = result.Error;
       var problemDetails = new ProblemDetails {
          Title = error.Title,
          Detail = error.Message,
-         Status = (int)error.Code
+         Status = error.Code.ToHttpStatusCode()
       };
-      
+
       return error.Code switch {
-         ErrorCode.BadReqest => controller.BadRequest(problemDetails),                   //400
-         ErrorCode.Unauthorized => controller.Unauthorized(problemDetails),               //401
-         ErrorCode.Forbidden => new ObjectResult(problemDetails) { StatusCode = 403 },    //403
-         ErrorCode.NotFound => controller.NotFound(problemDetails),                       //404
-         ErrorCode.Conflict => controller.Conflict(problemDetails),                       //409
-         ErrorCode.UnsupportedMediaType => controller.StatusCode(415, problemDetails),    //415
-         ErrorCode.UnprocessableEntity => controller.UnprocessableEntity(problemDetails), //422
-         _ => controller.BadRequest(problemDetails)                                       //400
+         ErrorCode.BadReqest => controller.BadRequest(problemDetails),
+         ErrorCode.Unauthorized => controller.Unauthorized(problemDetails),
+         ErrorCode.Forbidden => new ObjectResult(problemDetails) { StatusCode = 403 },
+         ErrorCode.NotFound => controller.NotFound(problemDetails),
+         ErrorCode.Conflict => controller.Conflict(problemDetails),
+         ErrorCode.UnsupportedMediaType => controller.StatusCode(415, problemDetails),
+         ErrorCode.UnprocessableEntity => controller.UnprocessableEntity(problemDetails),
+         _ => controller.BadRequest(problemDetails)
       };
    }
 
@@ -45,15 +75,12 @@ public static class ResultApiExtensions {
       string context,
       object? args = null
    ) {
-      if (result.IsFailure) 
+      if (result.IsFailure)
          return controller.ToActionResult(result, logger, context, args);
-      
+
       return controller.CreatedAtRoute(routeName, routeValues, result.Value);
    }
 
-   /// <summary>
-   /// Gibt die HTTP-Statuscodes zurück, die für den gegebenen ErrorCode verwendet werden
-   /// </summary>
    public static int ToHttpStatusCode(this ErrorCode errorCode) {
       return errorCode switch {
          ErrorCode.BadReqest => StatusCodes.Status400BadRequest,

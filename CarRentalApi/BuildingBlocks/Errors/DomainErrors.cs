@@ -34,6 +34,14 @@ public sealed record DomainErrors(
          Message: "The Requested Operation Is Not Allowed."
       );
 
+   
+   public static readonly DomainErrors Invalid =
+      new(
+         ErrorCode.BadReqest,
+         Title: "Value is invalid",
+         Message: "The Value Is Not Valid."
+      );
+   
    public static readonly DomainErrors InvalidGuidFormat =
       new(
          ErrorCode.BadReqest,

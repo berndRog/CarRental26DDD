@@ -5,6 +5,7 @@ public sealed record class CustomerDto(
    string FirstName,
    string LastName,
    string Email,
+   DateTimeOffset CreatedAt,
    string? Street,
    string? PostalCode,
    string? City

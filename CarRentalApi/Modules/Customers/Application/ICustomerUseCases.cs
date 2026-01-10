@@ -10,10 +10,17 @@ public interface ICustomerUseCases {
       string firstName,
       string lastName,
       string email,
+      DateTimeOffset createdAt,
       string? street,
       string? postalCode,
       string? city,
       string? id,
+      CancellationToken ct
+   );
+   
+   Task<Result> BlockAsync(
+      Guid id,
+      DateTimeOffset blockedAt,
       CancellationToken ct
    );
 

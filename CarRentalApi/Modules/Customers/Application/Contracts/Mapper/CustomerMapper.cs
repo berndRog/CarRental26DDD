@@ -9,6 +9,7 @@ public static class CustomerMapper {
       customer.FirstName,
       customer.LastName,
       customer.Email,
+      customer.CreatedAt,
       customer.Address?.Street,
       customer.Address?.PostalCode,
       customer.Address?.City

@@ -12,7 +12,7 @@ public sealed class ReservationTests {
    [Fact]
    public void CreateDraft_success_sets_initial_state() {
       // Arrange
-      var createdAt = _seed.Now;
+      var createdAt = _seed.FixedNow;
       var start = createdAt.AddDays(10);
       var end = createdAt.AddDays(12);
 
@@ -48,7 +48,7 @@ public sealed class ReservationTests {
    [Fact]
    public void CreateDraft_invalid_period_returns_failure() {
       // Arrange
-      var createdAt = _seed.Now;
+      var createdAt = _seed.FixedNow;
       var start = createdAt.AddDays(10);
       var end = start; // invalid: end == start
 

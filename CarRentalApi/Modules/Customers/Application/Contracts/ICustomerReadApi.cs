@@ -79,7 +79,7 @@ public interface ICustomerReadApi {
    /// Supported filter aspects may include:
    /// - Name (partial or full)
    /// - Email
-   /// - Status (e.g. active/inactive)
+   /// - Status (e.g. blocked)
    /// - Creation date ranges
    ///
    /// Business meaning:

@@ -10,6 +10,8 @@ namespace CarRentalApiTest;
 
 public sealed class TestSeed {
 
+   public DateTimeOffset FixedNow => DateTimeOffset.Parse("2025-01-01T00:00:00Z");
+
    // ---------- Test data for addresses ----------
    public Address Address1 { get; private set; } = null!;
    public Address Address2 { get; private set; } = null!;
@@ -131,8 +133,6 @@ public sealed class TestSeed {
 
    
    //---------- Common test periods ----------
-   public DateTimeOffset Now => DateTimeOffset.Parse("2026-01-01T00:00:00+00:00");
-
    // Periods for overlap/non-overlap scenarios
    public RentalPeriod Period1 => RentalPeriod.Create(
       DateTimeOffset.Parse("2030-05-01T10:00:00+00:00"),
@@ -167,11 +167,11 @@ public sealed class TestSeed {
       Address3 = Address.Create("Schillerstr. 1", "30123", "Hannover").GetValueOrThrow();
       
       //---------- Customers ----------
-      Customer1 = CreateCustomer(Customer1Id, "Erika", "Mustermann","e.mustermann@t-line.de", Address1);
-      Customer2 = CreateCustomer(Customer2Id, "Max", "Mustermann","m.mustermann@gmail.com");
-      Customer3 = CreateCustomer(Customer3Id, "Arne", "Arndt", "a.arndt@icloud.com", Address2);
-      Customer4 = CreateCustomer(Customer4Id, "Benno", "Bauer", "b.bauer@t-online.de");
-      Customer5 = CreateCustomer(Customer5Id, "Chrisitine","Conrad", "c.conrad@gmx.de", Address3);
+      Customer1 = CreateCustomer(Customer1Id, "Erika", "Mustermann","e.mustermann@t-line.de",FixedNow, Address1);
+      Customer2 = CreateCustomer(Customer2Id, "Max", "Mustermann","m.mustermann@gmail.com",FixedNow);
+      Customer3 = CreateCustomer(Customer3Id, "Arne", "Arndt", "a.arndt@icloud.com", FixedNow, Address2);
+      Customer4 = CreateCustomer(Customer4Id, "Benno", "Bauer", "b.bauer@t-online.de", FixedNow);
+      Customer5 = CreateCustomer(Customer5Id, "Chrisitine","Conrad", "c.conrad@gmx.de", FixedNow, Address3);
       
       //---------- Cars ----------
       Car1 = CreateCar(Car1Id, CarCategory.Economy, "VW", "Polo", "ECO-001");
@@ -285,12 +285,14 @@ public sealed class TestSeed {
       string id,
       string firstName,
       string lastName,
-      string email
+      string email,
+      DateTimeOffset createdAt
    ) {
       var result = Customer.Create(
          firstName: firstName,
          lastName: lastName,
          email: email,
+         createdAt: createdAt,
          id: id,
          address: null
       );
@@ -304,12 +306,14 @@ public sealed class TestSeed {
       string firstName,
       string lastName,
       string email,
+      DateTimeOffset createdAt,
       Address? address
    ) {
       var result = Customer.Create(
          firstName: firstName,
          lastName: lastName,
          email: email,
+         createdAt: createdAt,
          id: id,
          address: address
       );

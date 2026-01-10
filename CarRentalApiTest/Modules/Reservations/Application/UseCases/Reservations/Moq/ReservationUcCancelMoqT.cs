@@ -6,7 +6,6 @@ using CarRentalApi.Modules.Reservations.Domain.Aggregates;
 using CarRentalApi.Modules.Reservations.Domain.Enums;
 using CarRentalApi.Modules.Reservations.Domain.Errors;
 using CarRentalApi.Modules.Reservations.Infrastructure;
-using CarRentalApiTest.Domain.Utils;
 using Microsoft.Extensions.Logging;
 using Moq;
 namespace CarRentalApiTest.Modules.Reservations.Application.UseCases.Reservations.Moq;
@@ -19,7 +18,7 @@ public sealed class ReservationUcCancelUt {
 
    public ReservationUcCancelUt() {
       var seed = new TestSeed();
-      _clock = new FakeClock(seed.Now);
+      _clock = new FakeClock(seed.FixedNow);
    }
 
    [Fact]
@@ -61,12 +60,12 @@ public sealed class ReservationUcCancelUt {
          carCategory: CarCategory.Compact,
          start: seed.Period1.Start,
          end: seed.Period1.End,
-         createdAt: seed.Now.AddDays(-10),
+         createdAt: seed.FixedNow.AddDays(-10),
          id: seed.Reservation1Id
       ).Value;
 
       // Expire it -> Cancel must be rejected by domain
-      var expireResult = reservation.Expire(seed.Now.AddDays(-1));
+      var expireResult = reservation.Expire(seed.FixedNow.AddDays(-1));
       Assert.True(expireResult.IsSuccess);
       Assert.Equal(ReservationStatus.Expired, reservation.Status);
 
@@ -103,7 +102,7 @@ public sealed class ReservationUcCancelUt {
          carCategory: CarCategory.Compact,
          start: seed.Period1.Start,
          end: seed.Period1.End,
-         createdAt: seed.Now.AddDays(-2),
+         createdAt: seed.FixedNow.AddDays(-2),
          id: seed.Reservation2Id
       ).Value;
 

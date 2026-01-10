@@ -7,7 +7,6 @@ using CarRentalApi.Modules.Reservations.Domain.Aggregates;
 using CarRentalApi.Modules.Reservations.Domain.Enums;
 using CarRentalApi.Modules.Reservations.Domain.Errors;
 using CarRentalApi.Modules.Reservations.Infrastructure;
-using CarRentalApiTest.Domain.Utils;
 using Microsoft.Extensions.Logging;
 using Moq;
 namespace CarRentalApiTest.Modules.Reservations.Application.UseCases.Reservations.Moq;
@@ -30,7 +29,7 @@ public sealed class ReservationUcConfirmMoqT {
 
       // Important:
       // NotFound must NOT save anything, so we do not set up SaveAllChangesAsync here.
-      var clock = new FakeClock(seed.Now);
+      var clock = new FakeClock(seed.FixedNow);
 
       var sut = new ReservationUcConfirm(
          _repository: _repo.Object,
@@ -87,7 +86,7 @@ public sealed class ReservationUcConfirmMoqT {
             It.IsAny<CancellationToken>()))
          .ReturnsAsync(ReservationConflict.OverCapacity);
 
-      var clock = new FakeClock(seed.Now);
+      var clock = new FakeClock(seed.FixedNow);
 
       var sut = new ReservationUcConfirm(
          _repository: _repo.Object,
