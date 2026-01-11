@@ -13,10 +13,10 @@ namespace CarRentalApi.Controllers;
 
 [ApiController]
 
-// 🔹 Enable later if API versioning is introduced
+// Enable later if API versioning is introduced
 // [ApiVersion("1.0")]
 
-// 🔹 Replace route with:
+// Replace route with:
 // [Route("carrentalapi/v{version:apiVersion}")]
 [Route("carrentalapi/v1")]
 

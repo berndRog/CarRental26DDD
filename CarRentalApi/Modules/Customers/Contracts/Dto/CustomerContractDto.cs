@@ -4,12 +4,9 @@ namespace CarRentalApi.Modules.Customers.Application.contracts.Dto;
 /// <summary>
 /// Projection for customer contracts
 /// </summary>
-public sealed record class CustomerDto(
+public sealed record class CustomerContractDto(
    string? Id,
-   string FirstName,
-   string LastName,
-   string Email,
+   string? Identity,
    DateTimeOffset CreatedAt,
-   bool IsBlocked,
-   Address? Address = null
+   bool IsBlocked
 );

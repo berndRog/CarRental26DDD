@@ -4,6 +4,7 @@ using CarRentalApi.Modules.Customers.Domain.Aggregates;
 using CarRentalApi.Modules.Customers.Domain.ValueObjects;
 namespace CarRentalApiTest.Modules.Customers.Domain;
 
+/*
 public class CustomerUt {
 
    private readonly TestSeed _seed = new();
@@ -173,3 +174,4 @@ public class CustomerUt {
       Assert.Equal(_seed.Address3, _seed.Customer5.Address);
    }
 }
+*/

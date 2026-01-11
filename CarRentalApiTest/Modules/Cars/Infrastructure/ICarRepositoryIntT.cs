@@ -5,7 +5,7 @@ using CarRentalApi.Modules.Cars.Domain.Aggregates;
 using CarRentalApi.Modules.Cars.Domain.Enums;
 using CarRentalApi.Modules.Cars.Infrastructure;
 using CarRentalApi.Modules.Cars.Infrastructure.Repositories;
-using CarRentalApi.Modules.Cars.Repositories;
+using CarRentalApi.Modules.Cars.Ports.Outbound;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApiTest.Modules.Cars.Infrastructure;

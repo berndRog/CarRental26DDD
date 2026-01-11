@@ -9,6 +9,7 @@ using CarRentalApi.Modules.Cars.Domain.Policies;
 using CarRentalApi.Modules.Rentals.Domain.Aggregates;
 using CarRentalApi.Modules.Bookings.Domain.ValueObjects;
 using CarRentalApi.Modules.Cars.Application.ReadModel;
+using CarRentalApi.Modules.Cars.Ports.Inbound;
 namespace CarRentalApi.Modules.Cars.Domain.Aggregates;
 
 public sealed class Car: Entity<Guid> {

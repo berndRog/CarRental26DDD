@@ -7,13 +7,7 @@ namespace CarRentalApi.Modules.Cars.Application;
 public interface ICustomerUseCases {
 
    Task<Result<Customer>> CreateAsync(
-      string firstName,
-      string lastName,
-      string email,
       DateTimeOffset createdAt,
-      string? street,
-      string? postalCode,
-      string? city,
       string? id,
       CancellationToken ct
    );

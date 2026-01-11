@@ -4,13 +4,10 @@ namespace CarRentalApi.Modules.Customers.Application.Contracts.Mapping;
 
 public static class CustomerMapper {
    
-   public static CustomerDto ToCustomerDto(this Customer customer) => new(
+   public static CustomerContractDto ToCustomerDto(this Customer customer) => new(
       Id: customer.Id.ToString(),
-      FirstName: customer.FirstName,
-      LastName: customer.LastName,
-      Email: customer.Email,
+      Identity: customer.Identity,
       customer.CreatedAt,
-      customer.IsBlocked,
-      customer.Address
+      customer.IsBlocked
    );
 }

@@ -289,12 +289,8 @@ public sealed class TestSeed {
       DateTimeOffset createdAt
    ) {
       var result = Customer.Create(
-         firstName: firstName,
-         lastName: lastName,
-         email: email,
          createdAt: createdAt,
-         id: id,
-         address: null
+         id: id
       );
 
       Assert.True(result.IsSuccess);
@@ -310,12 +306,8 @@ public sealed class TestSeed {
       Address? address
    ) {
       var result = Customer.Create(
-         firstName: firstName,
-         lastName: lastName,
-         email: email,
          createdAt: createdAt,
-         id: id,
-         address: address
+         id: id
       );
 
       Assert.True(result.IsSuccess);

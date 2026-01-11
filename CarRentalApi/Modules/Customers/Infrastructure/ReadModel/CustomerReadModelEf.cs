@@ -1,8 +1,5 @@
 using CarRentalApi.BuildingBlocks;
-using CarRentalApi.BuildingBlocks.ReadModel;
 using CarRentalApi.Data.Database;
-using CarRentalApi.Modules.Cars.Application.ReadModel.Dto;
-using CarRentalApi.Modules.Customers.Application.contracts.Dto;
 using CarRentalApi.Modules.Customers.Application.Contracts.Mapping;
 using CarRentalApi.Modules.Customers.Application.ReadModel;
 using CarRentalApi.Modules.Customers.Application.ReadModel.Dto;
@@ -10,7 +7,7 @@ using CarRentalApi.Modules.Customers.Domain.Errors;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApi.Modules.Customers.Infrastructure.ReadModel;
 
-public sealed class CustomerReadModel(
+public sealed class CustomerReadModelEf(
    CarRentalDbContext _dbContext
 ) : ICustomerReadModel {
    
@@ -27,7 +24,7 @@ public sealed class CustomerReadModel(
          ? Result<CustomerDetail>.Failure(CustomerErrors.NotFound) 
          : Result<CustomerDetail>.Success(customer.ToCustomerDetail());
    }
-   
+   /*
    public async Task<Result<CustomerDetail>> FindByEmailAsync(
       string email,
       CancellationToken ct
@@ -75,6 +72,6 @@ public sealed class CustomerReadModel(
 
       return Result<IReadOnlyList<CustomerListItem>>.Success(customerListItems);
    }
-
+*/
 
 }

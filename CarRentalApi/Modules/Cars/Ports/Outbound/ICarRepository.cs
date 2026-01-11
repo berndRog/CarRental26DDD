@@ -1,7 +1,7 @@
 using CarRentalApi.BuildingBlocks.Enums;
 using CarRentalApi.Modules.Cars.Domain.Aggregates;
 using CarRentalApi.Modules.Cars.Domain.Enums;
-namespace CarRentalApi.Modules.Cars.Repositories;
+namespace CarRentalApi.Modules.Cars.Ports.Outbound;
 
 public interface ICarRepository {
    

@@ -1,5 +1,5 @@
 using CarRentalApi.Modules.Bookings.Domain.ValueObjects;
-namespace CarRentalApi.Modules.Cars.Application.ReadModel;
+namespace CarRentalApi.Modules.Cars.Ports.Inbound;
 /// <summary>
 /// Read model / policy to check if a car has overlaps with rentals or reservations
 /// for a given period. Used inside the Car aggregate.

@@ -10,6 +10,7 @@ using CarRentalApi.Modules.Bookings.Domain.Aggregates;
 using CarRentalApi.Modules.Cars.Application.ReadModel;
 using CarRentalApi.Modules.Cars.Application.ReadModel.Errors;
 using CarRentalApi.Modules.Cars.Infrastructure.Adapters;
+using CarRentalApi.Modules.Cars.Ports.Inbound;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 

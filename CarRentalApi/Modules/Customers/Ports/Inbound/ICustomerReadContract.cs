@@ -15,7 +15,7 @@ namespace CarRentalApi.Modules.Customers.Application.Contracts;
 /// - Other bounded contexts requiring customer information
 /// - Read models / projections
 /// </summary>
-public interface ICustomerReadApi {
+public interface ICustomerReadContract {
 
    /// <summary>
    /// Finds a single customer by its unique identifier.
@@ -25,14 +25,15 @@ public interface ICustomerReadApi {
    /// - Does NOT load the aggregate for modification
    ///
    /// Returns:
-   /// - Success with <see cref="CustomerDto"/> if the customer exists
+   /// - Success with <see cref="CustomerContractDto"/> if the customer exists
    /// - Failure if the customer does not exist
    /// </summary>
-   Task<Result<CustomerDto>> FindByIdAsync(
+   Task<Result<CustomerContractDto>> FindByIdAsync(
       Guid customerId,
       CancellationToken ct
    );
 
+   /*
    /// <summary>
    /// Executes a flexible customer search using filter criteria.
    ///
@@ -53,4 +54,5 @@ public interface ICustomerReadApi {
       CustomerFilter filter,
       CancellationToken ct
    );
+   */
 }

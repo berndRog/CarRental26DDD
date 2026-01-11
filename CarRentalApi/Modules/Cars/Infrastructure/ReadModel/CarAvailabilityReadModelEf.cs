@@ -5,6 +5,7 @@ using CarRentalApi.Modules.Rentals.Domain.Enums;
 using CarRentalApi.Modules.Bookings.Domain.Enums;
 using CarRentalApi.Modules.Bookings.Domain.ValueObjects;
 using CarRentalApi.Modules.Cars.Application.ReadModel;
+using CarRentalApi.Modules.Cars.Ports.Inbound;
 
 namespace CarRentalApi.Modules.Cars.Infrastructure.ReadModels;
 

@@ -6,7 +6,8 @@ using CarRentalApi.Modules.Cars.Domain.Policies;
 using CarRentalApi.Modules.Cars.Infrastructure.Adapters;
 using CarRentalApi.Modules.Cars.Infrastructure.ReadModel;
 using CarRentalApi.Modules.Cars.Infrastructure.Repositories;
-using CarRentalApi.Modules.Cars.Repositories;
+using CarRentalApi.Modules.Cars.Ports.Inbound;
+using CarRentalApi.Modules.Cars.Ports.Outbound;
 namespace CarRentalApi.Modules.Cars;
 
 public static class DiAddCarsExtensions {

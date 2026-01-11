@@ -5,7 +5,7 @@ using CarRentalApi.Modules.Customers.Domain.Errors;
 using CarRentalApi.Modules.Customers.Domain.ValueObjects;
 namespace CarRentalApi.Modules.Customers.Domain.Aggregates;
 
-public sealed class Customer : Person {
+public sealed class Customer : Entity<Guid> {
 
 #if OOP_MODE
    // With Navigation properties (object graph)
@@ -24,6 +24,7 @@ public sealed class Customer : Person {
    #error "Define either OOP_MODE or DDD_MODE in .csproj"
 #endif
    
+   public string? Identity { get; private set; }
    public DateTimeOffset CreatedAt { get; private set; }
    public DateTimeOffset? BlockedAt { get; private set; }
    public bool IsBlocked => BlockedAt is not null;
@@ -34,32 +35,17 @@ public sealed class Customer : Person {
    // Domain ctor
    private Customer(
       Guid id,
-      string firstName,
-      string lastName,
-      string email,
-      DateTimeOffset createdAt,
-      Address? address
-   ) : base(id, firstName, lastName, email, address) {
+      DateTimeOffset createdAt
+   )  {
       CreatedAt = createdAt;
    }
 
    // ---------- Factory (Result-based) ----------
    public static Result<Customer> Create(
-      string firstName,
-      string lastName,
-      string email,
       DateTimeOffset createdAt,
-      string? id = null,
-      Address? address = null
+      string? id = null
    ) {
       // Normalize input early
-      firstName = firstName?.Trim() ?? string.Empty;
-      lastName = lastName?.Trim() ?? string.Empty;
-      email = email?.Trim() ?? string.Empty;
-      
-      var baseValidation = ValidatePersonData(firstName, lastName, email);
-      if (baseValidation.IsFailure)
-         return Result<Customer>.Failure(baseValidation.Error);
       
       var result = EntityId.Resolve(id, PersonErrors.InvalidId);
       if (result.IsFailure)
@@ -68,24 +54,10 @@ public sealed class Customer : Person {
 
       var customer = new Customer(
          customerId,
-         firstName,
-         lastName,
-         email,
-         createdAt,
-         address
+         createdAt
       );
 
       return Result<Customer>.Success(customer);
-   }
-   
-   // ---------- Behavior methods ----------
-   public Result ChangeEmail(string email) {
-      var validation = ValidatePersonData(FirstName, LastName, email);
-      if (validation.IsFailure)
-         return validation;
-
-      Email = email.Trim();
-      return Result.Success();
    }
    
    public Result Block(
@@ -98,4 +70,6 @@ public sealed class Customer : Person {
       return Result.Success();
    }
 
+   
+   
 }

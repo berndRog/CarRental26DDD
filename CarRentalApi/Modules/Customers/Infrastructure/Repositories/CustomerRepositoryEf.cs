@@ -4,7 +4,7 @@ using CarRentalApi.Modules.Customers.Domain.Aggregates;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApi.Modules.Cars.Infrastructure.Repositories;
 
-public sealed class CustomerRepository(
+public sealed class CustomerRepositoryEf(
    CarRentalDbContext _dbContext
 ) : ICustomerRepository {
   

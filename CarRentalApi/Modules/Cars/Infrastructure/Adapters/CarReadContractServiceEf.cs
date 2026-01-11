@@ -6,6 +6,7 @@ using CarRentalApi.Modules.Cars.Application.Contracts;
 using CarRentalApi.Modules.Cars.Application.Contracts.Dto;
 using CarRentalApi.Modules.Cars.Application.ReadModel;
 using CarRentalApi.Modules.Cars.Application.ReadModel.Errors;
+using CarRentalApi.Modules.Cars.Ports.Inbound;
 using CarRentalApi.Modules.Customers.Application.Contracts.Mapping;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApi.Modules.Cars.Infrastructure.Adapters;

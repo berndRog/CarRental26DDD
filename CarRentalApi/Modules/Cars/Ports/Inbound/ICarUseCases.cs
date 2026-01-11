@@ -1,8 +1,7 @@
 using CarRentalApi.BuildingBlocks;
 using CarRentalApi.BuildingBlocks.Enums;
-using CarRentalApi.Domain;
 using CarRentalApi.Modules.Cars.Domain.Aggregates;
-namespace CarRentalApi.Modules.Cars.Application;
+namespace CarRentalApi.Modules.Cars.Ports.Inbound;
 
 public interface ICarUseCases {
 

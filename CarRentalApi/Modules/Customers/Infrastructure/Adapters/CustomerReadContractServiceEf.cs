@@ -1,29 +1,25 @@
 using CarRentalApi.BuildingBlocks;
-using CarRentalApi.BuildingBlocks.Enums;
-using CarRentalApi.BuildingBlocks.Errors;
 using CarRentalApi.Data.Database;
 using CarRentalApi.Modules.Customers.Application.Contracts;
 using CarRentalApi.Modules.Customers.Application.contracts.Dto;
-using CarRentalApi.Modules.Customers.Application.Contracts.Dto;
 using CarRentalApi.Modules.Customers.Application.Contracts.Mapping;
-using CarRentalApi.Modules.Customers.Domain.Aggregates;
 using CarRentalApi.Modules.Customers.Domain.Errors;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApi.Modules.Customers.Application.Services;
 
 /// <summary>
-/// Read-only EF Core implementation of <see cref="ICustomerReadApi"/>.
+/// Read-only EF Core implementation of <see cref="ICustomerReadContract"/>.
 /// </summary>
-public sealed class CustomerReadService(
+public sealed class CustomerReadContractServiceEf(
    CarRentalDbContext _dbContext
-) : ICustomerReadApi {
+) : ICustomerReadContract {
 
-   public async Task<Result<CustomerDto>> FindByIdAsync(
+   public async Task<Result<CustomerContractDto>> FindByIdAsync(
       Guid customerId,
       CancellationToken ct
    ) {
       if (customerId == Guid.Empty) 
-         return Result<CustomerDto>.Failure(CustomerErrors.InvalidId);
+         return Result<CustomerContractDto>.Failure(CustomerErrors.InvalidId);
       
       // Read-only query: no tracking, DTO projection only
       var customer = await _dbContext.Customers
@@ -31,10 +27,11 @@ public sealed class CustomerReadService(
          .FirstOrDefaultAsync(c => c.Id == customerId, ct);
       
       return customer is null 
-         ? Result<CustomerDto>.Failure(CustomerErrors.NotFound) 
-         : Result<CustomerDto>.Success(customer.ToCustomerDto());
+         ? Result<CustomerContractDto>.Failure(CustomerErrors.NotFound) 
+         : Result<CustomerContractDto>.Success(customer.ToCustomerDto());
    }
    
+   /*
    public async Task<Result<IReadOnlyList<CustomerDto>>> FilterAsync(
       CustomerFilter filter,
       CancellationToken ct
@@ -80,5 +77,5 @@ public sealed class CustomerReadService(
 
       return Result<IReadOnlyList<CustomerDto>>.Success(dtos);
    }
-   
+   */
 }

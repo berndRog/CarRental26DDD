@@ -3,7 +3,7 @@ using CarRentalApi.BuildingBlocks.Utils;
 using CarRentalApi.Data.Database;
 using CarRentalApi.Modules.Cars.Domain.Aggregates;
 using CarRentalApi.Modules.Cars.Domain.Enums;
-using CarRentalApi.Modules.Cars.Repositories;
+using CarRentalApi.Modules.Cars.Ports.Outbound;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApi.Modules.Cars.Infrastructure.Repositories;
 

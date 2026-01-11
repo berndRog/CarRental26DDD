@@ -6,7 +6,7 @@ using CarRentalApi.Modules.Bookings.Infrastructure;
 using CarRentalApi.Modules.Cars.Application;
 using CarRentalApi.Modules.Cars.Infrastructure;
 using CarRentalApi.Modules.Bookings.Application;
-using CarRentalApi.Modules.Cars.Repositories;
+using CarRentalApi.Modules.Cars.Ports.Outbound;
 namespace CarRentalApi.Modules.Bookings.Domain.Policies;
 
 public sealed class ReservationConflictPolicy(

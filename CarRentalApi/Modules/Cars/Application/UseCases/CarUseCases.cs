@@ -2,6 +2,7 @@ using CarRentalApi.BuildingBlocks;
 using CarRentalApi.BuildingBlocks.Enums;
 using CarRentalApi.Domain;
 using CarRentalApi.Modules.Cars.Domain.Aggregates;
+using CarRentalApi.Modules.Cars.Ports.Inbound;
 namespace CarRentalApi.Modules.Cars.Application.UseCases;
 
 public class CarUseCases(

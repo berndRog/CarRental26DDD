@@ -5,6 +5,7 @@ using CarRentalApi.Modules.Cars.Application;
 using CarRentalApi.Modules.Cars.Application.Contracts.Dto;
 using CarRentalApi.Modules.Cars.Application.ReadModel;
 using CarRentalApi.Modules.Cars.Application.ReadModel.Dto;
+using CarRentalApi.Modules.Cars.Ports.Inbound;
 using Microsoft.AspNetCore.Mvc;
 namespace CarRentalApi.Controllers;
 
