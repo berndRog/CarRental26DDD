@@ -1,6 +1,6 @@
 using CarRentalApi.Data.Database;
+using CarRentalApi.Modules.Bookings.Domain;
 using CarRentalApi.Modules.Rentals.Domain.Aggregates;
-using CarRentalApi.Modules.Rentals.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace CarRentalApi.Infrastructure.Persistence.Repositories;

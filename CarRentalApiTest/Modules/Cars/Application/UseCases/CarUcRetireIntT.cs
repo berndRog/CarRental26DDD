@@ -6,6 +6,7 @@ using CarRentalApi.Modules.Cars.Domain.Errors;
 using CarRentalApi.Modules.Cars.Domain.Policies;
 using CarRentalApi.Modules.Cars.Infrastructure;
 using CarRentalApi.Modules.Cars.Infrastructure.Repositories;
+using CarRentalApi.Modules.Cars.Repositories;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApiTest.Modules.Cars.Application.UseCases;
@@ -31,7 +32,7 @@ public sealed class CarUcRetireIt : TestBase, IAsyncLifetime {
       _dbContext = new CarRentalDbContext(options);
       await _dbContext.Database.EnsureCreatedAsync();
 
-      _repository = new CarRepository(_dbContext, CreateLogger<CarRepository>());
+      _repository = new CarRepositoryEf(_dbContext, CreateLogger<CarRepositoryEf>());
       _unitOfWork = new UnitOfWork(_dbContext, CreateLogger<UnitOfWork>());
 
       // Persist seed cars

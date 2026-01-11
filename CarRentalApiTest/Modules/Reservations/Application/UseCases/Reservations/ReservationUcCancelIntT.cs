@@ -1,10 +1,10 @@
 using CarRentalApi.BuildingBlocks;
 using CarRentalApi.BuildingBlocks.Persistence;
 using CarRentalApi.Data.Database;
-using CarRentalApi.Modules.Reservations.Application.UseCases;
-using CarRentalApi.Modules.Reservations.Domain.Enums;
-using CarRentalApi.Modules.Reservations.Domain.Errors;
-using CarRentalApi.Modules.Reservations.Infrastructure.Repositories;
+using CarRentalApi.Modules.Bookings.Application.UseCases;
+using CarRentalApi.Modules.Bookings.Domain.Enums;
+using CarRentalApi.Modules.Bookings.Domain.Errors;
+using CarRentalApi.Modules.Bookings.Infrastructure.Repositories;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApiTest.Modules.Reservations.Application.UseCases.Reservations;
@@ -13,7 +13,7 @@ public sealed class ReservationUcCancelIntT : TestBase, IAsyncLifetime {
    private TestSeed _seed = null!;
    private SqliteConnection _dbConnection = null!;
    private CarRentalDbContext _dbContext = null!;
-   private ReservationRepository _repository = null!;
+   private ReservationRepositoryEf _repositoryEf = null!;
    private IUnitOfWork _unitOfWork = null!;
 
    private FakeClock _clock = null!;
@@ -43,14 +43,14 @@ public sealed class ReservationUcCancelIntT : TestBase, IAsyncLifetime {
       await _dbContext.SaveChangesAsync();
       
       
-      _repository = new ReservationRepository(_dbContext, CreateLogger<ReservationRepository>());
+      _repositoryEf = new ReservationRepositoryEf(_dbContext, CreateLogger<ReservationRepositoryEf>());
       _unitOfWork = new UnitOfWork(_dbContext, CreateLogger<UnitOfWork>());
 
       _clock = new FakeClock(DateTimeOffset.Parse("2026-01-01T00:20:00+00:00"));
 
       // NOTE: ctor might differ in your codebase -> adjust if needed
       _uc = new ReservationUcCancel(
-         _repository,
+         _repositoryEf,
          _unitOfWork,
          CreateLogger<ReservationUcCancel>(),
          _clock
@@ -87,7 +87,7 @@ public sealed class ReservationUcCancelIntT : TestBase, IAsyncLifetime {
       Assert.True(result.IsSuccess);
 
       _unitOfWork.ClearChangeTracker();
-      var actual = await _repository.FindByIdAsync(reservationId, CancellationToken.None);
+      var actual = await _repositoryEf.FindByIdAsync(reservationId, CancellationToken.None);
 
       Assert.NotNull(actual);
       Assert.Equal(ReservationStatus.Cancelled, actual!.Status);
@@ -103,7 +103,7 @@ public sealed class ReservationUcCancelIntT : TestBase, IAsyncLifetime {
 
       // Load from DB to get tracked entity
       var reservationId = Guid.Parse(_seed.Reservation1Id);
-      var reservation = await _repository.FindByIdAsync(reservationId, CancellationToken.None);
+      var reservation = await _repositoryEf.FindByIdAsync(reservationId, CancellationToken.None);
       Assert.NotNull(reservation);
 
       // Confirm first (domain allows cancel Draft or Confirmed)
@@ -122,7 +122,7 @@ public sealed class ReservationUcCancelIntT : TestBase, IAsyncLifetime {
       Assert.True(result.IsSuccess);
 
       _unitOfWork.ClearChangeTracker();
-      var actual = await _repository.FindByIdAsync(reservationId, CancellationToken.None);
+      var actual = await _repositoryEf.FindByIdAsync(reservationId, CancellationToken.None);
 
       Assert.NotNull(actual);
       Assert.Equal(ReservationStatus.Cancelled, actual!.Status);

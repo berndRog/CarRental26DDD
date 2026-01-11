@@ -15,7 +15,7 @@ public static class DiAddCustomersExtensions {
    ) {
       
       // ReadModels
-      services.AddScoped<ICustomerReadModel, CustomerReadService>();
+      //services.AddScoped<ICustomerReadModel, CustomerReadService>();
       
       // Services 
       services.AddScoped<ICustomerReadApi, CustomerReadService>();

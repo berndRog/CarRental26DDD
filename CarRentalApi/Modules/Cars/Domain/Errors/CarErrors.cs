@@ -17,8 +17,8 @@ public static class CarErrors {
    public static readonly DomainErrors InvalidId =
       new(
          ErrorCode.BadReqest,
-         Title: "Invalid Car Id",
-         Message: "The Provided Car Id Is Invalid."
+         Title: "Invalid Car ReservationId",
+         Message: "The Provided Car ReservationId Is Invalid."
       );
 
    public static readonly DomainErrors IdAlreadyExists = new(
@@ -30,8 +30,8 @@ public static class CarErrors {
    public static readonly DomainErrors CategoryIsRequired =
       new(
          ErrorCode.BadReqest,
-         Title: "Car Category Is Required",
-         Message: "A Car Category Must Be Provided."
+         Title: "Car CarCategory Is Required",
+         Message: "A Car CarCategory Must Be Provided."
       );
 
    public static readonly DomainErrors ManufacturerIsRequired =
@@ -79,7 +79,7 @@ public static class CarErrors {
    public static readonly DomainErrors InvalidStatusTransition =
       new(
          ErrorCode.Conflict,
-         Title: "Invalid Car Status Transition",
-         Message: "The Requested Car Status Transition Is Not Allowed."
+         Title: "Invalid Car ReservationStatus Transition",
+         Message: "The Requested Car ReservationStatus Transition Is Not Allowed."
       );
 }

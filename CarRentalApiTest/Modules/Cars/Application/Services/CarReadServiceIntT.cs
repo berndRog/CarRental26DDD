@@ -2,12 +2,14 @@ using System.Data.Common;
 using CarRentalApi.BuildingBlocks;
 using CarRentalApi.BuildingBlocks.Enums;
 using CarRentalApi.Data.Database;
-using CarRentalApi.Modules.Cars.Application.Services;
 using CarRentalApi.Modules.Cars.Domain.Errors;
 using CarRentalApi.Modules.Cars.Domain.Policies;
 using CarRentalApi.Modules.Cars.Infrastructure.ReadModels;
 using CarRentalApi.Modules.Rentals.Domain.Aggregates;
-using CarRentalApi.Modules.Reservations.Domain.Aggregates;
+using CarRentalApi.Modules.Bookings.Domain.Aggregates;
+using CarRentalApi.Modules.Cars.Application.ReadModel;
+using CarRentalApi.Modules.Cars.Application.ReadModel.Errors;
+using CarRentalApi.Modules.Cars.Infrastructure.Adapters;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
@@ -55,13 +57,13 @@ public sealed class CarReadService_IntT  : TestBase, IAsyncLifetime {
       }
    }
 
-   private static CarReadService CreateSut(
+   private static CarReadContractServiceEf CreateSut(
       CarRentalDbContext db,
       TestSeed seed
    ) {
-      ICarAvailabilityReadModel availability = new CarAvailabilityReadModel(db);
+      ICarAvailabilityReadModel availability = new CarAvailabilityReadModelEf(db);
       IClock clock = new FakeClock(seed.FixedNow);
-      return new CarReadService(db, availability, clock);
+      return new CarReadContractServiceEf(db, availability, clock);
    }
 
    private static async Task ConfirmReservationsAsync(
@@ -70,8 +72,8 @@ public sealed class CarReadService_IntT  : TestBase, IAsyncLifetime {
       DateTimeOffset now
    ) {
       // Important: your ICarAvailabilityReadModel filters:
-      // - rental.Status == Active
-      // - reservation.Status == Confirmed
+      // - rental.ReservationStatus == Active
+      // - reservation.ReservationStatus == Confirmed
       foreach (var reservation in reservations) {
          var result = reservation.Confirm(now);
          Assert.True(result.IsSuccess);
@@ -130,7 +132,7 @@ public sealed class CarReadService_IntT  : TestBase, IAsyncLifetime {
       var sut = CreateSut(_dbContext, _seed);
 
       // Seed rentals block Car6/Car7/Car8 for Period1/Overlap1.
-      // Candidates are ordered by Id => Car6, Car7, Car8, Car9, Car10 ...
+      // Candidates are ordered by ReservationId => Car6, Car7, Car8, Car9, Car10 ...
       // Expected: first available car should be Car9.
       var result = await sut.FindAvailableCarAsync(
          category: CarCategory.Compact,

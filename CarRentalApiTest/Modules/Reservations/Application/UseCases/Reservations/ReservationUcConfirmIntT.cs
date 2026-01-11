@@ -3,12 +3,12 @@ using CarRentalApi.BuildingBlocks.Enums;
 using CarRentalApi.BuildingBlocks.Persistence;
 using CarRentalApi.Data.Database;
 using CarRentalApi.Domain;
-using CarRentalApi.Modules.Reservations.Application.UseCases;
-using CarRentalApi.Modules.Reservations.Domain;
-using CarRentalApi.Modules.Reservations.Domain.Enums;
-using CarRentalApi.Modules.Reservations.Domain.Errors;
-using CarRentalApi.Modules.Reservations.Domain.ValueObjects;
-using CarRentalApi.Modules.Reservations.Infrastructure.Repositories;
+using CarRentalApi.Modules.Bookings.Application.UseCases;
+using CarRentalApi.Modules.Bookings.Domain;
+using CarRentalApi.Modules.Bookings.Domain.Enums;
+using CarRentalApi.Modules.Bookings.Domain.Errors;
+using CarRentalApi.Modules.Bookings.Domain.ValueObjects;
+using CarRentalApi.Modules.Bookings.Infrastructure.Repositories;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApiTest.Domain.UseCases.Reservations;
@@ -17,7 +17,7 @@ public sealed class ReservationUcConfirmIt : TestBase, IAsyncLifetime {
    private TestSeed _seed = null!;
    private SqliteConnection _dbConnection = null!;
    private CarRentalDbContext _dbContext = null!;
-   private ReservationRepository _repository = null!;
+   private ReservationRepositoryEf _repositoryEf = null!;
    private IUnitOfWork _unitOfWork = null!;
 
    private FakeConflictPolicy _conflicts = null!;
@@ -46,14 +46,14 @@ public sealed class ReservationUcConfirmIt : TestBase, IAsyncLifetime {
          _dbContext.Cars.AddRange(_seed.Cars);
       }
       
-      _repository = new ReservationRepository(_dbContext, CreateLogger<ReservationRepository>());
+      _repositoryEf = new ReservationRepositoryEf(_dbContext, CreateLogger<ReservationRepositoryEf>());
       _unitOfWork = new UnitOfWork(_dbContext, CreateLogger<UnitOfWork>());
 
       _conflicts = new FakeConflictPolicy();
       _clock = new FakeClock(DateTimeOffset.Parse("2026-01-01T00:10:00+00:00"));
 
       _uc = new ReservationUcConfirm(
-         _repository,
+         _repositoryEf,
          _unitOfWork,
          _conflicts,
          CreateLogger<ReservationUcConfirm>(),
@@ -93,7 +93,7 @@ public sealed class ReservationUcConfirmIt : TestBase, IAsyncLifetime {
       Assert.True(result.IsSuccess);
 
       _unitOfWork.ClearChangeTracker();
-      var actual = await _repository.FindByIdAsync(reservationId, CancellationToken.None);
+      var actual = await _repositoryEf.FindByIdAsync(reservationId, CancellationToken.None);
 
       Assert.NotNull(actual);
       Assert.Equal(ReservationStatus.Confirmed, actual!.Status);
@@ -121,7 +121,7 @@ public sealed class ReservationUcConfirmIt : TestBase, IAsyncLifetime {
       Assert.NotNull(result.Error);
 
       _unitOfWork.ClearChangeTracker();
-      var actual = await _repository.FindByIdAsync(reservationId, CancellationToken.None);
+      var actual = await _repositoryEf.FindByIdAsync(reservationId, CancellationToken.None);
 
       Assert.NotNull(actual);
       Assert.Equal(ReservationStatus.Draft, actual!.Status);

@@ -34,52 +34,12 @@ public interface ICustomerReadApi {
    );
 
    /// <summary>
-   /// Finds a single customer by email address.
-   ///
-   /// Business rules:
-   /// - Email addresses are assumed to be unique per customer
-   /// - Comparison should be case-insensitive
-   ///
-   /// Typical use cases:
-   /// - Login / identity lookup
-   /// - Duplicate email validation
-   ///
-   /// Returns:
-   /// - Success with <see cref="CustomerDto"/> if found
-   /// - Failure if no customer with the given email exists
-   /// </summary>
-   Task<Result<CustomerDto>> FindByEmailAsync(
-      string email,
-      CancellationToken ct
-   );
-
-   /// <summary>
-   /// Finds customers by first and last name.
-   ///
-   /// Business rules:
-   /// - Name comparison should be case-insensitive
-   /// - Multiple customers may share the same name
-   ///
-   /// Typical use cases:
-   /// - Customer search screens
-   /// - Back-office administration
-   ///
-   /// Returns:
-   /// - Success with a list of matching customers (may be empty)
-   /// </summary>
-   Task<Result<IReadOnlyList<CustomerDto>>> FindByNameAsync(
-      string firstName,
-      string lastName,
-      CancellationToken ct
-   );
-
-   /// <summary>
    /// Executes a flexible customer search using filter criteria.
    ///
    /// Supported filter aspects may include:
    /// - Name (partial or full)
    /// - Email
-   /// - Status (e.g. blocked)
+   /// - ReservationStatus (e.g. blocked)
    /// - Creation date ranges
    ///
    /// Business meaning:

@@ -5,6 +5,7 @@ using CarRentalApi.BuildingBlocks.Persistence;
 using CarRentalApi.Modules.Cars.Domain.Aggregates;
 using CarRentalApi.Modules.Cars.Domain.Errors;
 using CarRentalApi.Modules.Cars.Infrastructure;
+using CarRentalApi.Modules.Cars.Repositories;
 namespace CarRentalApi.Modules.Cars.Application.UseCases;
 
 public sealed class CarUcCreate(

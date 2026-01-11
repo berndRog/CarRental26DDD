@@ -50,14 +50,56 @@ public interface ICustomerReadModel {
    /// - No domain logic is executed
    ///
    /// Returns:
-   /// - Success(CustomerDetails) if the customer exists
+   /// - Success(CustomerDetail) if the customer exists
    /// - NotFound if the customer does not exist
    /// </summary>
-   Task<Result<CustomerDetails>> FindByIdAsync(
-      Guid customerId,
+   Task<Result<CustomerDetail>> FindByIdAsync(
+      Guid Id,
       CancellationToken ct
    );
 
+   
+   /// <summary>
+   /// Finds a single customer by email address.
+   ///
+   /// Business rules:
+   /// - Email addresses are assumed to be unique per customer
+   /// - Comparison should be case-insensitive
+   ///
+   /// Typical use cases:
+   /// - Login / identity lookup
+   /// - Duplicate email validation
+   ///
+   /// Returns:
+   /// - Success with <see cref="CustomerDetail"/> if found
+   /// - Failure if no customer with the given email exists
+   /// </summary>
+   Task<Result<CustomerDetail>> FindByEmailAsync(
+      string email,
+      CancellationToken ct
+   );
+
+   /// <summary>
+   /// Finds customers by first and last name.
+   ///
+   /// Business rules:
+   /// - Name comparison should be case-insensitive
+   /// - Multiple customers may share the same name
+   ///
+   /// Typical use cases:
+   /// - Customer search screens
+   /// - Back-office administration
+   ///
+   /// Returns:
+   /// - Success with a list of matching customers (may be empty)
+   /// </summary>
+   Task<Result<IReadOnlyList<CustomerListItem>>> SelectByNameAsync(
+      string firstName,
+      string lastName,
+      CancellationToken ct
+   );
+
+   
    /// <summary>
    /// Searches customers using flexible filter, paging and sorting parameters.
    ///
@@ -79,7 +121,7 @@ public interface ICustomerReadModel {
    ///   - Items may be empty if no customers match the criteria
    /// - Invalid if paging or sorting parameters are invalid
    /// </summary>
-   Task<Result<PagedResult<CustomerListItem>>> SearchAsync(
+   Task<Result<PagedResult<CustomerListItem>>> FilterAsync(
       CustomerSearchFilter filter,
       PageRequest page,
       SortRequest sort,

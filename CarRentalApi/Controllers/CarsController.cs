@@ -81,15 +81,15 @@ public sealed class CarsController(
    
    [HttpPost("cars")]
    public async Task<ActionResult> Create(
-      [FromBody] CarDto carDto,
+      [FromBody] CarContractDto carContractDto,
       CancellationToken ct
    ) {
       var result = await _carUseCases.CreateAsync(
-         category: carDto.Category,
-         manufacturer: carDto.Manufacturer,
-         model: carDto.Model,
-         licensePlate: carDto.LicensePlate,
-         id: carDto.Id.ToString(),
+         category: carContractDto.Category,
+         manufacturer: carContractDto.Manufacturer,
+         model: carContractDto.Model,
+         licensePlate: carContractDto.LicensePlate,
+         id: carContractDto.Id.ToString(),
          ct: ct
       );
       
@@ -101,7 +101,7 @@ public sealed class CarsController(
          result: result,
          logger: _logger,
          context: "CarsController.Create",
-         args: new { carDto }
+         args: new { carDto = carContractDto }
       );
    }
    

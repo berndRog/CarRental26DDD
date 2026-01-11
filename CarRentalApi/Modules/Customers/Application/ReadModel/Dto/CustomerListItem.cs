@@ -5,10 +5,9 @@ namespace CarRentalApi.Modules.Customers.Application.ReadModel.Dto;
 /// Lightweight projection for list views.
 /// </summary>
 public sealed record CustomerListItem(
-   Guid CustomerId,
+   Guid Id,
    string FirstName,
    string LastName,
    string Email,
-   DateTime CreatedAt
-   // Optional: bool IsBlocked
+   DateTimeOffset CreatedAt
 );

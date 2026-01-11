@@ -1,10 +1,11 @@
 using CarRentalApi.BuildingBlocks.Domain.Entities;
-using CarRentalApi.Data.Database.Configurations;
 using CarRentalApi.Modules.Cars.Domain.Aggregates;
 using CarRentalApi.Modules.Customers.Domain.Aggregates;
 using CarRentalApi.Modules.Employees.Domain.Aggregates;
 using CarRentalApi.Modules.Rentals.Domain.Aggregates;
-using CarRentalApi.Modules.Reservations.Domain.Aggregates;
+using CarRentalApi.Modules.Bookings.Domain.Aggregates;
+using CarRentalApi.Modules.Bookings.Infrastructure.Persistence;
+using CarRentalApi.Modules.Cars.Infrastructure.Persistence;
 using CarRentalApi.Persistence.Database;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApi.Data.Database;

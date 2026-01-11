@@ -3,12 +3,13 @@ using CarRentalApi.BuildingBlocks.Persistence;
 using CarRentalApi.BuildingBlocks.Utils;
 using CarRentalApi.Data.Database;
 using CarRentalApi.Domain;
-using CarRentalApi.Modules.Reservations.Application;
-using CarRentalApi.Modules.Reservations.Application.UseCases;
-using CarRentalApi.Modules.Reservations.Domain.Enums;
-using CarRentalApi.Modules.Reservations.Domain.Errors;
-using CarRentalApi.Modules.Reservations.Infrastructure;
-using CarRentalApi.Modules.Reservations.Infrastructure.Repositories;
+using CarRentalApi.Modules.Bookings.Application;
+using CarRentalApi.Modules.Bookings.Application.UseCases;
+using CarRentalApi.Modules.Bookings.Domain;
+using CarRentalApi.Modules.Bookings.Domain.Enums;
+using CarRentalApi.Modules.Bookings.Domain.Errors;
+using CarRentalApi.Modules.Bookings.Infrastructure;
+using CarRentalApi.Modules.Bookings.Infrastructure.Repositories;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApiTest.Domain.UseCases.Reservations;
@@ -21,7 +22,7 @@ public sealed class ReservationUcCreateDraftIntT : TestBase, IAsyncLifetime {
    private IUnitOfWork _unitOfWork = null!;
    private FakeClock _clock = null!;
    private ReservationUcCreate _sut = null!;
-
+   
    public async Task InitializeAsync() {
       _seed = new TestSeed();
 
@@ -43,7 +44,7 @@ public sealed class ReservationUcCreateDraftIntT : TestBase, IAsyncLifetime {
          _dbContext.Cars.AddRange(_seed.Cars);
       }
       
-      _repository = new ReservationRepository(_dbContext, CreateLogger<ReservationRepository>());
+      _repository = new ReservationRepositoryEf(_dbContext, CreateLogger<ReservationRepositoryEf>());
       _unitOfWork = new UnitOfWork(_dbContext, CreateLogger<UnitOfWork>());
 
       _clock = new FakeClock(_seed.FixedNow);
@@ -136,16 +137,17 @@ public sealed class ReservationUcCreateDraftIntT : TestBase, IAsyncLifetime {
          id: id,
          ct: CancellationToken.None
       );
-
+  
       // Assert (use case result)
       Assert.True(result.IsSuccess);
-
-      var reservation = result.Value;
+      var ReservationId = result.Value!;
+      var reservation =  await _repository.FindByIdAsync(ReservationId, CancellationToken.None);
+      Assert.NotNull(reservation);
+      
       Assert.Equal(Guid.Parse(id), reservation.Id);
       Assert.Equal(customerId, reservation.CustomerId);
       Assert.Equal(CarCategory.Compact, reservation.CarCategory);
       Assert.Equal(ReservationStatus.Draft, reservation.Status);
-
       Assert.Equal(start, reservation.Period.Start);
       Assert.Equal(end, reservation.Period.End);
 

@@ -10,8 +10,8 @@ public static class PersonErrors {
    public static readonly DomainErrors InvalidId =
       new(
          ErrorCode.UnprocessableEntity,
-         Title: "Invalid Person Id",
-         Message: "The Provided Person Id Is Invalid."
+         Title: "Invalid Person ReservationId",
+         Message: "The Provided Person ReservationId Is Invalid."
       );
 
    public static readonly DomainErrors FirstNameIsRequired =

@@ -4,8 +4,8 @@ using CarRentalApi.Modules.Cars.Domain.Aggregates;
 using CarRentalApi.Modules.Customers.Domain.Aggregates;
 using CarRentalApi.Modules.Customers.Domain.ValueObjects;
 using CarRentalApi.Modules.Rentals.Domain.Aggregates;
-using CarRentalApi.Modules.Reservations.Domain.Aggregates;
-using CarRentalApi.Modules.Reservations.Domain.ValueObjects;
+using CarRentalApi.Modules.Bookings.Domain.Aggregates;
+using CarRentalApi.Modules.Bookings.Domain.ValueObjects;
 namespace CarRentalApiTest;
 
 public sealed class TestSeed {

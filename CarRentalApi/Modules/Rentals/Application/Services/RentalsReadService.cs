@@ -1,7 +1,7 @@
 using CarRentalApi.BuildingBlocks;
 using CarRentalApi.Data.Database;
+using CarRentalApi.Modules.Bookings.Application.ReadModel.Errors;
 using CarRentalApi.Modules.Rentals.Application.Contracts;
-using CarRentalApi.Modules.Rentals.Application.Errors;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApi.Modules.Rentals.Application.Services;
 
@@ -18,11 +18,11 @@ public sealed class RentalsReadService(
       CancellationToken ct
    ) {
       if (reservationId == Guid.Empty) {
-         return Result<Guid?>.Failure(RentalApplicationErrors.InvalidReservationId);
+         return Result<Guid?>.Failure(RentalReadErrors.InvalidReservationId);
       }
 
       // Read-only query: AsNoTracking to avoid change tracking overhead.
-      // We only need the Rental Id (projection).
+      // We only need the Rental ReservationId (projection).
       var rentalId = await _dbContext.Rentals
          .AsNoTracking()
          .Where(r => r.ReservationId == reservationId)

@@ -6,7 +6,7 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>
    // id == primary key
    public TId Id { get; protected set; } = default!;
 
-   // override equality based on Id
+   // override equality based on ReservationId
    public override bool Equals(object? obj) {
       
       if (obj is not Entity<TId> other)
@@ -15,7 +15,7 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>
       if (ReferenceEquals(this, other))
          return true;
 
-      // Transient entities (Id not set yet) are never equal
+      // Transient entities (ReservationId not set yet) are never equal
       if (Equals(Id, default(TId)) || Equals(other.Id, default(TId)))
          return false;
 

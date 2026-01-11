@@ -30,8 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Modules\Bookings\Contracts\Dto\" />
     <Folder Include="Modules\Cars\Domain\ValueObjects\" />
-    <Folder Include="Modules\Cars\Infrastructure\Persistence\" />
     <Folder Include="Modules\Customers\Domain\Enums\" />
     <Folder Include="Modules\Customers\Domain\Policies\" />
     <Folder Include="Modules\Customers\Domain\ValueObjects\" />
@@ -42,10 +42,7 @@
     <Folder Include="Modules\Employees\Domain\Policies\" />
     <Folder Include="Modules\Employees\Domain\ValueObjects\" />
     <Folder Include="Modules\Employees\Infrastructure\Persistence\" />
-    <Folder Include="Modules\Rentals\Domain\Policies\" />
-    <Folder Include="Modules\Rentals\Domain\ValueObjects\" />
     <Folder Include="Modules\Rentals\Infrastructure\Persistence\" />
-    <Folder Include="Modules\Reservations\Infrastructure\Persistence\" />
   </ItemGroup>
 
 </Project>

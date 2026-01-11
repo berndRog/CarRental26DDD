@@ -1,8 +1,8 @@
 using CarRentalApi.BuildingBlocks.Enums;
 using CarRentalApi.BuildingBlocks.Utils;
-using CarRentalApi.Modules.Reservations.Domain.Aggregates;
-using CarRentalApi.Modules.Reservations.Domain.Enums;
-using CarRentalApi.Modules.Reservations.Domain.Errors;
+using CarRentalApi.Modules.Bookings.Domain.Aggregates;
+using CarRentalApi.Modules.Bookings.Domain.Enums;
+using CarRentalApi.Modules.Bookings.Domain.Errors;
 namespace CarRentalApiTest.Modules.Reservations.Domain;
 
 public sealed class ReservationTests {

@@ -7,12 +7,13 @@ using CarRentalApi.Modules.Cars.Domain.Enums;
 using CarRentalApi.Modules.Cars.Domain.Errors;
 using CarRentalApi.Modules.Cars.Domain.Policies;
 using CarRentalApi.Modules.Rentals.Domain.Aggregates;
-using CarRentalApi.Modules.Reservations.Domain.ValueObjects;
+using CarRentalApi.Modules.Bookings.Domain.ValueObjects;
+using CarRentalApi.Modules.Cars.Application.ReadModel;
 namespace CarRentalApi.Modules.Cars.Domain.Aggregates;
 
 public sealed class Car: Entity<Guid> {
    
-   // Guid Id is inherited from Entity<T>
+   // Guid ReservationId is inherited from Entity<T>
    
 #if OOP_MODE
    // With Navigation properties (object graph)

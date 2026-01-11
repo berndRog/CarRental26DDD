@@ -6,7 +6,7 @@ namespace CarRentalApi.BuildingBlocks.Domain.Entities;
 
 public abstract class Person : Entity<Guid> {
    
-   // Guid Id is inherited from Entity<T>
+   // Guid ReservationId is inherited from Entity<T>
    
    public string FirstName { get; protected set; } = string.Empty;
    public string LastName  { get; protected set; } = string.Empty;

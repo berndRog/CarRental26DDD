@@ -1,5 +1,5 @@
-using CarRentalApi.Modules.Reservations.Domain.Errors;
-using CarRentalApi.Modules.Reservations.Domain.ValueObjects;
+using CarRentalApi.Modules.Bookings.Domain.Errors;
+using CarRentalApi.Modules.Bookings.Domain.ValueObjects;
 namespace CarRentalApiTest.Modules.Reservations.Domain.ValueObjects;
 
 public sealed class RentalPeriodTests {

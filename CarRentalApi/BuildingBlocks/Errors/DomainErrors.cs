@@ -46,7 +46,7 @@ public sealed record DomainErrors(
       new(
          ErrorCode.BadReqest,
          Title: "Invalid Guid Format",
-         Message: "The Provided Id Is Not A Valid GUID."
+         Message: "The Provided ReservationId Is Not A Valid GUID."
       );
 }
 

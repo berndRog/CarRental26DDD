@@ -1,9 +1,10 @@
 using CarRentalApi.BuildingBlocks.Enums;
 using CarRentalApi.BuildingBlocks.Persistence;
 using CarRentalApi.Data.Database;
-using CarRentalApi.Modules.Reservations.Domain.Enums;
-using CarRentalApi.Modules.Reservations.Infrastructure;
-using CarRentalApi.Modules.Reservations.Infrastructure.Repositories;
+using CarRentalApi.Modules.Bookings.Domain;
+using CarRentalApi.Modules.Bookings.Domain.Enums;
+using CarRentalApi.Modules.Bookings.Infrastructure;
+using CarRentalApi.Modules.Bookings.Infrastructure.Repositories;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApiTest.Modules.Reservations.Infrastructure.Repositories;
@@ -29,7 +30,7 @@ public sealed class ReservationRepositoryIt : TestBase, IAsyncLifetime {
       _dbContext = new CarRentalDbContext(options);
       await _dbContext.Database.EnsureCreatedAsync();
 
-      _repository = new ReservationRepository(_dbContext, CreateLogger<ReservationRepository>());
+      _repository = new ReservationRepositoryEf(_dbContext, CreateLogger<ReservationRepositoryEf>());
       _unitOfWork = new UnitOfWork(_dbContext, CreateLogger<UnitOfWork>());
    }
 

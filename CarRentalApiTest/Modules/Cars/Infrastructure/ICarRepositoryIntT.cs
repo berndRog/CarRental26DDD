@@ -5,6 +5,7 @@ using CarRentalApi.Modules.Cars.Domain.Aggregates;
 using CarRentalApi.Modules.Cars.Domain.Enums;
 using CarRentalApi.Modules.Cars.Infrastructure;
 using CarRentalApi.Modules.Cars.Infrastructure.Repositories;
+using CarRentalApi.Modules.Cars.Repositories;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApiTest.Modules.Cars.Infrastructure;
@@ -30,7 +31,7 @@ public sealed class CarRepositoryIntT : TestBase, IAsyncLifetime {
       _dbContext = new CarRentalDbContext(options);
       await _dbContext.Database.EnsureCreatedAsync();
 
-      _repository = new CarRepository(_dbContext, CreateLogger<CarRepository>());
+      _repository = new CarRepositoryEf(_dbContext, CreateLogger<CarRepositoryEf>());
       _unitOfWork = new UnitOfWork(_dbContext, CreateLogger<UnitOfWork>());
    }
 
