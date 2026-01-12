@@ -7,7 +7,7 @@ public sealed class UnitOfWork(
    ILogger<UnitOfWork> _logger
 ) : IUnitOfWork {
    
-   public async Task<bool> SaveAllChangesAsync(
+   public async Task<int> SaveAllChangesAsync(
       string? text = null,
       CancellationToken ctToken = default
    ) {
@@ -19,14 +19,14 @@ public sealed class UnitOfWork(
             _dbContext.ChangeTracker.DebugView.LongView);
       }
 
-      var result = await _dbContext.SaveChangesAsync(ctToken);
+      var rows = await _dbContext.SaveChangesAsync(ctToken);
 
       if (_logger.IsEnabled(LogLevel.Debug)) {
-         _logger.LogDebug("\nSaveChanges affected {Result} rows", result);
+         _logger.LogDebug("\nSaveChanges affected {Result} rows", rows);
          _logger.LogDebug("\nAfter SaveChanges\n{View}", _dbContext.ChangeTracker.DebugView.LongView);
       }
 
-      return result > 0;
+      return rows;
    }
 
    public void ClearChangeTracker() =>

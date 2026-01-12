@@ -1,4 +1,4 @@
-namespace CarRentalApi.Modules.Rentals.Domain.Enums;
+namespace CarRentalApi.Modules.Bookings.Domain.Enums;
 
 public enum RentalStatus {
    Active = 1,   // after pick-up

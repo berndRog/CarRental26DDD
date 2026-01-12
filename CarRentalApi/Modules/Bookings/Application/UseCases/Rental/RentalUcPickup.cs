@@ -46,7 +46,7 @@ public sealed class RentalUcPickup(
       // (Optional extra guard: AssignRental already checks Status == Confirmed,
       // but doing it here improves error clarity / early exit)
       if (reservation.Status != ReservationStatus.Confirmed)
-         return Result<Guid>.Failure(ReservationErrors.InvalidStatusTransition);
+         return Result<Guid>.Failure(RentalReadErrors.ReservationInvalidStatus);
 
       // 2) Find an available car (Fleet/Cars BC)
       // Your ICarsReadApi signature earlier used (category, period).

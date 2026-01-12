@@ -30,31 +30,15 @@ public sealed class CarRepositoryEf(
    public async Task<int> CountCarsInCategoryAsync(
       CarCategory category,
       CancellationToken ct
-   ) {
-      _logger.LogDebug(
-         "Count cars in category={CarCategory}",
-         category
-      );
-
-      var count = await _dbContext.Cars
-         .Where(c => c.Category == category)
-         .CountAsync(ct);
-
-      _logger.LogDebug(
-         "Found {Count} cars in category={CarCategory}",
-         count, category
-      );
-
-      return count;
-   }
-
+   ) => await _dbContext.Cars
+      .Where(c => c.Category == category)
+      .CountAsync(ct);
+     
    public async Task<IReadOnlyList<Car>> SelectByAsync(
       CarCategory? category,
       CarStatus? status,
       CancellationToken ct
    ) {
-      _logger.LogDebug("Select Cars category={Cat} status={CarStatus}", category, status);
-
       var query = _dbContext.Cars.AsQueryable();
 
       if (category is not null)

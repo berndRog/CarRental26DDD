@@ -21,16 +21,14 @@ public sealed class CarReadModelEf(
       Guid carId,
       CancellationToken ct
    ) {
-      var carDetails = await _dbContext.Cars
+      var car = await _dbContext.Cars
          .AsNoTracking()
-         .Where(c => c.Id == carId)
-         .Select(c => c.ToCarDetails())
-         .SingleOrDefaultAsync(ct);
+         .FirstOrDefaultAsync(c => c.Id == carId, ct);
 
-      if (carDetails is null)
+      if (car is null)
          return Result<CarDetails>.Failure(DomainErrors.NotFound);
 
-      return Result<CarDetails>.Success(carDetails);
+      return Result<CarDetails>.Success(car.ToCarDetails());
    }
 
    public async Task<Result<PagedResult<CarListItem>>> SearchAsync(

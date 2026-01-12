@@ -3,7 +3,7 @@ using CarRentalApi.Modules.Bookings.Domain.Aggregates;
 
 namespace CarRentalApi.Modules.Bookings.Application.ReadModel.Mapping;
 
-public static class ReservationMappingReadModel {
+public static class ReservationReadModelMapping {
 
    public static ReservationDetailsDto ToReservationDetailsDto(this Reservation reservation) => new(
       ReservationId: reservation.Id,

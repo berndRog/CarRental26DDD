@@ -1,7 +1,7 @@
 namespace CarRentalApi.BuildingBlocks.Persistence;
 
 public interface IUnitOfWork {
-   Task<bool> SaveAllChangesAsync(
+   Task<int> SaveAllChangesAsync(
       string? text = null,
       CancellationToken ctToken = default
    ); 

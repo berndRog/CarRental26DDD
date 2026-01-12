@@ -22,16 +22,16 @@ public sealed class ReservationUcCreate(
       string? id,
       CancellationToken ct
    ) {
-      _logger.LogInformation(
-         "ReservationUcCreateDraft start ReservationId={ReservationId} carCategory={cat} start={start} end={end}",
-         customerId, carCategory, start, end
-      );
 
       // Use-case rule:
       // Customers may only create reservation in the future (start must be > now).
       var now = _clock.UtcNow;
-      if (start <= now)
-         return Result<Guid>.Failure(ReservationErrors.StartDateInPast);
+      if (start <= now) {
+         var failure = Result<Guid>.Failure(ReservationErrors.StartDateInPast);
+         failure.LogIfFailure(_logger, "ReservationUcCreate.StartDateInPast",
+            new { customerId, carCategory, start, now });
+         return failure;
+      }
 
       // Domain factory: enforces domain invariants (e.g., end > start).
       var result = Reservation.Create(
@@ -44,15 +44,13 @@ public sealed class ReservationUcCreate(
       );
 
       if (result.IsFailure) {
-         _logger.LogWarning(
-            "ReservationUcCreateDraft rejected errorCode={code} message={message}",
-            result.Error.Code, result.Error.Message);
+         result.LogIfFailure(_logger, "ReservationUcCreate.DomainRejected",
+            new { customerId, carCategory, start, end });
          return Result<Guid>.Failure(result.Error);
       }
-
-      var reservation = result.Value!;
-
+      
       // Add the new reservation to the _repository (tracked by EF).
+      var reservation = result.Value!;
       _repository.Add(reservation);
 
       // Persist changes.

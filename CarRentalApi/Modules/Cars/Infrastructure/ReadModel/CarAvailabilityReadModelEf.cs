@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using CarRentalApi.Data.Database; // ggf. anpassen
 using CarRentalApi.Modules.Cars.Domain.Policies;
-using CarRentalApi.Modules.Rentals.Domain.Enums;
 using CarRentalApi.Modules.Bookings.Domain.Enums;
 using CarRentalApi.Modules.Bookings.Domain.ValueObjects;
 using CarRentalApi.Modules.Cars.Application.ReadModel;

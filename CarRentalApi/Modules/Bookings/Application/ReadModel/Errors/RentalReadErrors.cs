@@ -7,28 +7,22 @@ namespace CarRentalApi.Modules.Bookings.Application.ReadModel.Errors;
 /// (e.g. pick-up, return).
 /// </summary>
 public static class RentalReadErrors {
+   
+   public static readonly DomainErrors InvalidId =
+      new(
+         ErrorCode.BadReqest,
+         Title: "Invalid Rental Id",
+         Message: "The provided rental id is invalid."
+      );
+   
    public static readonly DomainErrors ReservationNotFound =
       new(
          ErrorCode.NotFound,
          Title: "Reservation Not Found",
          Message: "The Requested Reservation Does Not Exist."
       );
-
-   public static readonly DomainErrors CustomerNotFound =
-      new(
-         ErrorCode.NotFound,
-         Title: "Customer Not Found",
-         Message: "The Requested Customer Does Not Exist."
-      );
-
-   public static readonly DomainErrors CarNotFound =
-      new(
-         ErrorCode.NotFound,
-         Title: "Car Not Found",
-         Message: "The Requested Car Does Not Exist."
-      );
-
-   public static readonly DomainErrors RentalNotFound =
+   
+   public static readonly DomainErrors NotFound =
       new(
          ErrorCode.NotFound,
          Title: "Rental Not Found",
@@ -56,8 +50,7 @@ public static class RentalReadErrors {
          Message: "The Provided Reservation ReservationId Is Invalid."
       );
    
-
-
+   
    public static readonly DomainErrors ReservationNotConfirmed =
       new(
          ErrorCode.Conflict,

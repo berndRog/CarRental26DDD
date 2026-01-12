@@ -3,9 +3,9 @@ using CarRentalApi.BuildingBlocks.Domain.Entities;
 using CarRentalApi.Domain;
 using CarRentalApi.Modules.Cars.Domain.Aggregates;
 using CarRentalApi.Modules.Customers.Domain.Aggregates;
-using CarRentalApi.Modules.Rentals.Domain.Enums;
 using CarRentalApi.Modules.Rentals.Domain.Errors;
 using CarRentalApi.Modules.Bookings.Domain.Aggregates;
+using CarRentalApi.Modules.Bookings.Domain.Enums;
 namespace CarRentalApi.Modules.Rentals.Domain.Aggregates;
 
 /// <summary>

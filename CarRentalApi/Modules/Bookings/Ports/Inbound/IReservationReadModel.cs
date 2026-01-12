@@ -1,9 +1,7 @@
 using CarRentalApi.BuildingBlocks;
 using CarRentalApi.BuildingBlocks.ReadModel;
-using CarRentalApi.Modules.Bookings.Api.Dto;
 using CarRentalApi.Modules.Bookings.Application.ReadModel.Dto;
 using CarRentalApi.Modules.Cars.Application.ReadModel.Dto;
-
 namespace CarRentalApi.Modules.Bookings.Application.ReadModel;
 
 /// <summary>
@@ -88,3 +86,88 @@ public interface IReservationReadModel {
       CancellationToken ct = default
    );
 }
+
+/* =====================================================================
+   * Deutsche Architektur- und Didaktik-Hinweise
+   * =====================================================================
+   *
+   * Was ist IRentalUseCases?
+   * ------------------------
+   * IRentalUseCases ist die öffentliche Anwendungsfall-Schnittstelle
+   * (Application Layer) für den Rentals-Bounded-Context.
+   *
+   * Sie definiert die fachlichen Kommandos (Commands), die den Zustand
+   * des Systems verändern:
+   * - Pickup (Abholung) erzeugt bzw. startet eine Miete
+   * - Return (Rückgabe) beendet eine Miete
+   *
+   * IRentalUseCases kapselt die Orchestrierung:
+   * - Laden/Speichern von Aggregaten über Repositories
+   * - Aufruf von Domain-Methoden (Invarianten, Zustandsübergänge)
+   * - Transaktionale Konsistenz (UnitOfWork)
+   * - Zeit/Clock, Logging, ggf. Policies
+   *
+   *
+   * Was ist IRentalUseCases NICHT?
+   * ------------------------------
+   * - Kein ReadModel (keine Queries, keine Such-/Listen-Endpunkte)
+   * - Kein Repository (keine Persistenz-Details, kein EF Core im Interface)
+   * - Kein Domain Service (keine fachlichen Regeln im Application Layer)
+   * - Kein Aggregate (keine Zustandsdatenhaltung, keine Entity)
+   *
+   * Insbesondere:
+   * - Der UseCase enthält keine fachlichen Regeln „im Code verteilt“,
+   *   sondern delegiert Regeln an das Domain Model (Rental Aggregate).
+   *
+   *
+   * Warum gibt es zwei Methoden (PickupAsync / ReturnAsync)?
+   * --------------------------------------------------------
+   * Fachlicher Hintergrund:
+   * - Ein Rental entsteht erst bei der Abholung (Pick-up).
+   *   Vorher existiert „nur“ eine bestätigte Reservation.
+   * - Ein Rental wird bei der Rückgabe geschlossen (Return).
+   *
+   * Die beiden UseCases modellieren genau diese fachlichen Zustandsübergänge:
+   * - Reservation (Confirmed) → Rental (Active)   via PickupAsync
+   * - Rental (Active)        → Rental (Returned) via ReturnAsync
+   *
+   *
+   * Abgrenzung zu anderen Schichten:
+   * --------------------------------
+   * - Lesen/Anzeigen von Mietdaten:
+   *   → IRentalReadModel (AsNoTracking + Projektionen)
+   *
+   * - Fachliche Regeln und Invarianten:
+   *   → Rental Aggregate (Domain Layer)
+   *     z.B.:
+   *     - FuelLevel 0..100
+   *     - KmIn >= KmOut
+   *     - Statusübergänge nur in erlaubter Reihenfolge
+   *
+   * - Persistenz / EF Core:
+   *   → RentalRepository (Infrastructure)
+   *
+   * - Cross-BC Datenzugriffe (z.B. Reservation confirmed?):
+   *   → Contracts / ReadApi des anderen BC (z.B. IReservationsReadApi)
+   *
+   *
+   * Typisches Implementierungsdetail:
+   * ---------------------------------
+   * - PickupAsync:
+   *   - prüft Reservation existiert und ist Confirmed (über ReadApi/Repository)
+   *   - verhindert Doppel-Pickup (Conflict)
+   *   - erzeugt Rental Aggregate + setzt Status Active + speichert
+   *
+   * - ReturnAsync:
+   *   - lädt Rental Aggregate (Tracking, weil Zustandsänderung)
+   *   - führt Domain-Übergang Active → Returned aus
+   *   - speichert + commit über UnitOfWork
+   *
+   * Dadurch:
+   * - klare CQRS-Trennung (ReadModel vs UseCases)
+   * - zentrale fachliche Anwendungsfälle
+   * - saubere BC-Grenzen
+   * - gut testbar (Unit Tests auf UseCases)
+   *
+   * =====================================================================
+*/

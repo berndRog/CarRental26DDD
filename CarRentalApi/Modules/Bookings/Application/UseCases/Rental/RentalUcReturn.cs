@@ -21,7 +21,7 @@ public sealed class RentalUcReturn(
       // fetch rental from database and track it (via EF Core DbContext)
       var rental = await _rentalRepo.FindByIdAsync(rentalId, ct);
       if (rental is null)
-         return Result.Failure(RentalReadErrors.RentalNotFound);
+         return Result.Failure(RentalReadErrors.NotFound);
 
       // domain model operation
       var returnAt = _clock.UtcNow;
@@ -33,16 +33,12 @@ public sealed class RentalUcReturn(
       if (result.IsFailure)
          return Result.Failure(result.Error);
 
-      var saved = await _unitOfWork.SaveAllChangesAsync("RentalUcReturn", ct);
-      if (!saved)
-         return Result.Failure(RentalReadErrors.RentalSaveFailed);
-
-      // Optional: Gebühren/Policies nur als Hinweis (gehört oft in separaten Policy/Service)
-      // var needsRefuelFee = rental.NeedsRefuelFee();
+      // Persist changes to database
+      var savedRows = await _unitOfWork.SaveAllChangesAsync("RentalUcReturn", ct);
 
       _logger.LogInformation(
-         "RentalUcReturn success rentalId={rentalId} returned={returned} needsRefuelFee={needsRefuelFee}",
-         rental.Id, rental.IsReturned(), rental.NeedsRefuelFee()
+         "RentalUcReturn success rentalId={id} savedRows={rows}",
+         rental.Id, savedRows
       );
       return Result.Success();
    }

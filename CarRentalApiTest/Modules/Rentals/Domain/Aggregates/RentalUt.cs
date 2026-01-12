@@ -1,5 +1,5 @@
+using CarRentalApi.Modules.Bookings.Domain.Enums;
 using CarRentalApi.Modules.Rentals.Domain.Aggregates;
-using CarRentalApi.Modules.Rentals.Domain.Enums;
 using CarRentalApi.Modules.Rentals.Domain.Errors;
 namespace CarRentalApiTest.Modules.Rentals.Domain.Aggregates;
 

@@ -6,6 +6,7 @@ using CarRentalApi.Modules.Bookings.Domain.Policies;
 using CarRentalApi.Modules.Bookings.Infrastructure.ReadModel;
 using CarRentalApi.Modules.Bookings.Infrastructure.Repositories;
 using CarRentalApi.Modules.Rentals;
+using CarRentalApi.Modules.Rentals.Application.UseCases;
 namespace CarRentalApi.Modules.Bookings;
 
 public static class DiAddBookings {
@@ -33,7 +34,6 @@ public static class DiAddBookings {
       
       // Policies
       services.AddScoped<IReservationConflictPolicy, ReservationConflictPolicy>();
-      
       
       // =========================================================
       // Outbound ports

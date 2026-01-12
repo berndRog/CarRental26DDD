@@ -16,26 +16,32 @@ public sealed class ReservationUcCancel(
       Guid reservationId, 
       CancellationToken ct
    ) {
-      // fetch from repository or query database
+      // Load aggregate from repository or query database
       var reservation = await _repository.FindByIdAsync(reservationId, ct);
       if (reservation is null) {
-         _logger.LogWarning(
-            "ReservationUcCancel rejected reservationId={ReservationId} not found", reservationId);
-         return Result.Failure(ReservationErrors.NotFound);
+         var fail = Result.Failure(ReservationErrors.NotFound);
+         fail.LogIfFailure(_logger, "ReservationUcCancel.NotFound",
+            new { reservationId });
+         return fail;
       }
       
-      // domain model operation
+      // Apply domain transisitions
       var now = _clock.UtcNow;
       var result = reservation.Cancel(now);
       if (result.IsFailure) {
-         _logger.LogWarning(
-            "ReservationUcCancel rejected reservationId={ReservationId} message={message}",
-            reservationId, result.Error.Message);
+         result.LogIfFailure(_logger, "ReservationUcCancel.DomainRejected",
+            new { reservationId, now });
          return result;
       }
 
       // unit of work to save all changes to database
-      var saved = await _unitOfWork.SaveAllChangesAsync("Reservation cancelled", ct);
+      var savedRows = await _unitOfWork.SaveAllChangesAsync("Reservation cancelled", ct);
+      
+      _logger.LogInformation(
+         "ReservationUcCancel done reservationId={reservationId} savedRows={rows}",
+         reservation.Id, savedRows
+      );
+      
       return Result.Success();
    }
 }
