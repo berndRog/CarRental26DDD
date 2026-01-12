@@ -83,3 +83,87 @@ public interface ICarReadModel {
       CancellationToken ct
    );
 }
+
+/* =====================================================================
+ * Deutsche Architektur- und Didaktik-Erläuterung
+ * =====================================================================
+ *
+ * Was ist ICarReadModel?
+ * ----------------------
+ * ICarReadModel ist ein ReadModel (Query Model) für den
+ * Cars-/Fleet-Bounded-Context.
+ *
+ * Es stellt ausschließlich Lesezugriffe auf Fahrzeugdaten bereit
+ * und liefert dafür Projektionen (DTOs), keine Domain-Aggregates.
+ *
+ * Typische Anwendungsfälle:
+ * - Fahrzeug-Detailansicht (Admin / Backoffice)
+ * - Fahrzeuglisten und Suchmasken
+ * - Verwaltungs- und Übersichtsansichten
+ *
+ *
+ * Was ist ICarReadModel NICHT?
+ * ----------------------------
+ * - Kein UseCase (keine Zustandsänderungen)
+ * - Kein Repository (keine Persistenzverantwortung)
+ * - Kein Domain Service
+ * - Kein Bounded-Context-Facade
+ *
+ * Insbesondere:
+ * - Es ändert keinen Fahrzeugstatus
+ * - Es führt keine fachlichen Regeln aus
+ * - Es kennt keine Invarianten des Car-Aggregates
+ *
+ *
+ * Warum ein eigenes ReadModel?
+ * -----------------------------
+ * - Trennung von Lesen und Schreiben (CQRS)
+ * - Optimierung für UI- und Suchanforderungen
+ * - Vermeidung von unnötigem EF-Core-Tracking
+ * - Keine Leaks von Domain-Objekten nach außen
+ *
+ *
+ * Warum gibt es nur eine SearchAsync-Methode?
+ * --------------------------------------------
+ * Fachliche und technische Entscheidung:
+ * - Alle Listen- und Suchanforderungen werden über
+ *   Filter + Paging + Sorting abgebildet
+ * - Keine spezialisierten Methoden wie:
+ *   - FindByCategory
+ *   - FindInMaintenance
+ *
+ * Vorteile:
+ * - Einheitlicher API-Zugriff
+ * - Einfachere Erweiterbarkeit
+ * - Klare Kontrolle erlaubter Filter- und Sortierfelder
+ *
+ *
+ * Abgrenzung zu anderen Schichten:
+ * --------------------------------
+ * - Zustandsänderungen (Create, Maintenance, Retire):
+ *   → ICarUseCases (Application Layer)
+ *
+ * - Fachliche Regeln & Zustandsautomaten:
+ *   → Car Aggregate (Domain Layer)
+ *
+ * - Persistenz / EF Core:
+ *   → CarRepository (Infrastructure)
+ *
+ * - BC-übergreifende Abfragen:
+ *   → ICarsReadApi (Contracts)
+ *
+ *
+ * Typische Implementierungsdetails:
+ * ---------------------------------
+ * - EF Core mit AsNoTracking()
+ * - Projektionen via Select(...)
+ * - Keine Include(...)
+ * - Nutzung von Indizes für Filter- und Sortierfelder
+ *
+ * Dadurch:
+ * - hohe Performance
+ * - saubere BC-Grenzen
+ * - klare CQRS-Struktur
+ *
+ * =====================================================================
+ */

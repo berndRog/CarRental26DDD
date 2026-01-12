@@ -6,6 +6,7 @@ using CarRentalApi.Modules.Bookings.Domain.Enums;
 using CarRentalApi.Modules.Bookings.Domain.Errors;
 using CarRentalApi.Modules.Cars.Application.Contracts;
 using CarRentalApi.Modules.Rentals.Domain.Aggregates;
+
 namespace CarRentalApi.Modules.Bookings.Application.UseCases;
 
 /// <summary>
@@ -35,22 +36,32 @@ public sealed class RentalUcPickup(
       int kmOut,
       CancellationToken ct
    ) {
-      if (reservationId == Guid.Empty)
-         return Result<Guid>.Failure(ReservationErrors.InvalidId);
+      // Guard: invalid id
+      if (reservationId == Guid.Empty) {
+         var fail = Result<Guid>.Failure(ReservationErrors.InvalidId);
+         fail.LogIfFailure(_logger, "RentalUcPickup.InvalidReservationId",
+            new { reservationId });
+         return fail;
+      }
 
       // 1) Load reservation (same BC => repository)
       var reservation = await _reservationRepository.FindByIdAsync(reservationId, ct);
-      if (reservation is null)
-         return Result<Guid>.Failure(RentalReadErrors.ReservationNotFound);
+      if (reservation is null) {
+         var fail = Result<Guid>.Failure(RentalReadErrors.ReservationNotFound);
+         fail.LogIfFailure(_logger, "RentalUcPickup.ReservationNotFound",
+            new { reservationId });
+         return fail;
+      }
 
-      // (Optional extra guard: AssignRental already checks Status == Confirmed,
-      // but doing it here improves error clarity / early exit)
-      if (reservation.Status != ReservationStatus.Confirmed)
-         return Result<Guid>.Failure(RentalReadErrors.ReservationInvalidStatus);
+      // Optional early guard for clearer error
+      if (reservation.Status != ReservationStatus.Confirmed) {
+         var fail = Result<Guid>.Failure(RentalReadErrors.ReservationInvalidStatus);
+         fail.LogIfFailure(_logger, "RentalUcPickup.ReservationInvalidStatus",
+            new { reservationId, reservation.Status });
+         return fail;
+      }
 
       // 2) Find an available car (Fleet/Cars BC)
-      // Your ICarsReadApi signature earlier used (category, period).
-      // If yours uses (category, start, end), adapt accordingly.
       var carResult = await _carsRead.FindAvailableCarAsync(
          reservation.CarCategory,
          reservation.Period.Start,
@@ -58,11 +69,20 @@ public sealed class RentalUcPickup(
          ct
       );
 
-      if (carResult.IsFailure)
+      if (carResult.IsFailure) {
+         carResult.LogIfFailure(_logger, "RentalUcPickup.FindAvailableCarFailed",
+            new { reservationId, reservation.CarCategory, reservation.Period }
+         );
          return Result<Guid>.Failure(carResult.Error);
+      }
 
-      if (carResult.Value is null)
-         return Result<Guid>.Failure(RentalReadErrors.NoCarAvailable);
+      if (carResult.Value is null) {
+         var fail = Result<Guid>.Failure(RentalReadErrors.NoCarAvailable);
+         fail.LogIfFailure(_logger, "RentalUcPickup.NoCarAvailable",
+            new { reservationId, reservation.CarCategory, reservation.Period }
+         );
+         return fail;
+      }
 
       var pickupAt = _clock.UtcNow;
 
@@ -76,15 +96,27 @@ public sealed class RentalUcPickup(
          kmOut: kmOut
       );
 
-      if (rentalResult.IsFailure)
+      if (rentalResult.IsFailure) {
+         rentalResult.LogIfFailure(_logger, "RentalUcPickup.CreateRentalRejected",
+            new {
+               reservationId,
+               carId = carResult.Value.Id,
+               pickupAt,
+               fuelLevelOut,
+               kmOut
+            });
          return Result<Guid>.Failure(rentalResult.Error);
+      }
 
       var rental = rentalResult.Value!;
 
       // 4) Assign rental to reservation (domain behavior, idempotent)
       var assignResult = reservation.AssignRental(rental.Id);
-      if (assignResult.IsFailure)
+      if (assignResult.IsFailure) {
+         assignResult.LogIfFailure(_logger, "RentalUcPickup.AssignRentalRejected",
+            new { reservationId, rentalId = rental.Id });
          return Result<Guid>.Failure(assignResult.Error);
+      }
 
       // 5) Persist both aggregates in one UoW
       _rentalRepository.Add(rental);
@@ -92,16 +124,22 @@ public sealed class RentalUcPickup(
       // 6) Optional: mark car as rented
       if (_carsWrite is not null) {
          var carWriteResult = await _carsWrite.MarkAsRentedAsync(carResult.Value.Id, ct);
-         if (carWriteResult.IsFailure)
+         if (carWriteResult.IsFailure) {
+            carWriteResult.LogIfFailure(
+               _logger,
+               "RentalUcPickup.MarkCarAsRentedFailed",
+               new { reservationId, carId = carResult.Value.Id }
+            );
             return Result<Guid>.Failure(carWriteResult.Error);
+         }
       }
 
-      await _unitOfWork.SaveAllChangesAsync("Rental created at pick-up", ct);
+      // 7) Commit once
+      var savedRows = await _unitOfWork.SaveAllChangesAsync("Rental created at pick-up", ct);
 
       _logger.LogInformation(
-         "RentalUcPickup completed. reservationId={ReservationId} rentalId={RentalId} carId={CarId}",
-         reservation.Id, rental.Id, carResult.Value.Id
-      );
+         "RentalUcPickup done reservationId={id} rentalId={id} carId={id} savedRows={rows}",
+         reservation.Id, rental.Id, carResult.Value.Id, savedRows);
 
       return Result<Guid>.Success(rental.Id);
    }
