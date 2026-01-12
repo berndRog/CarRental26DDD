@@ -27,13 +27,6 @@ public static class CarErrors {
       "A car with this ID already exists."
    );
    
-   public static readonly DomainErrors CategoryIsRequired =
-      new(
-         ErrorCode.BadReqest,
-         Title: "Car CarCategory Is Required",
-         Message: "A Car CarCategory Must Be Provided."
-      );
-
    public static readonly DomainErrors ManufacturerIsRequired =
       new(
          ErrorCode.BadReqest,
@@ -69,6 +62,21 @@ public static class CarErrors {
          Message: "The License Plate Must Be Unique."
       );
 
+      
+   public static readonly DomainErrors CategoryIsRequired =
+      new(
+         ErrorCode.BadReqest,
+         Title: "Car CarCategory Is Required",
+         Message: "A Car CarCategory Must Be Provided."
+      );
+
+   public static readonly DomainErrors CreatedAtIsRequired =
+      new(
+         ErrorCode.BadReqest,
+         "Creation timestamp is required",
+         "The creation timestamp (createdAt) must be provided when creating a car."
+      );
+   
    public static readonly DomainErrors CarNotAvailable =
       new(
          ErrorCode.BadReqest,

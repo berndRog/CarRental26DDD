@@ -1,4 +1,5 @@
 using CarRentalApi.BuildingBlocks;
+using CarRentalApi.Modules.Rentals.Domain.Enums;
 
 namespace CarRentalApi.Modules.Rentals.Application.UseCases;
 
@@ -59,7 +60,7 @@ public interface IRentalUseCases {
    /// </summary>
    Task<Result<Guid>> PickupAsync(
       Guid reservationId,
-      int fuelLevelOut,
+      RentalFuelLevel fuelOut,
       int kmOut,
       CancellationToken ct
    );
@@ -88,7 +89,7 @@ public interface IRentalUseCases {
    /// </summary>
    Task<Result> ReturnAsync(
       Guid rentalId,
-      int fuelLevelIn,
+      RentalFuelLevel fuelIn,
       int kmIn,
       CancellationToken ct
    );

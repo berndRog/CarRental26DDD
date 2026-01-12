@@ -5,6 +5,7 @@ using CarRentalApi.Modules.Cars.Application;
 using CarRentalApi.Modules.Cars.Application.Contracts.Dto;
 using CarRentalApi.Modules.Cars.Application.ReadModel;
 using CarRentalApi.Modules.Cars.Application.ReadModel.Dto;
+using CarRentalApi.Modules.Cars.Application.UseCases.Dto;
 using CarRentalApi.Modules.Cars.Ports.Inbound;
 using Microsoft.AspNetCore.Mvc;
 namespace CarRentalApi.Controllers;
@@ -82,27 +83,29 @@ public sealed class CarsController(
    
    [HttpPost("cars")]
    public async Task<ActionResult> Create(
-      [FromBody] CarContractDto carContractDto,
+      [FromBody] CarDto carDto,
       CancellationToken ct
    ) {
       var result = await _carUseCases.CreateAsync(
-         category: carContractDto.Category,
-         manufacturer: carContractDto.Manufacturer,
-         model: carContractDto.Model,
-         licensePlate: carContractDto.LicensePlate,
-         id: carContractDto.Id.ToString(),
+         manufacturer: carDto.Manufacturer,
+         model: carDto.Model,
+         licensePlate: carDto.LicensePlate,
+         category: carDto.Category,
+         createdAt: carDto.CreatedAt,
+         id: carDto.CarId.ToString(),
          ct: ct
       );
+      var carId = result.Value!;
       
       return this.CreatedAt(
          Routes.Cars.GetById,
          routeValues: result.IsSuccess
-            ? new { carId = result.Value.Id } // nur bei Success!
+            ? new { carId = carId } 
             : null,
          result: result,
          logger: _logger,
          context: "CarsController.Create",
-         args: new { carDto = carContractDto }
+         args: new { carDto = carDto }
       );
    }
    

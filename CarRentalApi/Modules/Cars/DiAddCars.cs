@@ -2,6 +2,7 @@ using CarRentalApi.Modules.Cars.Application;
 using CarRentalApi.Modules.Cars.Application.Contracts;
 using CarRentalApi.Modules.Cars.Application.ReadModel;
 using CarRentalApi.Modules.Cars.Application.UseCases;
+using CarRentalApi.Modules.Cars.Domain;
 using CarRentalApi.Modules.Cars.Domain.Policies;
 using CarRentalApi.Modules.Cars.Infrastructure.Adapters;
 using CarRentalApi.Modules.Cars.Infrastructure.ReadModel;

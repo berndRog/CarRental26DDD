@@ -2,7 +2,7 @@ using CarRentalApi.BuildingBlocks;
 using CarRentalApi.BuildingBlocks.Persistence;
 using CarRentalApi.Modules.Bookings.Application.ReadModel.Errors;
 using CarRentalApi.Modules.Bookings.Domain;
-
+using CarRentalApi.Modules.Rentals.Domain.Enums;
 namespace CarRentalApi.Domain.UseCases.Rentals;
 
 public sealed class RentalUcReturn(
@@ -14,7 +14,7 @@ public sealed class RentalUcReturn(
 
    public async Task<Result> ExecuteAsync(
       Guid rentalId,
-      int fuelLevelIn,
+      RentalFuelLevel fuelIn,
       int kmIn,
       CancellationToken ct
    ) {
@@ -31,13 +31,13 @@ public sealed class RentalUcReturn(
       var returnAt = _clock.UtcNow;
       var result = rental.ReturnCar(
          returnAt: returnAt,
-         fuelLevelIn: fuelLevelIn,
+         fuelIn: fuelIn,
          kmIn: kmIn
       );
 
       if (result.IsFailure) {
          result.LogIfFailure(_logger, "RentalUcReturn.DomainRejected",
-            new { rentalId = rental.Id, returnAt, fuelLevelIn, kmIn });
+            new { rentalId = rental.Id, returnAt, fuelIn, kmIn });
          return Result.Failure(result.Error);
       }
 

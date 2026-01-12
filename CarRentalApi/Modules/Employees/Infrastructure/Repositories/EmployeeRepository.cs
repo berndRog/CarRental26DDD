@@ -1,4 +1,5 @@
 using CarRentalApi.Data.Database;
+using CarRentalApi.Modules.Employees.Domain;
 using CarRentalApi.Modules.Employees.Domain.Aggregates;
 using CarRentalApi.Modules.Employees.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +20,15 @@ public sealed class EmployeeRepository(
       CancellationToken ct
    ) => await _dbContext.Employees
       .FirstOrDefaultAsync(e => e.PersonnelNumber == personnelNumber, ct);
-         
+
+   public Task<bool> ExistsPersonnelNumberAsync(string personnelNumber, CancellationToken ct) {
+      throw new NotImplementedException();
+   }
+
+   public Task<bool> ExistsEmailAsync(string email, CancellationToken ct) {
+      throw new NotImplementedException();
+   }
+
    public async Task<IReadOnlyList<Employee>> SelectAdminsAsync(CancellationToken ct) =>
       await _dbContext.Employees
          .AsNoTracking()

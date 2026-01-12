@@ -1,6 +1,7 @@
 using CarRentalApi.BuildingBlocks;
 using CarRentalApi.Domain.UseCases.Rentals;
 using CarRentalApi.Modules.Bookings.Application.UseCases;
+using CarRentalApi.Modules.Rentals.Domain.Enums;
 
 namespace CarRentalApi.Modules.Rentals.Application.UseCases;
 
@@ -40,11 +41,11 @@ public sealed class RentalUseCases(
    /// </summary>
    public Task<Result<Guid>> PickupAsync(
       Guid reservationId,
-      int fuelLevelOut,
+      RentalFuelLevel fuelOut,
       int kmOut,
       CancellationToken ct
    ) =>
-      pickupUc.ExecuteAsync(reservationId, fuelLevelOut, kmOut, ct);
+      pickupUc.ExecuteAsync(reservationId, fuelOut, kmOut, ct);
 
    /// <summary>
    /// Performs the return of an active rental and closes it.
@@ -58,11 +59,11 @@ public sealed class RentalUseCases(
    /// </summary>
    public Task<Result> ReturnAsync(
       Guid rentalId,
-      int fuelLevelIn,
+      RentalFuelLevel fuelIn,
       int kmIn,
       CancellationToken ct
    ) =>
-      returnUc.ExecuteAsync(rentalId, fuelLevelIn, kmIn, ct);
+      returnUc.ExecuteAsync(rentalId, fuelIn, kmIn, ct);
 }
 
 /* =====================================================================

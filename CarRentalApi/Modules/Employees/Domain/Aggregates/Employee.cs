@@ -4,37 +4,103 @@ using CarRentalApi.Modules.Common.Domain.Errors;
 using CarRentalApi.Modules.Customers.Domain.ValueObjects;
 using CarRentalApi.Modules.Employees.Domain.Enums;
 using CarRentalApi.Modules.Employees.Domain.Errors;
+
 namespace CarRentalApi.Modules.Employees.Domain.Aggregates;
 
-public class Employee: Person {
-   
-   public string PersonnelNumber { get; protected set; } = string.Empty;
+/// <summary>
+/// Employee aggregate root.
+///
+/// Represents an employee of the organization and defines
+/// all domain rules related to employee lifecycle and administration.
+///
+/// Responsibilities:
+/// - Holds identity and personal data (via Person base class)
+/// - Manages administrative rights
+/// - Controls activation and deactivation lifecycle
+///
+/// Invariants:
+/// - Personnel number must be present
+/// - Creation timestamp must be defined
+/// - Admin rights must only contain allowed flag values
+///
+/// Notes:
+/// - This aggregate contains no persistence or application logic
+/// - All state changes are enforced via domain methods
+/// </summary>
+public sealed class Employee : Person {
+
+   /// <summary>
+   /// Unique personnel number identifying the employee.
+   /// </summary>
+   public string PersonnelNumber { get; private set; } = string.Empty;
+
+   /// <summary>
+   /// Administrative rights assigned to the employee (bitmask).
+   /// </summary>
    public AdminRights AdminRights { get; private set; } = AdminRights.ViewReports;
 
-   // EF Core ctor
-   protected Employee() { }
+   /// <summary>
+   /// Indicates whether the employee has any administrative privileges.
+   /// </summary>
+   public bool IsAdmin => AdminRights != AdminRights.None;
 
-   // Domain ctor
-   protected Employee(
+   /// <summary>
+   /// Indicates whether the employee is currently active.
+   /// </summary>
+   public bool IsActive { get; private set; }
+
+   /// <summary>
+   /// Timestamp when the employee was created.
+   /// </summary>
+   public DateTimeOffset CreatedAt { get; private set; }
+
+   /// <summary>
+   /// Timestamp when the employee was deactivated (if applicable).
+   /// </summary>
+   public DateTimeOffset? DeactivatedAt { get; private set; }
+
+   // EF Core constructor
+   private Employee() { }
+
+   // Domain constructor
+   private Employee(
       Guid id,
       string firstName,
       string lastName,
       string email,
       string personnelNumber,
       AdminRights adminRights,
+      bool isActive,
+      DateTimeOffset createdAt,
       Address? address = null
    ) : base(id, firstName, lastName, email, address) {
+      IsActive = isActive;
       PersonnelNumber = personnelNumber;
       AdminRights = adminRights;
+      CreatedAt = createdAt;
    }
 
    // ---------- Factory (Result-based) ----------
+
+   /// <summary>
+   /// Creates a new employee aggregate.
+   ///
+   /// Business rules:
+   /// - All personal data must be valid
+   /// - Personnel number is mandatory
+   /// - Creation timestamp must be provided
+   ///
+   /// Returns:
+   /// - Success(Employee) if creation succeeds
+   /// - Failure with a domain error if validation fails
+   /// </summary>
    public static Result<Employee> Create(
       string firstName,
       string lastName,
       string email,
       string personnelNumber,
       AdminRights adminRights = AdminRights.None,
+      DateTimeOffset createdAt = default,
       string? id = null,
       Address? address = null
    ) {
@@ -43,7 +109,7 @@ public class Employee: Person {
       lastName = lastName?.Trim() ?? string.Empty;
       email = email?.Trim() ?? string.Empty;
       personnelNumber = personnelNumber?.Trim() ?? string.Empty;
-      
+
       var baseValidation = ValidatePersonData(firstName, lastName, email);
       if (baseValidation.IsFailure)
          return Result<Employee>.Failure(baseValidation.Error);
@@ -51,22 +117,128 @@ public class Employee: Person {
       if (string.IsNullOrWhiteSpace(personnelNumber))
          return Result<Employee>.Failure(EmployeeErrors.PersonnelNumberIsRequired);
 
+      if (createdAt == default)
+         return Result<Employee>.Failure(EmployeeErrors.CreatedAtIsRequired);
+
       var result = EntityId.Resolve(id, PersonErrors.InvalidId);
       if (result.IsFailure)
          return Result<Employee>.Failure(result.Error);
-      var employeeId = result.Value;
-      
+
       var employee = new Employee(
-         employeeId,
+         result.Value,
          firstName,
          lastName,
          email,
          personnelNumber,
          adminRights,
+         isActive: true,
+         createdAt,
          address
       );
 
       return Result<Employee>.Success(employee);
    }
-   
+
+   // ---------- Domain operations ----------
+
+   /// <summary>
+   /// Replaces the administrative rights of the employee.
+   ///
+   /// Semantics:
+   /// - The provided rights replace the previous rights completely
+   /// - Partial add/remove operations are intentionally not supported
+   ///
+   /// Returns:
+   /// - Success if the rights are valid and applied
+   /// - Failure if the bitmask contains unsupported flags
+   /// </summary>
+   public Result SetAdminRights(AdminRights adminRights) {
+
+      // Validate allowed bits
+      if (!Enum.IsDefined(typeof(AdminRights), adminRights))
+         return Result.Failure(EmployeeErrors.InvalidAdminRightsBitmask);
+
+      AdminRights = adminRights;
+      return Result.Success();
+   }
+
+   /// <summary>
+   /// Deactivates the employee.
+   ///
+   /// Business rules:
+   /// - An employee can only be deactivated once
+   ///
+   /// Side effects:
+   /// - Sets IsActive to false
+   /// - Records the deactivation timestamp
+   /// </summary>
+   public Result Deactivate(DateTimeOffset deactivatedAt) {
+      if (!IsActive)
+         return Result.Failure(EmployeeErrors.AlreadyDeactivated);
+
+      IsActive = false;
+      DeactivatedAt = deactivatedAt;
+      return Result.Success();
+   }
 }
+
+/* =====================================================================
+ * Deutsche Architektur- und Didaktik-Erläuterung
+ * =====================================================================
+ *
+ * Was ist das Employee-Aggregat?
+ * ------------------------------
+ * Employee ist das Aggregate Root des Employees-Bounded-Contexts.
+ *
+ * Es modelliert:
+ * - Identität und Personendaten (über die Basisklasse Person)
+ * - administrative Berechtigungen (AdminRights)
+ * - den fachlichen Lebenszyklus eines Mitarbeiters
+ *
+ *
+ * Warum eine Result-basierte Factory?
+ * -----------------------------------
+ * Die statische Create-Methode stellt sicher, dass:
+ * - alle fachlichen Invarianten beim Erzeugen geprüft werden
+ * - kein ungültiges Employee-Objekt entstehen kann
+ * - Fehler eindeutig als DomainErrors zurückgegeben werden
+ *
+ *
+ * Wie werden AdminRights behandelt?
+ * ---------------------------------
+ * AdminRights werden IMMER als vollständiger Satz gesetzt.
+ *
+ * Das bedeutet:
+ * - Der neue Wert ersetzt den bisherigen komplett
+ * - Es gibt kein inkrementelles Hinzufügen oder Entfernen
+ *
+ * Vorteil:
+ * - deterministischer, sicherer Rechtezustand
+ * - einfache Autorisierungslogik
+ * - keine schleichenden Berechtigungsreste
+ *
+ *
+ * Aktiv / Inaktiv:
+ * ----------------
+ * Ein Employee ist entweder aktiv oder deaktiviert.
+ * Die Deaktivierung ist:
+ * - ein fachlicher Zustand
+ * - irreversibel ohne expliziten Reaktivierungs-UseCase
+ *
+ *
+ * Abgrenzung:
+ * -----------
+ * - Persistenz (EF Core): Infrastructure Layer
+ * - Orchestrierung (Create, Deactivate, SetRights):
+ *   Application UseCases
+ * - Lesen / Suchen / Listen:
+ *   EmployeeReadModel
+ *
+ *
+ * Merksatz:
+ * ---------
+ * Aggregate schützen ihre Invarianten selbst.
+ * UseCases orchestrieren – Aggregate entscheiden.
+ *
+ * =====================================================================
+ */

@@ -6,6 +6,7 @@ using CarRentalApi.Modules.Bookings.Domain.Enums;
 using CarRentalApi.Modules.Bookings.Domain.Errors;
 using CarRentalApi.Modules.Cars.Application.Contracts;
 using CarRentalApi.Modules.Rentals.Domain.Aggregates;
+using CarRentalApi.Modules.Rentals.Domain.Enums;
 
 namespace CarRentalApi.Modules.Bookings.Application.UseCases;
 
@@ -32,7 +33,7 @@ public sealed class RentalUcPickup(
 
    public async Task<Result<Guid>> ExecuteAsync(
       Guid reservationId,
-      int fuelLevelOut,
+      RentalFuelLevel FuelOut,
       int kmOut,
       CancellationToken ct
    ) {
@@ -92,7 +93,7 @@ public sealed class RentalUcPickup(
          customerId: reservation.CustomerId,
          carId: carResult.Value.Id,
          pickupAt: pickupAt,
-         fuelLevelOut: fuelLevelOut,
+         fuelOut: FuelOut,
          kmOut: kmOut
       );
 

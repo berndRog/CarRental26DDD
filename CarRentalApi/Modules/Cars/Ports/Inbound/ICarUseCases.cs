@@ -54,11 +54,12 @@ public interface ICarUseCases {
    /// - Invalid if input data is invalid
    /// - Conflict if the license plate or id already exists
    /// </summary>
-   Task<Result<Car>> CreateAsync(
-      CarCategory category,
+   Task<Result<Guid>> CreateAsync(
       string manufacturer,
       string model,
       string licensePlate,
+      CarCategory category,
+      DateTimeOffset createdAt,
       string? id,
       CancellationToken ct
    );

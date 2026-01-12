@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace CarRentalApi.Modules.Bookings.Infrastructure.Persistence;
 
 public sealed class ConfigRentals(
-   DateTimeOffsetToIsoStringConverter _dtOffMillis
+   DateTimeOffsetToIsoStringConverter _dtOffIso
 ) : IEntityTypeConfiguration<Rental> {
    
    public void Configure(EntityTypeBuilder<Rental> b) {
@@ -30,8 +30,8 @@ public sealed class ConfigRentals(
       // Pick-up
       b.Property(x => x.PickupAt)
          .IsRequired()
-         .HasConversion(_dtOffMillis);
-      b.Property(x => x.FuelLevelOut)
+         .HasConversion(_dtOffIso);
+      b.Property(x => x.FuelOut)
          .IsRequired();
       b.Property(x => x.KmOut)
          .IsRequired();
@@ -39,8 +39,8 @@ public sealed class ConfigRentals(
       // Return (nullable)
       b.Property(x => x.ReturnAt)
          .IsRequired(false)
-         .HasConversion(_dtOffMillis);
-      b.Property(x => x.FuelLevelIn)
+         .HasConversion(_dtOffIso);
+      b.Property(x => x.FuelIn)
          .IsRequired(false);
       b.Property(x => x.KmIn)
          .IsRequired(false);

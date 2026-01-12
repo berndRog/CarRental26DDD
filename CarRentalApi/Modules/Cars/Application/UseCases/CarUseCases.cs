@@ -11,14 +11,23 @@ public class CarUseCases(
    CarUcReturnFromMaintenance returnFromMaintenanceUc,
    CarUcRetire retireUc
 ): ICarUseCases {
-   public Task<Result<Car>> CreateAsync(
-      CarCategory category,
+   public Task<Result<Guid>> CreateAsync(
       string manufacturer,
       string model,
       string licensePlate,
+      CarCategory category,
+      DateTimeOffset createdAt,
       string? id,
       CancellationToken ct
-   ) => createUc.ExecuteAsync(category, manufacturer, model, licensePlate, id, ct);
+   ) => createUc.ExecuteAsync(
+      manufacturer: manufacturer,
+      model: model,
+      licensePlate: licensePlate,
+      category: category,
+      createdAt: createdAt,
+      id: id,
+      ct: ct
+   );
    
    public Task<Result> SendToMaintainanceAsync(
       Guid carId,

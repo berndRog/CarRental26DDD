@@ -11,8 +11,10 @@ public sealed class CarRepositoryEf(
    CarRentalDbContext _dbContext,
    ILogger<CarRepositoryEf> _logger
 ) : ICarRepository {
-   public async Task<Car?> FindByIdAsync(Guid id, CancellationToken ct) {
-      _logger.LogDebug("Load Car by ReservationId ({ReservationId})", id.To8());
+   public async Task<Car?> FindByIdAsync(
+      Guid id, 
+      CancellationToken ct
+   ) {
       return await _dbContext.Cars.FirstOrDefaultAsync(x => x.Id == id, ct);
    }
 
@@ -21,8 +23,6 @@ public sealed class CarRepositoryEf(
       CancellationToken ct
    ) {
       var normalized = licensePlate.Trim().ToUpperInvariant();
-
-      _logger.LogDebug("Check license plate exists ({Plate})", normalized);
       return await _dbContext.Cars
          .AnyAsync(x => x.LicensePlate == normalized, ct);
    }

@@ -6,6 +6,7 @@ using CarRentalApi.Modules.Customers.Domain.Aggregates;
 using CarRentalApi.Modules.Rentals.Domain.Errors;
 using CarRentalApi.Modules.Bookings.Domain.Aggregates;
 using CarRentalApi.Modules.Bookings.Domain.Enums;
+using CarRentalApi.Modules.Rentals.Domain.Enums;
 namespace CarRentalApi.Modules.Rentals.Domain.Aggregates;
 
 /// <summary>
@@ -52,13 +53,14 @@ public sealed class Rental: Entity<Guid> {
 
    // Pick-up data
    public DateTimeOffset PickupAt { get; private set; }
-   public int FuelLevelOut { get; private set; } // 0..100
+   public RentalFuelLevel FuelOut { get; private set; } 
    public int KmOut { get; private set; } // >= 0
 
    // Return data
    public DateTimeOffset? ReturnAt { get; private set; }
-   public int? FuelLevelIn { get; private set; } // 0..100
+   public RentalFuelLevel? FuelIn { get; private set; } 
    public int? KmIn { get; private set; } // >= KmOut
+   public bool IsReturned() => Status == RentalStatus.Returned;
 
    
    // EF Core
@@ -71,7 +73,7 @@ public sealed class Rental: Entity<Guid> {
       Guid customerId,
       Guid carId,
       DateTimeOffset pickupAt,
-      int fuelLevelOut,
+      RentalFuelLevel fuelOut,
       int kmOut
    ) {
       Id = id;
@@ -82,7 +84,7 @@ public sealed class Rental: Entity<Guid> {
       Status = RentalStatus.Active;
 
       PickupAt = pickupAt;
-      FuelLevelOut = fuelLevelOut;
+      FuelOut = fuelOut;
       KmOut = kmOut;
    }
 
@@ -92,7 +94,7 @@ public sealed class Rental: Entity<Guid> {
       Guid customerId,
       Guid carId,
       DateTimeOffset pickupAt,
-      int fuelLevelOut,
+      RentalFuelLevel fuelOut,
       int kmOut,
       string? id = null
    ) {
@@ -108,8 +110,8 @@ public sealed class Rental: Entity<Guid> {
 
       if (carId == Guid.Empty)
          return Result<Rental>.Failure(RentalErrors.InvalidCar);
-
-      if (!IsValidFuel(fuelLevelOut))
+      
+      if (!Enum.IsDefined(typeof(RentalFuelLevel), fuelOut))
          return Result<Rental>.Failure(RentalErrors.InvalidFuelLevel);
 
       if (kmOut < 0)
@@ -122,7 +124,7 @@ public sealed class Rental: Entity<Guid> {
             customerId: customerId,
             carId: carId,
             pickupAt: pickupAt,
-            fuelLevelOut: fuelLevelOut,
+            fuelOut: fuelOut,
             kmOut: kmOut
          )
       );
@@ -132,7 +134,7 @@ public sealed class Rental: Entity<Guid> {
    // Domain behavior: Return car
    public Result ReturnCar(
       DateTimeOffset returnAt,
-      int fuelLevelIn,
+      RentalFuelLevel fuelIn,
       int kmIn
    ) {
       if (Status != RentalStatus.Active)
@@ -141,27 +143,23 @@ public sealed class Rental: Entity<Guid> {
       if (returnAt < PickupAt)
          return Result.Failure(RentalErrors.InvalidTimestamp);
 
-      if (!IsValidFuel(fuelLevelIn))
+      if (!Enum.IsDefined(typeof(RentalFuelLevel), fuelIn))
          return Result.Failure(RentalErrors.InvalidFuelLevel);
-
+      
       if (kmIn < KmOut)
          return Result.Failure(RentalErrors.InvalidKm);
 
       ReturnAt = returnAt;
-      FuelLevelIn = fuelLevelIn;
+      FuelIn = fuelIn;
       KmIn = kmIn;
 
       Status = RentalStatus.Returned;
       return Result.Success();
    }
+   
+   // public bool NeedsRefuelFee() {
+   //    if (Status != RentalStatus.Returned) return false;
+   //    return FuelIn!.Value < FuelOut;
+   // }
 
-   // Convenience for policies
-   public bool IsReturned() => Status == RentalStatus.Returned;
-
-   public bool NeedsRefuelFee() {
-      if (Status != RentalStatus.Returned) return false;
-      return FuelLevelIn!.Value < FuelLevelOut;
-   }
-
-   private static bool IsValidFuel(int level) => level is >= 0 and <= 100;
 }

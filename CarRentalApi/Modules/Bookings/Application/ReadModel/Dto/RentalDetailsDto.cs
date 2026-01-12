@@ -3,36 +3,18 @@ using CarRentalApi.Modules.Bookings.Domain.Enums;
 
 namespace CarRentalApi.Modules.Rentals.Application.ReadModel.Dto;
 
-/// <summary>
-/// Read-only projection representing detailed information about a rental.
-///
-/// Purpose:
-/// - Used by rental detail views (API / UI)
-/// - Represents the full rental lifecycle (pick-up → return)
-/// - Serves as an immutable projection of the Rental aggregate
-///
-/// Characteristics:
-/// - Immutable record with primary constructor
-/// - No domain logic
-/// - No navigation properties
-/// - Optimized for read scenarios
-/// </summary>
 public sealed record RentalDetailsDto(
    Guid RentalId,
-
    // Foreign keys / references
    Guid ReservationId,
    Guid CarId,
    Guid CustomerId,
-
    // Lifecycle
    RentalStatus Status,
-
    // Pick-up data
    DateTimeOffset PickupAt,
    int FuelLevelOut,   // 0..100
    int KmOut,          // >= 0
-
    // Return data (nullable while active)
    DateTimeOffset? ReturnAt,
    int? FuelLevelIn,   // 0..100
