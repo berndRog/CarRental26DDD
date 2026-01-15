@@ -19,6 +19,12 @@ public sealed class RentalRepositoryEf(
       CancellationToken ct
    ) => await _dbContext.Rentals
          .FirstOrDefaultAsync(r => r.ReservationId == reservationId, ct);
+
+   public async Task<bool> ExistsForReservationAsync(
+      Guid reservationId, 
+      CancellationToken ct
+   ) => await _dbContext.Rentals
+         .AnyAsync(r => r.ReservationId == reservationId, ct);
    
    public async Task<IReadOnlyList<Rental>> SelectByCustomerIdAsync(
       Guid customerId,

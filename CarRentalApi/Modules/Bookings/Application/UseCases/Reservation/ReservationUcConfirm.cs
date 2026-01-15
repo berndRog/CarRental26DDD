@@ -4,7 +4,7 @@ using CarRentalApi.Modules.Bookings.Domain;
 using CarRentalApi.Modules.Bookings.Domain.Aggregates;
 using CarRentalApi.Modules.Bookings.Domain.Enums;
 using CarRentalApi.Modules.Bookings.Domain.Errors;
-using CarRentalApi.Modules.Bookings.Infrastructure;
+using CarRentalApi.Modules.Bookings.Domain.Policies;
 namespace CarRentalApi.Modules.Bookings.Application.UseCases;
 
 public sealed class ReservationUcConfirm(

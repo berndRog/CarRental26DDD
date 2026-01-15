@@ -18,20 +18,20 @@ public static class EmployeeErrors {
 
    public static readonly DomainErrors InvalidId =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Invalid Employee Id",
          Message: "The provided employee id is invalid."
       );
 
    public static readonly DomainErrors PersonnelNumberIsRequired =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Personnel Number Is Required",
          Message: "A personnel number must be provided."
       );
    public static readonly DomainErrors PersonnelNumberInvalidFormat =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Invalid Personnel Number Format",
          Message: "The personnel number has an invalid format."
       );
@@ -44,13 +44,13 @@ public static class EmployeeErrors {
    
    public static readonly DomainErrors EmailIsRequired =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Email Is Required",
          Message: "An email address must be provided."
       );
    public static readonly DomainErrors EmailInvalidFormat =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Invalid Email Format",
          Message: "The email address has an invalid format."
       );
@@ -63,19 +63,19 @@ public static class EmployeeErrors {
    
    public static readonly DomainErrors AdminRightsRequired =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Admin Rights Required",
          Message: "An employee must have at least one admin right."
       );
    public static readonly DomainErrors AdminRightsInvalid =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Invalid Admin Rights",
          Message: "The provided admin rights value is invalid."
       );  
    public static readonly DomainErrors InvalidAdminRightsBitmask =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Invalid Admin Rights Bitmask",
          Message: "The provided admin rights value contains undefined or unsupported flag bits."
       );
@@ -93,15 +93,10 @@ public static class EmployeeErrors {
          Message: "The employee is already active."
       );
    
-   public static readonly DomainErrors CreatedAtIsRequired =
-      new(
-         ErrorCode.BadReqest,
-         Title: "Creation Timestamp Required",
-         Message: "The creation timestamp (createdAt) must be provided when creating an employee."
-      );
+
    public static readonly DomainErrors DeactivatedAtIsRequired =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Deactivation Timestamp Required",
          Message: "The deactivation timestamp (deactivatedAt) must be provided when creating an employee."
       );

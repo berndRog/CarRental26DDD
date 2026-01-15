@@ -6,7 +6,6 @@ using CarRentalApi.Modules.Customers.Domain.Aggregates;
 using CarRentalApi.Modules.Rentals.Domain.Errors;
 using CarRentalApi.Modules.Bookings.Domain.Aggregates;
 using CarRentalApi.Modules.Bookings.Domain.Enums;
-using CarRentalApi.Modules.Rentals.Domain.Enums;
 namespace CarRentalApi.Modules.Rentals.Domain.Aggregates;
 
 /// <summary>
@@ -15,7 +14,7 @@ namespace CarRentalApi.Modules.Rentals.Domain.Aggregates;
 /// </summary>
 public sealed class Rental: Entity<Guid> {
    
-   // Guid ReservationId is inherited from Entity<T>
+   // Guid Id is inherited from Entity<T>
    
 #if OOP_MODE   
    // With Navigation properties (object graph)

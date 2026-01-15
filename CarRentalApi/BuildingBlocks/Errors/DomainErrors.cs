@@ -15,7 +15,7 @@ public sealed record DomainErrors(
    // ----------------------------
    public static readonly DomainErrors None =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "No Error",
          Message: "No Error Has Occurred."
       );
@@ -37,16 +37,61 @@ public sealed record DomainErrors(
    
    public static readonly DomainErrors Invalid =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Value is invalid",
          Message: "The Value Is Not Valid."
       );
    
    public static readonly DomainErrors InvalidGuidFormat =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Invalid Guid Format",
          Message: "The Provided ReservationId Is Not A Valid GUID."
       );
+   
+   // Contact data
+   public static readonly DomainErrors FirstNameIsRequired =
+      new(
+         ErrorCode.BadRequest,
+         Title: "First Name Is Required",
+         Message: "A First Name Must Be Provided."
+      );
+   
+   public static readonly DomainErrors InvalidFirstName =
+      new(
+         ErrorCode.BadRequest,
+         Title: "Invalid FirstName",
+         Message: "The Provided FirstName is too shot or too long (2-100 chars)."
+      );
+
+   public static readonly DomainErrors LastNameIsRequired =
+      new(
+         ErrorCode.BadRequest,
+         Title: "Last Name Is Required",
+         Message: "A Last Name Must Be Provided."
+      );
+
+   public static readonly DomainErrors InvalidLastName =
+      new(
+         ErrorCode.BadRequest,
+         Title: "Invalid LastName",
+         Message: "The Provided LastName is too shot or too long (2-100 chars)."
+      );
+   
+   public static readonly DomainErrors EmailIsRequired =
+      new(
+         ErrorCode.BadRequest,
+         Title: "Email Is Required",
+         Message: "An Email Address Must Be Provided."
+      );
+
+   public static readonly DomainErrors InvalidEmail =
+      new(
+         ErrorCode.BadRequest,
+         Title: "Invalid email address",
+         Message: "The provided email address is not valid."
+      );
+ 
+
 }
 

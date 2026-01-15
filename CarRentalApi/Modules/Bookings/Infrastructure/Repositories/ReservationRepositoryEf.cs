@@ -18,11 +18,10 @@ public sealed class ReservationRepositoryEf(
       Guid id,
       CancellationToken ct = default
    ){
-      _logger.LogDebug("Load Reservation by ReservationId ({ReservationId})", id.To8());
       var reservation = await _dbContext.Reservations
          .FirstOrDefaultAsync(r=> r.Id == id, ct);
       if (reservation is not null) return reservation;
-      
+            
       _logger.LogDebug("Reservation not found ({ReservationId})", id.To8());
       return null;
    }

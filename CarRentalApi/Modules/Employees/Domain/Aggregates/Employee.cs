@@ -1,6 +1,8 @@
 using CarRentalApi.BuildingBlocks;
 using CarRentalApi.BuildingBlocks.Domain.Entities;
+using CarRentalApi.BuildingBlocks.Domain.ValueObjects;
 using CarRentalApi.Modules.Common.Domain.Errors;
+using CarRentalApi.Modules.Common.Domain.ValueObjects;
 using CarRentalApi.Modules.Customers.Domain.ValueObjects;
 using CarRentalApi.Modules.Employees.Domain.Enums;
 using CarRentalApi.Modules.Employees.Domain.Errors;
@@ -28,35 +30,13 @@ namespace CarRentalApi.Modules.Employees.Domain.Aggregates;
 /// - All state changes are enforced via domain methods
 /// </summary>
 public sealed class Employee : Person {
-
-   /// <summary>
-   /// Unique personnel number identifying the employee.
-   /// </summary>
+   
+   public Phone? Phone { get; private set; } 
    public string PersonnelNumber { get; private set; } = string.Empty;
-
-   /// <summary>
-   /// Administrative rights assigned to the employee (bitmask).
-   /// </summary>
    public AdminRights AdminRights { get; private set; } = AdminRights.ViewReports;
-
-   /// <summary>
-   /// Indicates whether the employee has any administrative privileges.
-   /// </summary>
    public bool IsAdmin => AdminRights != AdminRights.None;
-
-   /// <summary>
-   /// Indicates whether the employee is currently active.
-   /// </summary>
    public bool IsActive { get; private set; }
-
-   /// <summary>
-   /// Timestamp when the employee was created.
-   /// </summary>
    public DateTimeOffset CreatedAt { get; private set; }
-
-   /// <summary>
-   /// Timestamp when the employee was deactivated (if applicable).
-   /// </summary>
    public DateTimeOffset? DeactivatedAt { get; private set; }
 
    // EF Core constructor
@@ -67,7 +47,8 @@ public sealed class Employee : Person {
       Guid id,
       string firstName,
       string lastName,
-      string email,
+      Email email,
+      Phone? phone,
       string personnelNumber,
       AdminRights adminRights,
       bool isActive,
@@ -81,23 +62,12 @@ public sealed class Employee : Person {
    }
 
    // ---------- Factory (Result-based) ----------
-
-   /// <summary>
-   /// Creates a new employee aggregate.
-   ///
-   /// Business rules:
-   /// - All personal data must be valid
-   /// - Personnel number is mandatory
-   /// - Creation timestamp must be provided
-   ///
-   /// Returns:
-   /// - Success(Employee) if creation succeeds
-   /// - Failure with a domain error if validation fails
    /// </summary>
    public static Result<Employee> Create(
       string firstName,
       string lastName,
-      string email,
+      string emailString,
+      string phoneString,
       string personnelNumber,
       AdminRights adminRights = AdminRights.None,
       DateTimeOffset createdAt = default,
@@ -107,18 +77,28 @@ public sealed class Employee : Person {
       // Normalize input early
       firstName = firstName?.Trim() ?? string.Empty;
       lastName = lastName?.Trim() ?? string.Empty;
-      email = email?.Trim() ?? string.Empty;
+      emailString = emailString?.Trim() ?? string.Empty;
+      phoneString = phoneString?.Trim() ?? string.Empty;
       personnelNumber = personnelNumber?.Trim() ?? string.Empty;
 
-      var baseValidation = ValidatePersonData(firstName, lastName, email);
+      var baseValidation = ValidatePersonData(firstName, lastName, emailString);
       if (baseValidation.IsFailure)
          return Result<Employee>.Failure(baseValidation.Error);
-
+      var email = Email.Create(emailString).Value!;
+      
+      Phone? phone = null;
+      if (!string.IsNullOrWhiteSpace(phoneString)) {
+         var resultPhone = Phone.Create(phoneString);
+         if (!resultPhone.IsFailure)
+            return Result<Employee>.Failure(resultPhone.Error);
+         phone = resultPhone.Value!;
+      }
+      
       if (string.IsNullOrWhiteSpace(personnelNumber))
          return Result<Employee>.Failure(EmployeeErrors.PersonnelNumberIsRequired);
 
       if (createdAt == default)
-         return Result<Employee>.Failure(EmployeeErrors.CreatedAtIsRequired);
+         return Result<Employee>.Failure(CommonErrors.CreatedAtIsRequired);
 
       var result = EntityId.Resolve(id, PersonErrors.InvalidId);
       if (result.IsFailure)
@@ -129,6 +109,7 @@ public sealed class Employee : Person {
          firstName,
          lastName,
          email,
+         phone,
          personnelNumber,
          adminRights,
          isActive: true,

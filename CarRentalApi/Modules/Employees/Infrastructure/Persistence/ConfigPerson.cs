@@ -4,10 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace CarRentalApi.Persistence.Database;
 
-public sealed class ConfigPeople : IEntityTypeConfiguration<Person> {
+public sealed class ConfigPerson : IEntityTypeConfiguration<Person> {
    public void Configure(EntityTypeBuilder<Person> b) {
       // Table für Basistyp
-      b.ToTable("People");
+      b.ToTable("Person");
 
       // Primary Key auf Basistyp
       b.HasKey(x => x.Id);

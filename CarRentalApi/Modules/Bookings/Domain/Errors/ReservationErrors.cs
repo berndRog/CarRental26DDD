@@ -10,7 +10,7 @@ public static class ReservationErrors {
 
    public static readonly DomainErrors InvalidId =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Invalid Reservation ReservationId",
          Message: "The Provided Reservation ReservationId Is Invalid."
       );
@@ -24,7 +24,7 @@ public static class ReservationErrors {
 
    public static readonly DomainErrors InvalidStatusTransition =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Invalid Reservation ReservationStatus Transition",
          Message: "The Requested Reservation ReservationStatus Transition Is Not Allowed."
       );
@@ -38,21 +38,21 @@ public static class ReservationErrors {
 
    public static readonly DomainErrors StartDateInPast =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Invalid Reservation Start Date",
          Message: "The Reservation Start Date Must Be In The Future."
       );
 
    public static readonly DomainErrors InvalidTimestamp =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Invalid Timestamp",
          Message: "The Provided Timestamp Is Invalid For The Current Reservation State."
       );
 
    public static readonly DomainErrors InvalidPeriod =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Invalid Reservation Period",
          Message: "The Reservation Period Is Invalid: The Start Date Must Be Earlier Than The End Date."
       );

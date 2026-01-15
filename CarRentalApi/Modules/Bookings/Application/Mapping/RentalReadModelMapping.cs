@@ -14,10 +14,10 @@ public static class RentalReadModelMapping {
       CustomerId: rental.CustomerId,
       Status: rental.Status,
       PickupAt: rental.PickupAt,
-      FuelLevelOut: rental.FuelLevelOut,
+      FuelOut: rental.FuelOut,
       KmOut: rental.KmOut,
       ReturnAt: rental.ReturnAt,
-      FuelLevelIn: rental.FuelLevelIn,
+      FuelIn: rental.FuelIn,
       KmIn: rental.KmIn
    );
 

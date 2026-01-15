@@ -3,32 +3,16 @@ using CarRentalApi.BuildingBlocks;
 using CarRentalApi.BuildingBlocks.Domain.Entities;
 using CarRentalApi.BuildingBlocks.Enums;
 using CarRentalApi.BuildingBlocks.Errors;
+using CarRentalApi.Modules.Bookings.Domain.ValueObjects;
 using CarRentalApi.Modules.Cars.Domain.Enums;
 using CarRentalApi.Modules.Cars.Domain.Errors;
-using CarRentalApi.Modules.Cars.Domain.Policies;
-using CarRentalApi.Modules.Rentals.Domain.Aggregates;
-using CarRentalApi.Modules.Bookings.Domain.ValueObjects;
-using CarRentalApi.Modules.Cars.Application.ReadModel;
 using CarRentalApi.Modules.Cars.Ports.Inbound;
 namespace CarRentalApi.Modules.Cars.Domain.Aggregates;
 
 public sealed class Car : Entity<Guid> {
-   // Guid ReservationId is inherited from Entity<T>
-
-#if OOP_MODE
-   // With Navigation properties (object graph)
-   // Car <-> Rental = 1 : 0..n
-   private readonly List<Rental> _rentals = new();
-   public IReadOnlyCollection<Rental> Rentals => _rentals.AsReadOnly();
-
-#elif DDD_MODE
-   // Without Navigation properties
-   // Use repositories to fetch related Cars
-
-#else
-   #error "Define either OOP_MODE or DDD_MODE in .csproj"
-#endif
-
+   
+   // Guid Id is inherited from Entity<T>
+   
    public string Manufacturer { get; private set; } = string.Empty;
    public string Model { get; private set; } = string.Empty;
    public string LicensePlate { get; private set; } = string.Empty;
@@ -43,8 +27,7 @@ public sealed class Car : Entity<Guid> {
    public bool IsRetired => Status == CarStatus.Retired;
 
    // EF Core ctor
-   private Car() {
-   }
+   private Car() { }
 
    // Domain ctor
    private Car(

@@ -12,8 +12,6 @@ public static class ReservationReadModelMapping {
       Start: reservation.Period.Start,
       End: reservation.Period.End,
       ReservationStatus: reservation.Status,
-      RentalId: reservation.RentalId,
-
       CreatedAt: reservation.CreatedAt,
       ConfirmedAt: reservation.ConfirmedAt,
       CancelledAt: reservation.CancelledAt,

@@ -33,7 +33,8 @@ public sealed class EmployeeUseCases(
    public Task<Result<Guid>> CreateAsync(
       string firstName,
       string lastName,
-      string email,
+      string emailString,
+      string phoneString,
       string personnelNumber,
       AdminRights adminRights,
       DateTimeOffset createdAt,
@@ -43,7 +44,8 @@ public sealed class EmployeeUseCases(
    ) => createUc.ExecuteAsync(
       firstName: firstName,
       lastName: lastName,
-      email: email,
+      emailString: emailString,
+      phoneString: phoneString,
       personnelNumber: personnelNumber,
       adminRights: adminRights,
       createdAt: createdAt,

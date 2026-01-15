@@ -17,14 +17,14 @@ public sealed class RentalReadModelEf(
       CancellationToken ct
    ) {
       if (rentalId == Guid.Empty)
-         return Result<RentalDetailsDto>.Failure(RentalReadErrors.InvalidId);
+         return Result<RentalDetailsDto>.Failure(RentalApplicationErrors.InvalidId);
 
       var rental = await _dbContext.Rentals
          .AsNoTracking()
          .FirstOrDefaultAsync(r => r.Id == rentalId, ct);
 
       return rental is null
-         ? Result<RentalDetailsDto>.Failure(RentalReadErrors.NotFound)
+         ? Result<RentalDetailsDto>.Failure(RentalApplicationErrors.NotFound)
          : Result<RentalDetailsDto>.Success(rental.ToRentalDetailsDto());
    }
 
@@ -33,7 +33,7 @@ public sealed class RentalReadModelEf(
       CancellationToken ct
    ) {
       if (reservationId == Guid.Empty)
-         return Result<Guid?>.Failure(RentalReadErrors.InvalidReservationId);
+         return Result<Guid?>.Failure(RentalApplicationErrors.InvalidReservationId);
 
       var rental = await _dbContext.Rentals
          .AsNoTracking()

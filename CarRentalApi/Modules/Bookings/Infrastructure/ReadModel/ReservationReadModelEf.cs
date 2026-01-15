@@ -32,14 +32,14 @@ public sealed class ReservationReadModelEf(
       CancellationToken ct = default
    ) {
       if (reservationId == Guid.Empty)
-         return Result<ReservationDetailsDto>.Failure(ReservationReadErrors.InvalidId);
+         return Result<ReservationDetailsDto>.Failure(ReservationApplicationErrors.InvalidId);
 
       var reservation = await _db.Set<Reservation>()
          .AsNoTracking()
          .SingleOrDefaultAsync(r => r.Id == reservationId, ct);
 
       if (reservation is null)
-         return Result<ReservationDetailsDto>.Failure(ReservationReadErrors.NotFound);
+         return Result<ReservationDetailsDto>.Failure(ReservationApplicationErrors.NotFound);
 
       return Result<ReservationDetailsDto>.Success(reservation.ToReservationDetailsDto());
    }
@@ -58,7 +58,7 @@ public sealed class ReservationReadModelEf(
 
       if (!AllowedSortFields.Contains(sortBy))
          return Result<PagedResult<ReservationListItemDto>>.Failure(
-            ReservationReadErrors.InvalidSortField
+            ReservationApplicationErrors.InvalidSortField
          );
 
       IQueryable<Reservation> query = _db.Set<Reservation>().AsNoTracking();

@@ -1,0 +1,33 @@
+@startuml
+title Pickup – Aktivitätsdiagramm (links -> rechts)
+
+left to right direction
+
+start
+:Kunde kommt, nennt Reservierungsdaten;
+:Reservierung laden;
+
+if (Reservierung gefunden?) then (ja)
+  if (Status = Confirmed?) then (ja)
+    :Identität/Führerschein prüfen;
+    if (Kunde berechtigt?) then (ja)
+      :Verfügbares Fahrzeug in Kategorie suchen;
+      if (Fahrzeug verfügbar?) then (ja)
+        :Fahrzeug zuweisen;
+        :Rental erstellen (Active, Start=jetzt);
+        :Übergabe durchführen;
+        stop
+      else (nein)
+        stop
+      endif
+    else (nein)
+      stop
+    endif
+  else (nein)
+    stop
+  endif
+else (nein)
+  stop
+endif
+
+@enduml

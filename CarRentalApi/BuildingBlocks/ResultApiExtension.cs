@@ -25,7 +25,7 @@ public static class ResultApiExtensions {
       };
 
       return error.Code switch {
-         ErrorCode.BadReqest => controller.BadRequest(problemDetails),
+         ErrorCode.BadRequest => controller.BadRequest(problemDetails),
          ErrorCode.Unauthorized => controller.Unauthorized(problemDetails),
          ErrorCode.Forbidden => new ObjectResult(problemDetails) { StatusCode = 403 },
          ErrorCode.NotFound => controller.NotFound(problemDetails),
@@ -55,7 +55,7 @@ public static class ResultApiExtensions {
       };
 
       return error.Code switch {
-         ErrorCode.BadReqest => controller.BadRequest(problemDetails),
+         ErrorCode.BadRequest => controller.BadRequest(problemDetails),
          ErrorCode.Unauthorized => controller.Unauthorized(problemDetails),
          ErrorCode.Forbidden => new ObjectResult(problemDetails) { StatusCode = 403 },
          ErrorCode.NotFound => controller.NotFound(problemDetails),
@@ -83,7 +83,7 @@ public static class ResultApiExtensions {
 
    public static int ToHttpStatusCode(this ErrorCode errorCode) {
       return errorCode switch {
-         ErrorCode.BadReqest => StatusCodes.Status400BadRequest,
+         ErrorCode.BadRequest => StatusCodes.Status400BadRequest,
          ErrorCode.Unauthorized => StatusCodes.Status401Unauthorized,
          ErrorCode.Forbidden => StatusCodes.Status403Forbidden,
          ErrorCode.NotFound => StatusCodes.Status404NotFound,

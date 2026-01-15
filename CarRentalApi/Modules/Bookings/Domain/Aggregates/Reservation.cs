@@ -5,12 +5,11 @@ using CarRentalApi.BuildingBlocks.Errors;
 using CarRentalApi.Modules.Bookings.Domain.Enums;
 using CarRentalApi.Modules.Bookings.Domain.Errors;
 using CarRentalApi.Modules.Bookings.Domain.ValueObjects;
-using CarRentalApi.Modules.Customers.Domain.Aggregates;
-using CarRentalApi.Modules.Rentals.Domain.Aggregates;
 namespace CarRentalApi.Modules.Bookings.Domain.Aggregates;
 
 public sealed class Reservation: Entity<Guid> {
-   // Guid ReservationId is inherited from Entity<T>
+   
+   // Guid Id is inherited from Entity<T>
 
 #if OOP_MODE   
    // With Navigation properties (object graph)
@@ -19,7 +18,6 @@ public sealed class Reservation: Entity<Guid> {
    public Customer Customer { get; private set; } = default!;
    
    // Reservation <-> Rental = 1 : 0..1
-   public Guid? RentalId { get; private set; }
    public Rental? Rental { get; private set; }
    
 #elif  DDD_MODE 
@@ -29,8 +27,6 @@ public sealed class Reservation: Entity<Guid> {
    // Reservation <-> Customer  = 0..n : 1 as foreign key 
    public Guid CustomerId { get; private set; }
    
-   // Reservation <-> Rental = 1 : 0..1 as foreign key
-   public Guid? RentalId { get; private set; }
 #else
    #error "Define either OOP_MODE or DDD_MODE in .csproj"
 #endif
@@ -114,24 +110,6 @@ public sealed class Reservation: Entity<Guid> {
          "RentalPeriod.Create returned success with null Value.");
 
       Period = period;
-      return Result.Success();
-   }
-   
-   public Result AssignRental(Guid rentalId) {
-
-      // Only confirmed reservations can be used at pick-up
-      if (Status != ReservationStatus.Confirmed)
-         return Result.Failure(ReservationErrors.InvalidStatusTransition);
-
-      // Idempotent: already linked -> ok
-      if (RentalId == rentalId)
-         return Result.Success();
-
-      // Already linked to a different rental -> not allowed
-      if (RentalId is not null)
-         return Result.Failure(ReservationErrors.InvalidStatusTransition);
-
-      RentalId = rentalId;
       return Result.Success();
    }
    

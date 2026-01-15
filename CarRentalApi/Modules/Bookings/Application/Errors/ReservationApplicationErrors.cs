@@ -6,11 +6,11 @@ namespace CarRentalApi.Modules.Bookings.Application.ReadModel.Errors;
 /// <summary>
 /// Read-model-level error definitions for reservation queries.
 /// </summary>
-public static class ReservationReadErrors {
+public static class ReservationApplicationErrors {
 
    public static readonly DomainErrors InvalidId =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Invalid Reservation Id",
          Message: "The provided reservation id is invalid."
       );
@@ -24,7 +24,7 @@ public static class ReservationReadErrors {
 
    public static readonly DomainErrors InvalidSortField =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Invalid Sort Field",
          Message: "The provided sort field is not supported for reservations."
       );

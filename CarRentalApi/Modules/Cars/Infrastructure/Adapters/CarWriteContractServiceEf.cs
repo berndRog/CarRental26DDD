@@ -89,7 +89,7 @@ public sealed class CarWriteContractServiceEf(
    /// - The car is no longer assigned to an active rental
    /// - The car may be rented again unless it is in maintenance
    /// </summary>
-   public async Task<Result> MarkAvailableAsync(
+   public async Task<Result> MarkAsAvailableAsync(
       Guid carId,
       CancellationToken ct
    ) {

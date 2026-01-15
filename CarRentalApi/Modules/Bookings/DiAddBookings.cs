@@ -33,7 +33,7 @@ public static class DiAddBookings {
       services.AddScoped<IRentalUseCases, RentalUseCases>();
       
       // Policies
-      services.AddScoped<IReservationConflictPolicy, ReservationConflictPolicy>();
+      services.AddScoped<IReservationConflictPolicy, ReservationConflictPolicyEf>();
       
       // =========================================================
       // Outbound ports

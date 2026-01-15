@@ -16,7 +16,7 @@ public static class CarErrors {
 
    public static readonly DomainErrors InvalidId =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Invalid Car ReservationId",
          Message: "The Provided Car ReservationId Is Invalid."
       );
@@ -29,28 +29,28 @@ public static class CarErrors {
    
    public static readonly DomainErrors ManufacturerIsRequired =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Manufacturer Is Required",
          Message: "A Manufacturer Must Be Provided."
       );
 
    public static readonly DomainErrors ModelIsRequired =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Model Is Required",
          Message: "A Model Must Be Provided."
       );
 
    public static readonly DomainErrors LicensePlateIsRequired =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "License Plate Is Required",
          Message: "A License Plate Must Be Provided."
       );
 
    public static readonly DomainErrors InvalidLicensePlateFormat =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Invalid License Plate Format",
          Message: "The License Plate May Only Contain Uppercase Letters, Digits, And Hyphens."
       );
@@ -65,21 +65,21 @@ public static class CarErrors {
       
    public static readonly DomainErrors CategoryIsRequired =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Car CarCategory Is Required",
          Message: "A Car CarCategory Must Be Provided."
       );
 
    public static readonly DomainErrors CreatedAtIsRequired =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          "Creation timestamp is required",
          "The creation timestamp (createdAt) must be provided when creating a car."
       );
    
    public static readonly DomainErrors CarNotAvailable =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Car Not Available",
          Message: "The Car Is Currently Not Available."
       );

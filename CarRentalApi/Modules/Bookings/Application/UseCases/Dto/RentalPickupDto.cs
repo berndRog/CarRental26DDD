@@ -1,4 +1,4 @@
-using CarRentalApi.Modules.Rentals.Domain.Enums;
+using CarRentalApi.Modules.Bookings.Domain.Enums;
 namespace CarRentalApi.Modules.Bookings.Application.UseCases.Dto;
 
 

@@ -35,13 +35,11 @@
     <Folder Include="Modules\Cars\Domain\ValueObjects\" />
     <Folder Include="Modules\Customers\Domain\Enums\" />
     <Folder Include="Modules\Customers\Domain\Policies\" />
-    <Folder Include="Modules\Customers\Domain\ValueObjects\" />
     <Folder Include="Modules\Employees\Application\Contracts\" />
     <Folder Include="Modules\Employees\Application\ReadModel\Errors\" />
     <Folder Include="Modules\Employees\Application\Services\" />
     <Folder Include="Modules\Employees\Domain\Policies\" />
     <Folder Include="Modules\Employees\Domain\ValueObjects\" />
-    <Folder Include="Modules\Employees\Infrastructure\Persistence\" />
   </ItemGroup>
 
 </Project>

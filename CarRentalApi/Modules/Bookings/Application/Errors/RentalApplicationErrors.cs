@@ -6,11 +6,11 @@ namespace CarRentalApi.Modules.Bookings.Application.ReadModel.Errors;
 /// Use-case level error definitions for rental-related application flows
 /// (e.g. pick-up, return).
 /// </summary>
-public static class RentalReadErrors {
+public static class RentalApplicationErrors {
    
    public static readonly DomainErrors InvalidId =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Invalid Rental Id",
          Message: "The provided rental id is invalid."
       );
@@ -31,21 +31,28 @@ public static class RentalReadErrors {
 
    public static readonly DomainErrors ReservationInvalidStatus =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Invalid Reservation ReservationStatus",
          Message: "The Reservation ReservationStatus Does Not Allow Pick-Up."
+      );
+   
+   public static readonly DomainErrors RentalAlreadyExistsForReservation =
+      new(
+         ErrorCode.Conflict,
+         Title: "Rental already exists",
+         Message: "A rental for the given reservation already exists."
       );
 
    public static readonly DomainErrors RentalSaveFailed =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Rental Persistence Failed",
          Message: "The Pick-Up Could Not Be Persisted."
       );
 
    public static readonly DomainErrors InvalidReservationId =
       new(
-         ErrorCode.BadReqest,
+         ErrorCode.BadRequest,
          Title: "Invalid Reservation ReservationId",
          Message: "The Provided Reservation ReservationId Is Invalid."
       );

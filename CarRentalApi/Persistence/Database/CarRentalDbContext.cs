@@ -6,6 +6,7 @@ using CarRentalApi.Modules.Rentals.Domain.Aggregates;
 using CarRentalApi.Modules.Bookings.Domain.Aggregates;
 using CarRentalApi.Modules.Bookings.Infrastructure.Persistence;
 using CarRentalApi.Modules.Cars.Infrastructure.Persistence;
+using CarRentalApi.Modules.Customers.Infrastructure.Persistence;
 using CarRentalApi.Persistence.Database;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApi.Data.Database;
@@ -25,23 +26,24 @@ public sealed class CarRentalDbContext(
       base.OnModelCreating(modelBuilder);
 
       // Reuse one converter instance
-      var dtOffMillis = new DateTimeOffsetToIsoStringConverter();
-
+      var dtOffToIsoStrConv = new DateTimeOffsetToIsoStringConverter();
+      var nulDtOfConv = new NullableDateTimeOffsetToIsoStringConverter();
+      
       // TPT: Person base + derived tables
       modelBuilder.Ignore<Entity<Guid>>();
       
-      // Entity Person -> Table People
-      modelBuilder.ApplyConfiguration(new ConfigPeople());
-      // Entity Customer -> Table Customers
-      modelBuilder.ApplyConfiguration(new ConfigCustomers());
+      // Entity Person -> Table Person
+      modelBuilder.ApplyConfiguration(new ConfigPerson());
+      // Entity Customer -> Table Customer
+      modelBuilder.ApplyConfiguration(new ConfigCustomer(dtOffToIsoStrConv, nulDtOfConv));
       // Entity Employee -> Table Employees
-      modelBuilder.ApplyConfiguration(new ConfigEmployees());
+      modelBuilder.ApplyConfiguration(new ConfigEmployee(dtOffToIsoStrConv, nulDtOfConv));
       
-      // Entity Car -> Table Cars
-      modelBuilder.ApplyConfiguration(new ConfigCars());
-      // Entity Reservation -> Table Reservations
-      modelBuilder.ApplyConfiguration(new ConfigReservations(dtOffMillis));
-      // Entity Rental -> Table Rentals
-      modelBuilder.ApplyConfiguration(new ConfigRentals(dtOffMillis));
+      // Entity Car -> Table Car
+      modelBuilder.ApplyConfiguration(new ConfigCar(dtOffToIsoStrConv, nulDtOfConv));
+      // Entity Reservation -> Table Reservation
+      modelBuilder.ApplyConfiguration(new ConfigReservation(dtOffToIsoStrConv, nulDtOfConv));
+      // Entity Rental -> Table Rental
+      modelBuilder.ApplyConfiguration(new ConfigRental(dtOffToIsoStrConv, nulDtOfConv));
    }
 }

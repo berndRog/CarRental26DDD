@@ -58,7 +58,31 @@ public interface IRentalRepository {
       Guid reservationId,
       CancellationToken ct
    );
-
+   
+   /// <summary>
+   /// Checks whether a rental already exists for the given reservation.
+   ///
+   /// Business meaning:
+   /// - Used during the pick-up workflow to ensure that
+   ///   a reservation is not picked up more than once
+   ///
+   /// Technical purpose:
+   /// - Lightweight existence check without loading the aggregate
+   /// - Used as a guard against duplicate or concurrent pick-up attempts
+   ///
+   /// Tracking behavior:
+   /// - No aggregate is loaded
+   /// - No change tracking is required
+   ///
+   /// Returns:
+   /// - True if a rental already exists for the reservation
+   /// - False if the reservation has not been picked up yet
+   /// </summary>
+   Task<bool> ExistsForReservationAsync(
+      Guid reservationId,
+      CancellationToken ct
+   );
+   
    // ------------------------------------------------------------------
    // Queries (0..n)
    // ------------------------------------------------------------------

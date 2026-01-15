@@ -15,54 +15,6 @@ namespace CarRentalApi.Modules.Cars.Application.Contracts;
 /// - Returns domain-level results (no DTOs)
 /// </summary>
 public interface ICarWriteContract {
-
-   /// <summary>
-   /// Sends a car to maintenance.
-   ///
-   /// Business meaning:
-   /// - The car is temporarily removed from the active fleet
-   /// - The car cannot be rented while in maintenance
-   ///
-   /// Typical use cases:
-   /// - Damage repair
-   /// - Scheduled service
-   ///
-   /// Expected rules:
-   /// - Car must exist
-   /// - Car must not already be in maintenance
-   /// - Car must not be currently rented
-   ///
-   /// Returns:
-   /// - Success if the car state was changed to "InMaintenance"
-   /// - Failure if any business rule is violated
-   /// </summary>
-   Task<Result> SendToMaintenanceAsync(
-      Guid carId,
-      CancellationToken ct
-   );
-
-   /// <summary>
-   /// Returns a car from maintenance back to the active fleet.
-   ///
-   /// Business meaning:
-   /// - The car becomes available for rental again
-   ///
-   /// Typical use cases:
-   /// - Maintenance or repair has been completed
-   ///
-   /// Expected rules:
-   /// - Car must exist
-   /// - Car must currently be in maintenance
-   ///
-   /// Returns:
-   /// - Success if the car state was changed to "Available"
-   /// - Failure if the car is not in maintenance or does not exist
-   /// </summary>
-   Task<Result> ReturnFromMaintenanceAsync(
-      Guid carId,
-      CancellationToken ct
-   );
-
    /// <summary>
    /// Marks a car as rented.
    ///
@@ -106,7 +58,7 @@ public interface ICarWriteContract {
    /// - Success if the car state was changed to "Available"
    /// - Failure if the car is not rented or does not exist
    /// </summary>
-   Task<Result> MarkAvailableAsync(
+   Task<Result> MarkAsAvailableAsync(
       Guid carId,
       CancellationToken ct
    );

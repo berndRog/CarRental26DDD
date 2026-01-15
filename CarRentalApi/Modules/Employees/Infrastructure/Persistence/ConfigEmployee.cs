@@ -4,10 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace CarRentalApi.Persistence.Database;
 
-public class ConfigEmployees : IEntityTypeConfiguration<Employee> {
+public class ConfigEmployee(
+   DateTimeOffsetToIsoStringConverter _dtOffToIsoStrConv,
+   NullableDateTimeOffsetToIsoStringConverter _nulDtOffToIsoStrConv
+) : IEntityTypeConfiguration<Employee> {
    public void Configure(EntityTypeBuilder<Employee> b) {
       // Tablename
-      b.ToTable("Employees");
+      b.ToTable("Employee");
       
       // Primary Key is inherited from Person
 

@@ -9,10 +9,8 @@ public sealed record ReservationDetailsDto(
    DateTimeOffset Start,
    DateTimeOffset End,
    ReservationStatus ReservationStatus,
-
    DateTimeOffset CreatedAt,
    DateTimeOffset? ConfirmedAt,
    DateTimeOffset? CancelledAt,
-   DateTimeOffset? ExpiredAt,
-   Guid? RentalId
+   DateTimeOffset? ExpiredAt
 );

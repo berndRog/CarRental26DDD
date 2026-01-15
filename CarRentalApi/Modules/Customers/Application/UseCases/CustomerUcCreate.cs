@@ -11,24 +11,19 @@ public sealed class CustomerUcCreate(
 ) {
    
    public async Task<Result<Customer>> ExecuteAsync(
-      DateTimeOffset createdAt,
-      string? id,
-      CancellationToken ct
+      string firstName,
+      string lastName,
+      string email,
+      DateTimeOffset createdAt = default,
+      string? street =  null,
+      string? postalCode =  null,
+      string? city = null,
+      string? id = null,
+      CancellationToken ct = default
    ) {
-      // // Create Address value object if all address fields are provided
-      // Address? address = null;
-      // if (!string.IsNullOrWhiteSpace(street) &&
-      //     !string.IsNullOrWhiteSpace(postalCode) &&
-      //     !string.IsNullOrWhiteSpace(city)
-      //    ) {
-      //    var addressResult = Address.Create(street, postalCode, city);
-      //    if (addressResult.IsFailure)
-      //       return Result<Customer>.Failure(addressResult.Error);
-      //    address = addressResult.Value;
-      // }
-      
       // Domain factory: enforces domain invariants.
-      var result = Customer.Create(createdAt, id);
+      var result = Customer.Create(firstName, lastName, email, 
+         street, postalCode, city, createdAt, id);
       if (result.IsFailure)
          return Result<Customer>.Failure(result.Error);
      

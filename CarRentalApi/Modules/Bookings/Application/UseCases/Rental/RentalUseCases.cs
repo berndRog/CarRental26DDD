@@ -1,7 +1,7 @@
 using CarRentalApi.BuildingBlocks;
 using CarRentalApi.Domain.UseCases.Rentals;
 using CarRentalApi.Modules.Bookings.Application.UseCases;
-using CarRentalApi.Modules.Rentals.Domain.Enums;
+using CarRentalApi.Modules.Bookings.Domain.Enums;
 
 namespace CarRentalApi.Modules.Rentals.Application.UseCases;
 

@@ -1,4 +1,5 @@
 using CarRentalApi.BuildingBlocks;
+using CarRentalApi.BuildingBlocks.Domain.Entities;
 using CarRentalApi.BuildingBlocks.Persistence;
 using CarRentalApi.Modules.Customers.Domain.ValueObjects;
 using CarRentalApi.Modules.Employees.Domain;
@@ -30,7 +31,8 @@ public sealed class EmployeeUcCreate(
    public async Task<Result<Guid>> ExecuteAsync(
       string firstName,
       string lastName,
-      string email,
+      string emailString,
+      string phoneString,
       string personnelNumber,
       AdminRights adminRights,
       DateTimeOffset createdAt = default,
@@ -38,12 +40,12 @@ public sealed class EmployeeUcCreate(
       Address? address = null,
       CancellationToken ct = default
    ) {
-
+      
       // ---- Use-case guards (cheap validations) ----
       if (string.IsNullOrWhiteSpace(personnelNumber)) 
          return Result<Guid>.Failure(EmployeeErrors.PersonnelNumberIsRequired);
       
-      if (string.IsNullOrWhiteSpace(email)) 
+      if (string.IsNullOrWhiteSpace(emailString)) 
          return Result<Guid>.Failure(EmployeeErrors.EmailIsRequired);
       
       // ---- Uniqueness checks (I/O) ----
@@ -53,9 +55,9 @@ public sealed class EmployeeUcCreate(
          return fail;
       }
 
-      if (await _repository.ExistsEmailAsync(email, ct)) {
+      if (await _repository.ExistsEmailAsync(emailString, ct)) {
          var fail = Result<Guid>.Failure(EmployeeErrors.EmailMustBeUnique);
-         fail.LogIfFailure(_logger, "EmployeeUcCreate.EmailMustBeUnique", new { email });
+         fail.LogIfFailure(_logger, "EmployeeUcCreate.EmailMustBeUnique", new { email = emailString });
          return fail;
       }
 
@@ -63,7 +65,8 @@ public sealed class EmployeeUcCreate(
       var createResult = Employee.Create(
          firstName: firstName,
          lastName: lastName,
-         email: email,
+         emailString: emailString,
+         phoneString:phoneString,
          personnelNumber: personnelNumber,
          adminRights: adminRights,
          createdAt: createdAt,
@@ -74,7 +77,7 @@ public sealed class EmployeeUcCreate(
       if (createResult.IsFailure) {
          createResult.LogIfFailure(
             _logger, "EmployeeUcCreate.DomainRejected",
-            new { firstName, lastName, email, personnelNumber, adminRights });
+            new { firstName, lastName, email = emailString, personnelNumber, adminRights });
          return Result<Guid>.Failure(createResult.Error);
       }
       var employee = createResult.Value!;

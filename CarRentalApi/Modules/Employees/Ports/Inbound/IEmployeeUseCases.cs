@@ -57,7 +57,8 @@ public interface IEmployeeUseCases {
    Task<Result<Guid>> CreateAsync(
       string firstName,
       string lastName,
-      string email,
+      string emailString,
+      string phoneString,
       string personnelNumber,
       AdminRights adminRights,
       DateTimeOffset createdAt,

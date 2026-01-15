@@ -1,6 +1,6 @@
 using System.Globalization;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-namespace CarRentalApi.Data.Database;
+namespace CarRentalApi.Persistence.Database;
 
 
 public sealed class DateTimeOffsetToIsoStringConverter() 
@@ -14,6 +14,8 @@ public sealed class DateTimeOffsetToIsoStringConverter()
       )
    ) {
 }
+
+
 
 /*
 // epoch ist leider schlecht lesbar

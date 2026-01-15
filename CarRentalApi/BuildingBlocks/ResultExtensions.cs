@@ -7,7 +7,7 @@ namespace CarRentalApi.BuildingBlocks;
 /// </summary>
 public static class ResultLoggingExtensions {
 
-   public static void LogIfFailure(
+   public static Result LogIfFailure(
       this Result result,
       ILogger logger,
       string context,
@@ -23,9 +23,10 @@ public static class ResultLoggingExtensions {
             args
          );
       }
+      return result;
    }
 
-   public static void LogIfFailure<T>(
+   public static Result<T> LogIfFailure<T>(
       this Result<T> result,
       ILogger logger,
       string context,
@@ -41,5 +42,6 @@ public static class ResultLoggingExtensions {
             args
          );
       }
+      return result;
    }
 }

@@ -3,7 +3,7 @@ using CarRentalApi.Modules.Cars.Domain.Enums;
 namespace CarRentalApi.Modules.Cars.Application.Contracts.Dto;
 
 public sealed record CarContractDto(
-   Guid Id,
+   Guid CarId,
    string Manufacturer,
    string Model,
    string LicensePlate,

@@ -31,7 +31,8 @@ public sealed class CarRepositoryEf(
       CarCategory category,
       CancellationToken ct
    ) => await _dbContext.Cars
-      .Where(c => c.Category == category)
+      .Where(c => c.Category == category &&
+         (c.Status == CarStatus.Available || c.Status == CarStatus.Rented))
       .CountAsync(ct);
      
    public async Task<IReadOnlyList<Car>> SelectByAsync(

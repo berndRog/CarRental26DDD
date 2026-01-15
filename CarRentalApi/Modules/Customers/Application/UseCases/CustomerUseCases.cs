@@ -12,10 +12,17 @@ public class CustomerUseCases(
 ): ICustomerUseCases {
    
    public Task<Result<Customer>> CreateAsync(
+      string firstName,
+      string lastName,
+      string email,
       DateTimeOffset createdAt,
+      string? street,
+      string? postalCode,
+      string? city,
       string? id,
       CancellationToken ct
-   ) => createUc.ExecuteAsync(createdAt, id, ct);
+   ) => createUc.ExecuteAsync(firstName, lastName, email, createdAt, 
+      street, postalCode, city, id, ct);
    
    public Task<Result> BlockAsync(
       Guid id,
