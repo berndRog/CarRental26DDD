@@ -1,10 +1,10 @@
 using CarRentalApi.BuildingBlocks.Enums;
-namespace CarRentalApi.Modules.Cars.Application.ReadModel.Dto;
+namespace CarRentalApi.Modules.Cars.Application.Dto;
 
 /// <summary>
 /// Lightweight projection for list views.
 /// </summary>
-public sealed record CarListItem(
+public sealed record CarListItemDto(
    Guid CarId,
    string Manufacturer,
    string Model,

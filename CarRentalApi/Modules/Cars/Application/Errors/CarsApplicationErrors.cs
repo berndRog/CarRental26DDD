@@ -24,7 +24,7 @@ public static class CarsApplicationErrors {
       new(
          ErrorCode.BadRequest,
          Title: "Invalid Rental Period",
-         Message: "The rental start date must be before the end date."
+         Message: "The start date must be before the end date."
       );
 
    public static readonly DomainErrors InvalidExamplesPerCategory =

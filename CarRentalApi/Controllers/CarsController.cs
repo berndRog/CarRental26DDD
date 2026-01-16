@@ -1,11 +1,9 @@
 using CarRentalApi.BuildingBlocks;
 using CarRentalApi.BuildingBlocks.Enums;
 using CarRentalApi.BuildingBlocks.ReadModel;
-using CarRentalApi.Modules.Cars.Application;
-using CarRentalApi.Modules.Cars.Application.Contracts.Dto;
+using CarRentalApi.Modules.Cars.Application.Dto;
 using CarRentalApi.Modules.Cars.Application.ReadModel;
 using CarRentalApi.Modules.Cars.Application.ReadModel.Dto;
-using CarRentalApi.Modules.Cars.Application.UseCases.Dto;
 using CarRentalApi.Modules.Cars.Ports.Inbound;
 using Microsoft.AspNetCore.Mvc;
 namespace CarRentalApi.Controllers;
@@ -25,7 +23,7 @@ public sealed class CarsController(
    /// Returns a single CarDetail.
    /// </summary>
    [HttpGet("{carId:guid}", Name = Routes.Cars.GetById)]
-   [ProducesResponseType(typeof(CarDetails), StatusCodes.Status200OK)]
+   [ProducesResponseType(typeof(CarDto), StatusCodes.Status200OK)]
    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
    public async Task<ActionResult> GetByIdAsync(
       Guid carId,
@@ -47,7 +45,7 @@ public sealed class CarsController(
    ///   /api/v1/cars?pageNumber=1&pageSize=20&sortBy=licensePlate&direction=Asc&category=Suv&isRetired=false&searchText=H-
    /// </summary>
    [HttpGet(Name = Routes.Cars.Search)]
-   [ProducesResponseType(typeof(PagedResult<CarListItem>), StatusCodes.Status200OK)]
+   [ProducesResponseType(typeof(PagedResult<CarListItemDto>), StatusCodes.Status200OK)]
    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
    public async Task<ActionResult> SearchAsync(
       [FromQuery] string? searchText,

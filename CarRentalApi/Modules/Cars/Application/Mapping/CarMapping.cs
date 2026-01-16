@@ -1,9 +1,10 @@
-using CarRentalApi.Modules.Cars.Application.ReadModel.Dto;
+using CarRentalApi.Modules.Cars.Application.Dto;
 using CarRentalApi.Modules.Cars.Domain.Aggregates;
 namespace CarRentalApi.Modules.Customers.Application.Contracts.Mapping;
 
-public static class CarReadModelMapping {
-   public static CarDetails ToCarDetails(this Car car) => new(
+public static class CarMapping { 
+   
+   public static CarDto ToCarDto(this Car car) => new(
       CarId: car.Id,
       Manufacturer: car.Manufacturer,
       Model: car.Model,
@@ -15,7 +16,7 @@ public static class CarReadModelMapping {
       RetiredAt: car.RetiredAt
    );
    
-   public static CarListItem ToCarListItem(this Car car) => new(
+   public static CarListItemDto ToCarListItem(this Car car) => new(
       CarId: car.Id,
       Manufacturer: car.Manufacturer,
       Model: car.Model,

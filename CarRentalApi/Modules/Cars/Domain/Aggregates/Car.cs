@@ -92,22 +92,7 @@ public sealed class Car : Entity<Guid> {
          new Car(carId, manufacturer, model, licensePlate, category, createdAt)
       );
    }
-
-   /// <summary>
-   /// Business rule: a car is available if there is no overlap with
-   /// (1) active rentals and (2) confirmed reservations for the given period.
-   /// </summary>
-   public async Task<bool> IsAvailableAsync(
-      RentalPeriod period,
-      ICarAvailabilityReadModel availability,
-      CancellationToken ct
-   ) {
-      if (Status != CarStatus.Available) return false;
-
-      var hasOverlap = await availability.HasOverlapAsync(Id, period, ct);
-      return !hasOverlap;
-   }
-
+   
    // ---------- CarStatus machine (centralized rules) --------
    private Result Transition(
       CarStatus from,

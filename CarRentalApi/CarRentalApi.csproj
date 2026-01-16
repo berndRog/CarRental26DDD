@@ -30,8 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Modules\Bookings\Application\Dto\" />
     <Folder Include="Modules\Bookings\Contracts\Dto\" />
+    <Folder Include="Modules\Cars\Application\Contracts\" />
     <Folder Include="Modules\Cars\Domain\ValueObjects\" />
     <Folder Include="Modules\Customers\Domain\Enums\" />
     <Folder Include="Modules\Customers\Domain\Policies\" />

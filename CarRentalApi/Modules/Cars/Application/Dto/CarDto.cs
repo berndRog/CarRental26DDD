@@ -1,5 +1,5 @@
 using CarRentalApi.BuildingBlocks.Enums;
-namespace CarRentalApi.Modules.Cars.Application.UseCases.Dto;
+namespace CarRentalApi.Modules.Cars.Application.Dto;
 
 public sealed record CarDto(
    Guid CarId,

@@ -1,5 +1,7 @@
 using CarRentalApi.BuildingBlocks;
 using CarRentalApi.BuildingBlocks.ReadModel;
+using CarRentalApi.Modules.Bookings.Application.Pricing.Dto;
+using CarRentalApi.Modules.Cars.Application.Dto;
 using CarRentalApi.Modules.Cars.Application.ReadModel.Dto;
 namespace CarRentalApi.Modules.Cars.Application.ReadModel;
 
@@ -20,7 +22,7 @@ namespace CarRentalApi.Modules.Cars.Application.ReadModel;
 ///
 /// Important:
 /// - This is NOT a bounded-context facade
-/// - Other bounded contexts must use ICarsReadApi (Contracts)
+/// - Other bounded contexts must use contracts if cross-BC reads are required
 /// - This interface must not be used by domain or application services
 ///
 /// Result policy:
@@ -50,10 +52,10 @@ public interface ICarReadModel {
    /// - No domain logic is executed
    ///
    /// Returns:
-   /// - Success(CarDetails) if the car exists
+   /// - Success(<see cref="CarDto"/>) if the car exists
    /// - NotFound if the car does not exist
    /// </summary>
-   Task<Result<CarDetails>> FindByIdAsync(
+   Task<Result<CarDto>> FindByIdAsync(
       Guid carId,
       CancellationToken ct
    );
@@ -72,14 +74,62 @@ public interface ICarReadModel {
    /// - Filtering, paging and sorting are translated directly into database queries
    ///
    /// Returns:
-   /// - Success(PagedResult&lt;CarListItem&gt;)
+   /// - Success(<see cref="PagedResult{T}"/>)
    ///   - Items may be empty if no cars match the criteria
    /// - Invalid if paging or sorting parameters are invalid
    /// </summary>
-   Task<Result<PagedResult<CarListItem>>> SearchAsync(
+   Task<Result<PagedResult<CarListItemDto>>> SearchAsync(
       CarSearchFilter filter,
       PageRequest page,
       SortRequest sort,
+      CancellationToken ct
+   );
+
+   /// <summary>
+   /// Returns availability and pricing information per car category
+   /// for the given rental period (SE-1 / SE-2).
+   ///
+   /// Business meaning:
+   /// - Used during public vehicle search:
+   ///   - SE-1: show available categories + calculated price
+   ///   - SE-2: show the same result filtered by categories and with
+   ///          up to N example cars per category
+   ///
+   /// Availability rules:
+   /// - Capacity is computed per category:
+   ///   - capacity = number of cars in the category that are operationally usable
+   ///   - blocked  = number of CONFIRMED reservations overlapping the period
+   ///   - available = max(0, capacity - blocked)
+   ///
+   /// Pricing rules:
+   /// - Price is calculated from:
+   ///   - a base price per day per category
+   ///   - discount tiers depending on rental length
+   ///     (e.g. ≥3, ≥7, ≥14, ≥30 days)
+   ///
+   /// Example cars:
+   /// - For UI preview only (optional)
+   /// - Returned cars are concrete vehicles (CarId etc.)
+   /// - Example cars are selected from currently available cars
+   ///   (typically excluding vehicles blocked by ACTIVE rentals)
+   ///
+   /// Returns:
+   /// - Success with a list of <see cref="AvailibilityWithPriceDto"/>
+   ///   (one entry per category; may be empty)
+   /// - Failure if input is invalid (e.g. period invalid, start in past,
+   ///   negative examplesPerCategory)
+   /// </summary>
+   /// <param name="start">Rental period start timestamp.</param>
+   /// <param name="end">Rental period end timestamp.</param>
+   /// <param name="examplesPerCategory">
+   /// Number of example cars to include per category.
+   /// Use 0 to disable example cars.
+   /// </param>
+   /// <param name="ct">Cancellation token.</param>
+   Task<Result<IReadOnlyList<AvailibilityWithPriceDto>>> GetAvailabilityWithPriceByCategoryAsync(
+      DateTimeOffset start,
+      DateTimeOffset end,
+      int examplesPerCategory,
       CancellationToken ct
    );
 }
@@ -88,82 +138,68 @@ public interface ICarReadModel {
  * Deutsche Architektur- und Didaktik-Erläuterung
  * =====================================================================
  *
- * Was ist ICarReadModel?
- * ----------------------
- * ICarReadModel ist ein ReadModel (Query Model) für den
- * Cars-/Fleet-Bounded-Context.
+ * Was ist GetAvailabilityWithPriceByCategoryAsync?
+ * ------------------------------------------------
+ * Diese Methode ist die ReadModel-Umsetzung der Such-User-Stories:
  *
- * Es stellt ausschließlich Lesezugriffe auf Fahrzeugdaten bereit
- * und liefert dafür Projektionen (DTOs), keine Domain-Aggregates.
+ * SE-1:
+ * - "Verfügbare Fahrzeugkategorien für einen Zeitraum suchen"
+ * - "Preis anzeigen" (Preis/Tag + Rabattstaffel + Gesamtpreis)
  *
- * Typische Anwendungsfälle:
- * - Fahrzeug-Detailansicht (Admin / Backoffice)
- * - Fahrzeuglisten und Suchmasken
- * - Verwaltungs- und Übersichtsansichten
- *
- *
- * Was ist ICarReadModel NICHT?
- * ----------------------------
- * - Kein UseCase (keine Zustandsänderungen)
- * - Kein Repository (keine Persistenzverantwortung)
- * - Kein Domain Service
- * - Kein Bounded-Context-Facade
- *
- * Insbesondere:
- * - Es ändert keinen Fahrzeugstatus
- * - Es führt keine fachlichen Regeln aus
- * - Es kennt keine Invarianten des Car-Aggregates
+ * SE-2:
+ * - "Suchergebnis nach Kategorien filtern"
+ * - "Bis zu N Beispiel-Fahrzeuge anzeigen" (UI-Vorschau)
  *
  *
- * Warum ein eigenes ReadModel?
- * -----------------------------
- * - Trennung von Lesen und Schreiben (CQRS)
- * - Optimierung für UI- und Suchanforderungen
- * - Vermeidung von unnötigem EF-Core-Tracking
- * - Keine Leaks von Domain-Objekten nach außen
+ * Warum gehört das in ICarReadModel (und nicht in Contracts)?
+ * ----------------------------------------------------------
+ * - Es ist kein BC-zu-BC Contract.
+ * - Es ist eine UI-/HTTP-Read-Anforderung (Search Screen).
+ * - Kein anderer BC fragt Preise ab.
+ *
+ * Deshalb:
+ * - ReadModel (UI) → ICarReadModel
+ * - Pick-up (BC-intern / Rentals) → ICarReadContract
  *
  *
- * Warum gibt es nur eine SearchAsync-Methode?
- * --------------------------------------------
- * Fachliche und technische Entscheidung:
- * - Alle Listen- und Suchanforderungen werden über
- *   Filter + Paging + Sorting abgebildet
- * - Keine spezialisierten Methoden wie:
- *   - FindByCategory
- *   - FindInMaintenance
- *
- * Vorteile:
- * - Einheitlicher API-Zugriff
- * - Einfachere Erweiterbarkeit
- * - Klare Kontrolle erlaubter Filter- und Sortierfelder
- *
- *
- * Abgrenzung zu anderen Schichten:
- * --------------------------------
- * - Zustandsänderungen (Create, Maintenance, Retire):
- *   → ICarUseCases (Application Layer)
- *
- * - Fachliche Regeln & Zustandsautomaten:
- *   → Car Aggregate (Domain Layer)
- *
- * - Persistenz / EF Core:
- *   → CarRepository (Infrastructure)
- *
- * - BC-übergreifende Abfragen:
- *   → ICarsReadApi (Contracts)
- *
- *
- * Typische Implementierungsdetails:
+ * Wie wird Verfügbarkeit berechnet?
  * ---------------------------------
- * - EF Core mit AsNoTracking()
- * - Projektionen via Select(...)
- * - Keine Include(...)
- * - Nutzung von Indizes für Filter- und Sortierfelder
+ * Verfügbarkeit in der Suche ist Kategorie-basiert:
+ * - capacity:
+ *   Anzahl Fahrzeuge einer Kategorie, die grundsätzlich vermietbar sind
+ *   (z.B. Status == Available)
  *
- * Dadurch:
- * - hohe Performance
- * - saubere BC-Grenzen
- * - klare CQRS-Struktur
+ * - blocked:
+ *   Anzahl CONFIRMED Reservierungen der Kategorie,
+ *   die zeitlich überlappen (Half-open Interval [start,end))
+ *
+ * - available:
+ *   max(0, capacity - blocked)
+ *
+ * Wichtig:
+ * - Nur CONFIRMED Reservierungen blockieren Kapazität
+ * - Draft/Cancelled/Expired blockieren NICHT
+ *
+ *
+ * Wie werden Beispiel-Fahrzeuge gewählt?
+ * -------------------------------------
+ * Beispiel-Fahrzeuge sind nur "Preview"-Objekte für die UI.
+ * Sie sind NICHT verbindlich reserviert.
+ *
+ * Typisch:
+ * - Auswahl aus aktuell verfügbaren Autos
+ * - Blockade über ACTIVE Rentals (CarId) beachten
+ *
+ *
+ * Preisstaffel:
+ * -------------
+ * Die Preisstaffel ist bewusst simpel:
+ * - Basispreis pro Tag je Kategorie
+ * - Rabatte ab definierter Mietdauer (z.B. 3/7/14/30 Tage)
+ *
+ * Kein eigener Abrechnungs-BC:
+ * - Für die Vorlesung/MVP bewusst im Cars-ReadModel integriert
+ * - Fachlich später auslagerbar (ohne jetzt neue Komplexität)
  *
  * =====================================================================
  */
