@@ -24,7 +24,7 @@ public sealed class CustomerReadModelEf(
          ? Result<CustomerDetail>.Failure(CustomerErrors.NotFound) 
          : Result<CustomerDetail>.Success(customer.ToCustomerDetail());
    }
-   /*
+
    public async Task<Result<CustomerDetail>> FindByEmailAsync(
       string email,
       CancellationToken ct
@@ -72,6 +72,6 @@ public sealed class CustomerReadModelEf(
 
       return Result<IReadOnlyList<CustomerListItem>>.Success(customerListItems);
    }
-*/
+
 
 }

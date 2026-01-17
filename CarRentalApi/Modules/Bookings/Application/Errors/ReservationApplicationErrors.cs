@@ -28,4 +28,13 @@ public static class ReservationApplicationErrors {
          Title: "Invalid Sort Field",
          Message: "The provided sort field is not supported for reservations."
       );
+   
+      
+   public static readonly DomainErrors ReservationIdMismatch =
+      new(
+         ErrorCode.BadRequest,
+         Title: "Reservation Id Mismatch",
+         Message: "The reservation id in the route does not match the reservation id in the request body."
+      );
+
 }

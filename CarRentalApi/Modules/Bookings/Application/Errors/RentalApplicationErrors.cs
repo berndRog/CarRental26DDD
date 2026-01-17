@@ -57,6 +57,12 @@ public static class RentalApplicationErrors {
          Message: "The Provided Reservation ReservationId Is Invalid."
       );
    
+   public static readonly DomainErrors RentalIdMismatch =
+      new(
+         ErrorCode.BadRequest,
+         Title: "Rental Id Mismatch",
+         Message: "The rental id in the route does not match the rental id in the request body."
+      );
    
    public static readonly DomainErrors ReservationNotConfirmed =
       new(
@@ -65,6 +71,8 @@ public static class RentalApplicationErrors {
          Message: "The Reservation Must Be Confirmed Before Pick-Up."
       );
 
+   
+   
    public static readonly DomainErrors NoCarAvailable =
       new(
          ErrorCode.Conflict,

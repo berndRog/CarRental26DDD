@@ -4,12 +4,11 @@ namespace CarRentalApi.Modules.Bookings.Application.ReadModel.Mapping;
 
 public static class RentalUseCasesMapping {
 
-   public static RentalPickupDto ToRentalCreateDto(this Rental rental) => new(
-      ReservationId: rental.Id, 
-      FuelOut: rental.FuelOut,
-      KmOut: rental.KmOut,
-      PickedUpAt: rental.PickupAt
-   );
+   // public static RentalPickupDto ToRentalCreateDto(this Rental rental) => new(
+   //    FuelOut: rental.FuelOut,
+   //    KmOut: rental.KmOut,
+   //    PickedUpAt: rental.PickupAt
+   // );
 
    /*
    public static ReservationListItemDto ToReservationListItemDto(this Reservation reservation) => new(

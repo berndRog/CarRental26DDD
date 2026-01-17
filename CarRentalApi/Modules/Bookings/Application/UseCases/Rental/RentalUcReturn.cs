@@ -1,6 +1,7 @@
 using CarRentalApi.BuildingBlocks;
 using CarRentalApi.BuildingBlocks.Persistence;
 using CarRentalApi.Modules.Bookings.Application.ReadModel.Errors;
+using CarRentalApi.Modules.Bookings.Application.UseCases.Dto;
 using CarRentalApi.Modules.Bookings.Domain;
 using CarRentalApi.Modules.Bookings.Domain.Enums;
 using CarRentalApi.Modules.Cars.Application.Contracts;
@@ -24,7 +25,6 @@ public sealed class RentalUcReturn(
    IRentalRepository _rentalRepo,
    ICarWriteContract _carsWrite,
    IUnitOfWork _unitOfWork,
-   IClock _clock,
    ILogger<RentalUcReturn> _logger
 ) {
 
@@ -49,38 +49,30 @@ public sealed class RentalUcReturn(
    /// - Conflict if the rental cannot be returned in its current state
    /// </summary>
    public async Task<Result> ExecuteAsync(
-      Guid rentalId,
-      RentalFuelLevel fuelIn,
-      int kmIn,
+      RentalReturnDto returnDto,
       CancellationToken ct
    ) {
-      // Guard: invalid id
-      if (rentalId == Guid.Empty) 
-         return Result.Failure(RentalApplicationErrors.InvalidId)
-            .LogIfFailure(_logger, "RentalUcReturn.InvalidRentalId", new { rentalId });
-
       // 1) Load rental aggregate (tracked)
-      var rental = await _rentalRepo.FindByIdAsync(rentalId, ct);
+      var rental = await _rentalRepo.FindByIdAsync(returnDto.RentalId, ct);
       if (rental is null) 
          return Result.Failure(RentalApplicationErrors.NotFound)
-            .LogIfFailure(_logger, "RentalUcReturn.NotFound", new { rentalId });
+            .LogIfFailure(_logger, "RentalUcReturn.NotFound", new { returnDto.RentalId });
 
       // 2) Apply domain transition
-      var returnAt = _clock.UtcNow;
-      var result = rental.ReturnCar(
-         returnAt: returnAt,
-         fuelIn: fuelIn,
-         kmIn: kmIn
+      var resultReturnCar = rental.ReturnCar(
+         returnAt: returnDto.ReturnAt,
+         fuelIn: returnDto.FuelIn,
+         kmIn: returnDto.KmIn
       );
 
-      if (result.IsFailure) 
-         return result.LogIfFailure(_logger, "RentalUcReturn.DomainRejected",
-            new { rentalId = rental.Id, returnAt, fuelIn, kmIn });
+      if (resultReturnCar.IsFailure) 
+         return resultReturnCar.LogIfFailure(_logger, "RentalUcReturn.DomainRejected",
+            new { rentalId = rental.Id, returnDto.ReturnAt, returnDto.FuelIn, returnDto.KmIn });
       
       // 3) Mark car as available (Fleet/Cars BC)
-      var carWriteResult = await _carsWrite.MarkAsAvailableAsync(rental.CarId, ct);
-      if (carWriteResult.IsFailure) 
-         return Result.Failure(carWriteResult.Error)
+      var resultCarWrite = await _carsWrite.MarkAsAvailableAsync(rental.CarId, ct);
+      if (resultCarWrite.IsFailure) 
+         return Result.Failure(resultCarWrite.Error)
             .LogIfFailure(_logger, "RentalUcReturn.MarkCarAvailableFailed",
                new { rentalId = rental.Id, carId = rental.CarId });
 

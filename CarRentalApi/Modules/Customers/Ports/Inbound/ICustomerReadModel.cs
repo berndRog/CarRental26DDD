@@ -57,8 +57,7 @@ public interface ICustomerReadModel {
       Guid Id,
       CancellationToken ct
    );
-
-   /*
+   
    /// <summary>
    /// Finds a single customer by email address.
    ///
@@ -127,5 +126,4 @@ public interface ICustomerReadModel {
       SortRequest sort,
       CancellationToken ct
    );
-   */
 }

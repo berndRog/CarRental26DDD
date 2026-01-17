@@ -1,6 +1,5 @@
 using CarRentalApi.BuildingBlocks;
-using CarRentalApi.Modules.Bookings.Domain.Enums;
-
+using CarRentalApi.Modules.Bookings.Application.UseCases.Dto;
 namespace CarRentalApi.Modules.Rentals.Application.UseCases;
 
 /// <summary>
@@ -59,9 +58,7 @@ public interface IRentalUseCases {
    /// - Invalid if input values are out of range
    /// </summary>
    Task<Result<Guid>> PickupAsync(
-      Guid reservationId,
-      RentalFuelLevel fuelOut,
-      int kmOut,
+      RentalPickupDto pickupDto,
       CancellationToken ct
    );
 
@@ -88,9 +85,7 @@ public interface IRentalUseCases {
    /// - Invalid if input values are out of range
    /// </summary>
    Task<Result> ReturnAsync(
-      Guid rentalId,
-      RentalFuelLevel fuelIn,
-      int kmIn,
+      RentalReturnDto returnDto,
       CancellationToken ct
    );
 }
