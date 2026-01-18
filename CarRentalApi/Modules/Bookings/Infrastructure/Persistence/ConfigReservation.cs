@@ -32,7 +32,12 @@ public sealed class ConfigReservation(
 
       // Prefer int enum mapping for status (smaller/faster indexes than strings)
       b.Property(x => x.Status).HasConversion<int>().IsRequired();
+      
+      // Indexes (basic)
+      b.HasIndex(x => x.CustomerId);
+      b.HasIndex(x => new { x.CarCategory, x.Status} );
 
+      
       // Owned value object: Period
       b.OwnsOne(r => r.Period, rp => {
          rp.WithOwner();
@@ -46,16 +51,14 @@ public sealed class ConfigReservation(
             .HasColumnName("PeriodEnd")
             .HasConversion(_dtOffToIsoStrConv)
             .IsRequired();
+         // index on owned properties (maps to PeriodStart/PeriodEnd columns)
+         rp.HasIndex(p => new { p.Start, p.End });
       });
 
       b.Navigation(x => x.Period).IsRequired();
+      
 
-      // Indexes (basic)
-      b.HasIndex(x => x.CustomerId);
 
-      // Availability search / overlap queries (SE-1/SE-2)
-      // Important: use column names for owned properties
-      b.HasIndex("CarCategory", "Status", "PeriodStart", "PeriodEnd");
 
 #if OOP_MODE
       b.HasOne(res => res.Customer)

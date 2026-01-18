@@ -33,4 +33,11 @@ public static class CustomerErrors {
          Message: "The customer is already blocked and cannot be blocked again."
       );
    
+   public static readonly DomainErrors NameIsRequired =
+      new(
+         ErrorCode.BadRequest,
+         Title: "Name is required",
+         Message: "The name parameter is required and cannot be empty."
+      );
+   
 }
