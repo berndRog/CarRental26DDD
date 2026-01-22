@@ -1,4 +1,4 @@
-namespace CarRentalApi.BuildingBlocks.Persistence;
+namespace CarRentalApi.BuildingBlocks.Infrastructure.Persistence;
 
 public interface IUnitOfWork {
    Task<int> SaveAllChangesAsync(

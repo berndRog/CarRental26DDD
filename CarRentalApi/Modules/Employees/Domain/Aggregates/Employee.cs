@@ -2,8 +2,6 @@ using CarRentalApi.BuildingBlocks;
 using CarRentalApi.BuildingBlocks.Domain.Entities;
 using CarRentalApi.BuildingBlocks.Domain.ValueObjects;
 using CarRentalApi.Modules.Common.Domain.Errors;
-using CarRentalApi.Modules.Common.Domain.ValueObjects;
-using CarRentalApi.Modules.Customers.Domain.ValueObjects;
 using CarRentalApi.Modules.Employees.Domain.Enums;
 using CarRentalApi.Modules.Employees.Domain.Errors;
 
@@ -29,9 +27,13 @@ namespace CarRentalApi.Modules.Employees.Domain.Aggregates;
 /// - This aggregate contains no persistence or application logic
 /// - All state changes are enforced via domain methods
 /// </summary>
-public sealed class Employee : Person {
+public sealed class Employee : Entity<Guid> {
    
+   public string FirstName { get; protected set; } = string.Empty;
+   public string LastName  { get; protected set; } = string.Empty;
+   public Email Email     { get; protected set; } = default!;
    public Phone? Phone { get; private set; } 
+   
    public string PersonnelNumber { get; private set; } = string.Empty;
    public AdminRights AdminRights { get; private set; } = AdminRights.ViewReports;
    public bool IsAdmin => AdminRights != AdminRights.None;
@@ -81,10 +83,23 @@ public sealed class Employee : Person {
       phoneString = phoneString?.Trim() ?? string.Empty;
       personnelNumber = personnelNumber?.Trim() ?? string.Empty;
 
-      var baseValidation = ValidatePersonData(firstName, lastName, emailString);
-      if (baseValidation.IsFailure)
-         return Result<Employee>.Failure(baseValidation.Error);
-      var email = Email.Create(emailString).Value!;
+      if (string.IsNullOrWhiteSpace(firstName))
+         return Result.Failure(CommonErrors.FirstNameIsRequired);
+      if (firstName.Length is < 2 or > 100)
+         return Result.Failure(CommonErrors.InvalidFirstName);
+      
+      if (string.IsNullOrWhiteSpace(lastName))
+         return Result.Failure(CommonErrors.LastNameIsRequired);
+      if (lastName.Length is < 2 or > 100)
+         return Result.Failure(CommonErrors.InvalidFirstName);
+
+      if (string.IsNullOrWhiteSpace(emailString))
+         return Result.Failure(CommonErrors.EmailIsRequired);
+      var resultEmail = Email.Create(emailString);
+      if(!resultEmail.IsFailure) 
+         return Result.Failure(CommonErrors.InvalidEmail);
+      var email = resultEmail.Value!;
+
       
       Phone? phone = null;
       if (!string.IsNullOrWhiteSpace(phoneString)) {

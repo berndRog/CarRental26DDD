@@ -20,6 +20,11 @@ public sealed record Phone {
    private static readonly Regex Allowed =
       new(@"^(?=.*\d)[0-9 +()/\-]{7,30}$", RegexOptions.Compiled);
 
+   // common international notation artifact: "+49 (0)..."  -> "+49 ..."
+   private static readonly Regex OptionalTrunkZero =
+      new(@"\(\s*0\s*\)", RegexOptions.Compiled);
+   
+   
    public static Result<Phone> Create(string input) {
       if (string.IsNullOrWhiteSpace(input))
          return Result<Phone>.Failure(CommonErrors.InvalidPhone);
@@ -30,12 +35,17 @@ public sealed record Phone {
          return Result<Phone>.Failure(CommonErrors.InvalidPhone);
 
       var hasPlus = number.StartsWith("+");
-      var digits = Regex.Replace(number, @"\D", ""); // keep digits only
-      // sanity: ensure at least 7 digits after normalization 
+      
+      // Remove "(0)" occurrences like "+49 (0)511 ..."
+      var cleaned = OptionalTrunkZero.Replace(number, "");
+      // Keep digits only
+      var digits = Regex.Replace(cleaned, @"\D", ""); 
+      
+      // sanity: ensure at least 7 digits after normalization
       if (digits.Length < 7)
          return Result<Phone>.Failure(CommonErrors.InvalidPhone);
       
-      // Minimal normalization:
+      // Minimal normalization (canonical form):
       // "+49 (0)511/ 8743 422" -> "+49511812345678"
       var normalized = hasPlus ? "+" + digits : digits;
       

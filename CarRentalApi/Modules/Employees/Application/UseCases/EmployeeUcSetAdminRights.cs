@@ -1,5 +1,5 @@
 using CarRentalApi.BuildingBlocks;
-using CarRentalApi.BuildingBlocks.Persistence;
+using CarRentalApi.BuildingBlocks.Infrastructure.Persistence;
 using CarRentalApi.Modules.Employees.Domain;
 using CarRentalApi.Modules.Employees.Domain.Enums;
 using CarRentalApi.Modules.Employees.Domain.Errors;

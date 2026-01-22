@@ -14,13 +14,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Authentication / Authorization -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.1" />
+    <!-- Token validation primitives (optional but explicit) -->
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.6.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.6.1" />
+    <!-- Swagger -->
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <!-- Entity Framework Core -->
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <!-- SQLite provider for EF Core -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,8 +45,8 @@
     <Folder Include="Modules\Cars\Application\Contracts\" />
     <Folder Include="Modules\Cars\Domain\ValueObjects\" />
     <Folder Include="Modules\Customers\Application\Errors\" />
-    <Folder Include="Modules\Customers\Domain\Enums\" />
     <Folder Include="Modules\Customers\Domain\Policies\" />
+    <Folder Include="Modules\Customers\Domain\ValueObjects\" />
     <Folder Include="Modules\Employees\Application\Contracts\" />
     <Folder Include="Modules\Employees\Application\ReadModel\Errors\" />
     <Folder Include="Modules\Employees\Application\Services\" />

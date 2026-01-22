@@ -1,12 +1,11 @@
-using CarRentalApi.BuildingBlocks;
-namespace CarRentalApi.Modules.Common.Domain.ValueObjects;
+namespace CarRentalApi.BuildingBlocks.Domain.ValueObjects;
 
 public sealed record Email {
-
    public string Value { get; private set; } = string.Empty;
 
    // EF Core ctor
-   private Email() { }
+   private Email() {
+   }
 
    // Domain ctor
    private Email(string value) {
@@ -19,18 +18,27 @@ public sealed record Email {
       if (v.Length is < 5 or > 320)
          return Result<Email>.Failure(CommonErrors.InvalidEmail);
 
-      var parts = v.Split('@');
-      if (parts.Length != 2)
+      var at = v.LastIndexOf('@');
+
+      // must contain exactly one '@'
+      if (at <= 0 || at != v.IndexOf('@') || at >= v.Length - 1)
          return Result<Email>.Failure(CommonErrors.InvalidEmail);
 
-      if (string.IsNullOrWhiteSpace(parts[0]) ||
-          string.IsNullOrWhiteSpace(parts[1]) ||
-          !parts[1].Contains('.'))
+      var localPart = v[..at];
+      var domainPart = v[(at + 1)..];
+
+      if (string.IsNullOrWhiteSpace(localPart))
          return Result<Email>.Failure(CommonErrors.InvalidEmail);
 
+      // minimal domain check
+      if (!domainPart.Contains('.') ||
+          domainPart.StartsWith('.') ||
+          domainPart.EndsWith('.'))
+         return Result<Email>.Failure(CommonErrors.InvalidEmail);
 
       return Result<Email>.Success(new Email(v));
    }
 
    public override string ToString() => Value;
+   
 }

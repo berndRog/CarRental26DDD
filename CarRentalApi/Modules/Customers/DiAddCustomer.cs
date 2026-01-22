@@ -1,31 +1,26 @@
+using CarRentalApi.BuildingBlocks.Ports.Outbound;
 using CarRentalApi.Domain;
 using CarRentalApi.Modules.Cars.Application;
 using CarRentalApi.Modules.Cars.Application.UseCases;
-using CarRentalApi.Modules.Cars.Domain.Policies;
 using CarRentalApi.Modules.Cars.Infrastructure.Repositories;
-using CarRentalApi.Modules.Cars.Ports.Outbound;
 using CarRentalApi.Modules.Customers.Application.Contracts;
 using CarRentalApi.Modules.Customers.Application.ReadModel;
 using CarRentalApi.Modules.Customers.Application.Services;
 using CarRentalApi.Modules.Customers.Application.UseCases.Block;
 using CarRentalApi.Modules.Customers.Infrastructure.ReadModel;
-namespace CarRentalApi.Modules.Cars;
+namespace CarRentalApi.Modules.Customers;
 
 public static class DiAddCustomersExtensions {
    
    public static IServiceCollection AddCustomers(
       this IServiceCollection services
    ) {
-      
-
-      // =========================================================      
-      // Contracts BC-to-BC
-      // =========================================================
-      services.AddScoped<ICustomerReadContract, CustomerReadContractServiceEf>();
-      
       // =========================================================
       // Inbound ports (HTTP / UI)
       // =========================================================
+      // Contracts      
+      services.AddScoped<ICustomerReadContract, CustomerReadContractServiceEf>();
+
       // ReadModels (Queries)
       services.AddScoped<ICustomerReadModel, CustomerReadModelEf>();
       
@@ -39,6 +34,10 @@ public static class DiAddCustomersExtensions {
       // =========================================================
       // Outbound ports
       // =========================================================
+      // Gateways security
+      services.AddScoped<IIdentityGateway, CustomerIdentityGatewayEf>();
+      
+      
       // Repositories
       services.AddScoped<ICustomerRepository, CustomerRepositoryEf>();
       

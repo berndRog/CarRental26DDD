@@ -1,5 +1,5 @@
 using CarRentalApi.BuildingBlocks.Domain.Entities;
-using CarRentalApi.Modules.Common.Domain.ValueObjects;
+using CarRentalApi.BuildingBlocks.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace CarRentalApi.Modules.People.Infrastructure.Persistence;

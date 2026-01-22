@@ -1,5 +1,5 @@
 using CarRentalApi.BuildingBlocks;
-using CarRentalApi.BuildingBlocks.Persistence;
+using CarRentalApi.BuildingBlocks.Infrastructure.Persistence;
 using CarRentalApi.Modules.Bookings.Domain;
 using CarRentalApi.Modules.Bookings.Domain.Aggregates;
 using CarRentalApi.Modules.Bookings.Domain.Enums;

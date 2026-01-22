@@ -1,9 +1,20 @@
+using CarRentalApi.Modules.Cars.Application.Dto;
+using CarRentalApi.Modules.Customers.Application.contracts.Dto;
 using CarRentalApi.Modules.Customers.Application.ReadModel.Dto;
 using CarRentalApi.Modules.Customers.Domain.Aggregates;
 namespace CarRentalApi.Modules.Customers.Application.Contracts.Mapping;
 
-public static class CustomerReadModelMapping {
+public static class CustomerApplicationMapping {
    
+   // Contract Mappings
+   public static CustomerContractDto ToCustomerDto(this Customer customer) => new(
+      Id: customer.Id.ToString(),
+      Identity: customer.IdentitySubject,
+      customer.CreatedAt,
+      customer.IsBlocked
+   );
+
+   // Read Model Mappings 
    public static CustomerDetail ToCustomerDetail(this Customer customer) => new(
       Id: customer.Id,
       CreatedAt: customer.CreatedAt,
@@ -16,4 +27,6 @@ public static class CustomerReadModelMapping {
       CreatedAt: customer.CreatedAt,
       IsBlocked: customer.IsBlocked
    );
+   
+   // Use Cases Mappings
 }

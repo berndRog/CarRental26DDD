@@ -1,4 +1,3 @@
-using CarRentalApi.Modules.Customers.Domain.ValueObjects;
 namespace CarRentalApi.Modules.Customers.Application.ReadModel.Dto;
 
 /// <summary>

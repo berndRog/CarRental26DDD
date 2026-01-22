@@ -1,7 +1,7 @@
 using CarRentalApi.BuildingBlocks;
 using CarRentalApi.BuildingBlocks.Domain.Entities;
-using CarRentalApi.BuildingBlocks.Persistence;
-using CarRentalApi.Modules.Customers.Domain.ValueObjects;
+using CarRentalApi.BuildingBlocks.Domain.ValueObjects;
+using CarRentalApi.BuildingBlocks.Infrastructure.Persistence;
 using CarRentalApi.Modules.Employees.Domain;
 using CarRentalApi.Modules.Employees.Domain.Aggregates;
 using CarRentalApi.Modules.Employees.Domain.Enums;

@@ -1,4 +1,4 @@
-using CarRentalApi.BuildingBlocks.Persistence;
+using CarRentalApi.BuildingBlocks.Infrastructure.Persistence;
 using CarRentalApi.Domain;
 namespace CarRentalApi.Data.Database;
 

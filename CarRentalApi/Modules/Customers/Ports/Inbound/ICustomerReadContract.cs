@@ -1,6 +1,6 @@
 using CarRentalApi.BuildingBlocks;
 using CarRentalApi.Modules.Customers.Application.contracts.Dto;
-using CarRentalApi.Modules.Customers.Application.Contracts.Dto;
+
 
 namespace CarRentalApi.Modules.Customers.Application.Contracts;
 

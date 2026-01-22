@@ -1,5 +1,5 @@
 using CarRentalApi.BuildingBlocks;
-using CarRentalApi.BuildingBlocks.Persistence;
+using CarRentalApi.BuildingBlocks.Infrastructure.Persistence;
 using CarRentalApi.Modules.Bookings.Application.ReadModel.Errors;
 using CarRentalApi.Modules.Bookings.Application.UseCases.Dto;
 using CarRentalApi.Modules.Bookings.Domain;

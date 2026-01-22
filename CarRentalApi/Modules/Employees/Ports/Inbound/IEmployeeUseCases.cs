@@ -1,5 +1,5 @@
 using CarRentalApi.BuildingBlocks;
-using CarRentalApi.Modules.Customers.Domain.ValueObjects;
+using CarRentalApi.BuildingBlocks.Domain.ValueObjects;
 using CarRentalApi.Modules.Employees.Domain.Enums;
 namespace CarRentalApi.Modules.Employees.Ports.Inbound;
 

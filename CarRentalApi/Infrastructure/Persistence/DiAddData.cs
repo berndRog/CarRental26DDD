@@ -1,4 +1,4 @@
-using CarRentalApi.BuildingBlocks.Persistence;
+using CarRentalApi.BuildingBlocks.Infrastructure.Persistence;
 using CarRentalApi.Data.Database;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApi.Data.Extensions;

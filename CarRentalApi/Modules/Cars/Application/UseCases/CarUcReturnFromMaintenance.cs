@@ -1,5 +1,5 @@
 using CarRentalApi.BuildingBlocks;
-using CarRentalApi.BuildingBlocks.Persistence;
+using CarRentalApi.BuildingBlocks.Infrastructure.Persistence;
 using CarRentalApi.Domain;
 using CarRentalApi.Modules.Cars.Domain.Errors;
 using CarRentalApi.Modules.Cars.Infrastructure;

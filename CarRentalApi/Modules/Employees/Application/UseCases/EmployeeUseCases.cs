@@ -1,6 +1,5 @@
 using CarRentalApi.BuildingBlocks;
-using CarRentalApi.BuildingBlocks.Persistence;
-using CarRentalApi.Modules.Customers.Domain.ValueObjects;
+using CarRentalApi.BuildingBlocks.Domain.ValueObjects;
 using CarRentalApi.Modules.Employees.Domain.Enums;
 using CarRentalApi.Modules.Employees.Ports.Inbound;
 

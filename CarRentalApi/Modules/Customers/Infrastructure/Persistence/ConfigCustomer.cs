@@ -1,4 +1,4 @@
-using CarRentalApi.Modules.Common.Domain.ValueObjects;
+using CarRentalApi.BuildingBlocks.Domain.ValueObjects;
 using CarRentalApi.Modules.Customers.Domain.Aggregates;
 using CarRentalApi.Persistence.Database;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +21,7 @@ public sealed class ConfigCustomer(
       // Scalar properties
       b.Property(x => x.CreatedAt).HasConversion(_dtOffToIsoStrConv).IsRequired();
       b.Property(x => x.BlockedAt).HasConversion(_nulDtOffToIsoStrConv).IsRequired(false);
-      b.Property(x => x.Identity).HasMaxLength(200).IsRequired(false);
+      b.Property(x => x.IdentitySubject).HasMaxLength(200).IsRequired(false);
       
       // Owned: Contact (REQUIRED)
       b.OwnsOne(x => x.Contact, c => {
@@ -58,7 +58,7 @@ public sealed class ConfigCustomer(
       b.Navigation(x => x.Address).IsRequired(false);
       
       // Indexes
-      b.HasIndex(x => x.Identity);
+      b.HasIndex(x => x.IdentitySubject);
 
       //b.HasIndex("Contact_Email").IsUnique();
 

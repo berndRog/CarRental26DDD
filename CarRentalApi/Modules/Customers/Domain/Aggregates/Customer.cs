@@ -1,8 +1,8 @@
 using CarRentalApi.BuildingBlocks;
 using CarRentalApi.BuildingBlocks.Domain.Entities;
+using CarRentalApi.BuildingBlocks.Domain.ValueObjects;
 using CarRentalApi.Modules.Common.Domain.Errors;
 using CarRentalApi.Modules.Customers.Domain.Errors;
-using CarRentalApi.Modules.Customers.Domain.ValueObjects;
 namespace CarRentalApi.Modules.Customers.Domain.Aggregates;
 
 public sealed class Customer : Entity<Guid> {
@@ -22,12 +22,15 @@ public sealed class Customer : Entity<Guid> {
 #else
    #error "Define either OOP_MODE or DDD_MODE in .csproj"
 #endif
-
-   public Contact Contact { get; private set; } = default!;
-   public Credentials Credentials { get; private set; } = default!; // Phase 1: required
-   public string? Identity { get; private set; } // Phase 2 (IAM)
+   
+   public string FirstName { get; private set; } = string.Empty;
+   public string LastName  { get; private set; } = string.Empty;
+   public Email Email { get; private set; } 
    public Address? Address { get; private set; }
-   public DateTimeOffset CreatedAt { get; private set; }
+
+   public IdentitySubject IdentitySubject { get; private set; }   // OidvOAuthServer
+   public DateTimeOffset CreatedAt { get; private set; } 
+   
    public DateTimeOffset? BlockedAt { get; private set; }
    public bool IsBlocked => BlockedAt is not null;
 
@@ -38,12 +41,16 @@ public sealed class Customer : Entity<Guid> {
    // Domain ctor
    private Customer(
       Guid id,
-      Contact contact,
+      string firstName,
+      string lastName,
+      Email email,
       Address? address,
       DateTimeOffset createdAt
    ) {
       Id = id;
-      Contact = contact;
+      FirstName = firstName;
+      LastName  = lastName;
+      Email     = email;
       Address = address;
       CreatedAt = createdAt;
    }
@@ -52,17 +59,44 @@ public sealed class Customer : Entity<Guid> {
    public static Result<Customer> Create(
       string firstName,
       string lastName,
-      string email,
+      string emailString,
+      string? phoneString = null,
       string? street = null,
       string? postalCode = null,
       string? city = null,
       DateTimeOffset createdAt = default,
       string? id = null
    ) {
-      var resultContact = Contact.Create(firstName, lastName, email);
-      if (resultContact.IsFailure)
-         return Result<Customer>.Failure(resultContact.Error);
-      var contact = resultContact.Value!;
+      // Normalize input early
+      firstName = firstName.Trim();
+      lastName = lastName.Trim();
+      emailString = emailString.Trim();
+      
+      if (string.IsNullOrWhiteSpace(firstName))
+         return Result<Customer>.Failure(CustomerErrors.FirstNameIsRequired);
+      if (firstName.Length is < 2 or > 100)
+         return Result<Customer>.Failure(CustomerErrors.InvalidFirstName);
+      
+      if (string.IsNullOrWhiteSpace(lastName))
+         return Result<Customer>.Failure(CustomerErrors.LastNameIsRequired);
+      if (lastName.Length is < 2 or > 100)
+         return Result<Customer>.Failure(CustomerErrors.InvalidLastName);
+
+      if (string.IsNullOrWhiteSpace(emailString))
+         return Result<Customer>.Failure(CustomerErrors.EmailIsRequired);
+      var resultEmail = Email.Create(emailString);
+      
+      if(!resultEmail.IsFailure) 
+         return Result<Customer>.Failure(resultEmail.Error);
+      var email = resultEmail.Value!;
+      
+      Phone? phone = null;
+      if (!string.IsNullOrWhiteSpace(phoneString)) {
+         var resultPhone = Phone.Create(phoneString);
+         if (!resultPhone.IsFailure)
+            return Result<Customer>.Failure(resultPhone.Error);
+         phone = resultPhone.Value!;
+      }
 
       Address? address = null;
       if (!string.IsNullOrWhiteSpace(street) &&
@@ -76,7 +110,7 @@ public sealed class Customer : Entity<Guid> {
       }
 
       if (createdAt == default)
-         return Result<Customer>.Failure(CommonErrors.CreatedAtIsRequired);
+         return Result<Customer>.Failure(CustomerErrors.CreatedAtIsRequired);
 
       var result = EntityId.Resolve(id, PersonErrors.InvalidId);
       if (result.IsFailure)
@@ -94,23 +128,6 @@ public sealed class Customer : Entity<Guid> {
    }
 
    //--- Domain methods ---
-   // Registration: Set initial password (registration)
-   public Result SetPassword(string plainPassword) {
-      var credentialsResult = Credentials.Create(plainPassword);
-      if (credentialsResult.IsFailure)
-         return Result.Failure(credentialsResult.Error);
-      // Set credentials
-      Credentials = credentialsResult.Value;
-      return Result.Success();
-   }
-
-   // Login: Verify password
-   public Result VerifyPassword(string plainPassword) {
-      if (Credentials is null)
-         return Result.Failure(CredentialsErrors.CredentialsNotSet);
-      return Credentials.VerifyPassword(plainPassword);
-   }
-
    public Result Block(
       DateTimeOffset blockedAt
    ) {
