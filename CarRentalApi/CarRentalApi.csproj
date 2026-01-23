@@ -41,17 +41,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Modules\Bookings\Contracts\Dto\" />
-    <Folder Include="Modules\Cars\Application\Contracts\" />
-    <Folder Include="Modules\Cars\Domain\ValueObjects\" />
-    <Folder Include="Modules\Customers\Application\Errors\" />
-    <Folder Include="Modules\Customers\Domain\Policies\" />
-    <Folder Include="Modules\Customers\Domain\ValueObjects\" />
-    <Folder Include="Modules\Employees\Application\Contracts\" />
-    <Folder Include="Modules\Employees\Application\ReadModel\Errors\" />
-    <Folder Include="Modules\Employees\Application\Services\" />
-    <Folder Include="Modules\Employees\Domain\Policies\" />
-    <Folder Include="Modules\Employees\Domain\ValueObjects\" />
+    <Folder Include="_2_Modules\Bookings\_2_Application\Dtos\Contracts\" />
+    <Folder Include="_2_Modules\Cars\_3_Domain\ValueObjects\" />
+    <Folder Include="_2_Modules\Customers\_2_Application\Errors\" />
+    <Folder Include="_2_Modules\Customers\_3_Domain\Enums\" />
+    <Folder Include="_2_Modules\Customers\_3_Domain\Policies\" />
+    <Folder Include="_2_Modules\Customers\_3_Domain\ValueObjects\" />
+    <Folder Include="_2_Modules\Employees\_2_Application\Dtos\Contracts\" />
+    <Folder Include="_2_Modules\Employees\_2_Application\Services\" />
+    <Folder Include="_2_Modules\Employees\_3_Domain\Policies\" />
+    <Folder Include="_2_Modules\Employees\_3_Domain\ValueObjects\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="_4_BuildingBlocks\Result.cs">
+      <DependentUpon>DiAddBuildingBlocks.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>
