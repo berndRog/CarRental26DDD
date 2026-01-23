@@ -1,3 +1,4 @@
+using CarRentalApi._2_Modules.Customers._2_Application.Dtos.UseCases;
 using CarRentalApi._2_Modules.Customers._3_Domain.Aggregates;
 using CarRentalApi.BuildingBlocks;
 namespace CarRentalApi.Modules.Customers._1_Ports.Inbound;
@@ -64,6 +65,15 @@ public interface ICustomerUseCases {
       CancellationToken ct
    );
 
+   public Task<Result<Guid>> Provisioned(
+      CancellationToken ct
+   );
+   
+   public Task<Result<CustomerProfileDto>> Profile(
+      CustomerProfileDto customerProfileDto,
+      CancellationToken ct
+   );
+   
    /// <summary>
    /// Blocks an existing customer.
    ///

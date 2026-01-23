@@ -15,14 +15,21 @@ public static class CommonErrors {
          Title: "Invalid phone number",
          Message: "The provided phone number is not valid."
       );
-   
+
    public static readonly DomainErrors InvalidIdentitySubject =
       new(
          ErrorCode.BadRequest,
          Title: "Invalid phone number",
          Message: "The provided phone number is not valid."
       );
-   
+
+   public static readonly DomainErrors Forbidden =
+      new(
+         ErrorCode.Forbidden,
+         Title: "Access denied",
+         Message: "You are authenticated but not allowed to perform this action."
+      );
+
    public static readonly DomainErrors StreetIsRequired =
       new(
          ErrorCode.UnprocessableEntity,
@@ -43,5 +50,4 @@ public static class CommonErrors {
          Title: "City Is Required",
          Message: "The City Must Not Be Empty."
       );
-
 }

@@ -1,10 +1,13 @@
 using CarRentalApi._2_Modules.Customers._1_Ports.Inbound;
 using CarRentalApi._2_Modules.Customers._2_Application.Dtos.ReadModels;
+using CarRentalApi._2_Modules.Customers._2_Application.Dtos.UseCases;
 using CarRentalApi._2_Modules.Customers._2_Application.Mappings;
 using CarRentalApi._2_Modules.Customers._3_Domain.Aggregates;
 using CarRentalApi._2_Modules.Customers._3_Domain.Errors;
+using CarRentalApi._4_BuildingBlocks._1_Ports.Outbound;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Enums;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Errors;
+using CarRentalApi._4_BuildingBlocks._3_Domain.ValueObjects;
 using CarRentalApi._4_BuildingBlocks._4_Infrastructure.ReadModel;
 using CarRentalApi.BuildingBlocks;
 using CarRentalApi.Data.Database;
@@ -13,14 +16,30 @@ using Microsoft.EntityFrameworkCore;
 namespace CarRentalApi._2_Modules.Customers._4_Infrastructure.ReadModels;
 
 public sealed class CustomerReadModelEf(
+   IIdentityGateway _identityGateway,
    CarRentalDbContext _dbContext
 ) : ICustomerReadModel {
+   
+   public async Task<CustomerDetailDto?> FindProfileAsync(CancellationToken ct) {
+      // 1) Subject aus Gateway
+      var subjectResult = IdentitySubject.Create(_identityGateway.Subject);
+      if (subjectResult.IsFailure)
+         return null; // oder Exception, je nach Stil
 
+      var subject = subjectResult.Value;
+
+      // 2) Customer laden (NO tracking, read-only)
+      return await _dbContext.Customers
+         .AsNoTracking()
+         .Where(c => c.Subject.Value == subject.Value)
+         .Select(c => c.ToCustomerDetailDto())
+         .SingleOrDefaultAsync(ct);
+   }
+   
    public async Task<Result<CustomerDetailDto>> FindByIdAsync(
       Guid Id,
       CancellationToken ct
    ) {
-
       var customer = await _dbContext.Customers
          .AsNoTracking()
          .FirstOrDefaultAsync(c => c.Id == Id, ct);
@@ -138,52 +157,4 @@ public sealed class CustomerReadModelEf(
    
       return Result<PagedResult<CustomerListItemDto>>.Success(paged);
    }
-   
-   
-   // public async Task<Result<PagedResult<CustomerListItemDto>>> FilterAsync(
-   //    CustomerSearchFilter filter,
-   //    PageRequest page,
-   //    SortRequest sort,
-   //    CancellationToken ct
-   // ) {
-   //    if (filter is null) {
-   //       return Result<PagedResult<CustomerListItemDto>>.Failure(
-   //          new DomainErrors(
-   //             ErrorCode.UnprocessableEntity,
-   //             Title: "Filter Is Required",
-   //             Message: "The Provided Filter Must Not Be Null."
-   //          )
-   //       );
-   //    }
-   //
-   //    // Base read-only query
-   //    IQueryable<Customer> query = _dbContext.Customers.AsNoTracking();
-   //
-   //    // Dynamic query composition - keep it provider-friendly.
-   //    if (!string.IsNullOrWhiteSpace(filter.Email)) {
-   //       var email = filter.Email.Trim().ToUpperInvariant();
-   //       query = query.Where(c => c.Email.Value.ToUpper() == email);
-   //    }
-   //
-   //    if (!string.IsNullOrWhiteSpace(filter.FirstName)) {
-   //       var fn = filter.FirstName.Trim().ToUpperInvariant();
-   //       query = query.Where(c => c.FirstName.ToUpper().Contains(fn));
-   //    }
-   //
-   //    if (!string.IsNullOrWhiteSpace(filter.LastName)) {
-   //       var ln = filter.LastName.Trim().ToUpperInvariant();
-   //       query = query.Where(c => c.LastName.ToUpper().Contains(ln));
-   //    }
-   //
-   //    query = query.OrderBy(c => c.LastName).ThenBy(c => c.FirstName);
-   //
-   //    var customers = await query
-   //       .ToListAsync(ct);
-   //
-   //    var dtos = customers
-   //       .Select(c => c.ToCustomerListItemDto())
-   //       .ToList();
-   //
-   //    return Result<PagedResult<CustomerListItemDto>>.Success(dtos);
-   // }
 }

@@ -1,5 +1,6 @@
 using CarRentalApi._4_BuildingBlocks._3_Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
+
 namespace CarRentalApi.BuildingBlocks;
 
 public static class ResultApiExtensions {
@@ -12,7 +13,8 @@ public static class ResultApiExtensions {
       object? args = null
    ) {
       // Success -> NoContent 204 (typisch für Commands ohne Body)
-      if (result.IsSuccess) return controller.NoContent();
+      if (result.IsSuccess)
+         return controller.NoContent();
 
       // Failure -> log and map DomainErrors to HTTP StatusCodes
       result.LogIfFailure(logger, context, args);
@@ -25,14 +27,29 @@ public static class ResultApiExtensions {
       };
 
       return error.Code switch {
-         ErrorCode.BadRequest => controller.BadRequest(problemDetails),
-         ErrorCode.Unauthorized => controller.Unauthorized(problemDetails),
-         ErrorCode.Forbidden => new ObjectResult(problemDetails) { StatusCode = 403 },
-         ErrorCode.NotFound => controller.NotFound(problemDetails),
-         ErrorCode.Conflict => controller.Conflict(problemDetails),
-         ErrorCode.UnsupportedMediaType => controller.StatusCode(415, problemDetails),
-         ErrorCode.UnprocessableEntity => controller.UnprocessableEntity(problemDetails),
-         _ => controller.BadRequest(problemDetails)
+         ErrorCode.BadRequest =>
+            controller.BadRequest(problemDetails),
+
+         ErrorCode.Unauthorized =>
+            controller.Unauthorized(problemDetails),
+
+         ErrorCode.Forbidden =>
+            controller.StatusCode(StatusCodes.Status403Forbidden, problemDetails),
+
+         ErrorCode.NotFound =>
+            controller.NotFound(problemDetails),
+
+         ErrorCode.Conflict =>
+            controller.Conflict(problemDetails),
+
+         ErrorCode.UnsupportedMediaType =>
+            controller.StatusCode(StatusCodes.Status415UnsupportedMediaType, problemDetails),
+
+         ErrorCode.UnprocessableEntity =>
+            controller.UnprocessableEntity(problemDetails),
+
+         _ =>
+            controller.BadRequest(problemDetails)
       };
    }
 
@@ -43,7 +60,8 @@ public static class ResultApiExtensions {
       string context,
       object? args = null
    ) {
-      if (result.IsSuccess) return controller.Ok(result.Value);
+      if (result.IsSuccess)
+         return controller.Ok(result.Value);
 
       result.LogIfFailure(logger, context, args);
 
@@ -55,14 +73,29 @@ public static class ResultApiExtensions {
       };
 
       return error.Code switch {
-         ErrorCode.BadRequest => controller.BadRequest(problemDetails),
-         ErrorCode.Unauthorized => controller.Unauthorized(problemDetails),
-         ErrorCode.Forbidden => new ObjectResult(problemDetails) { StatusCode = 403 },
-         ErrorCode.NotFound => controller.NotFound(problemDetails),
-         ErrorCode.Conflict => controller.Conflict(problemDetails),
-         ErrorCode.UnsupportedMediaType => controller.StatusCode(415, problemDetails),
-         ErrorCode.UnprocessableEntity => controller.UnprocessableEntity(problemDetails),
-         _ => controller.BadRequest(problemDetails)
+         ErrorCode.BadRequest =>
+            controller.BadRequest(problemDetails),
+
+         ErrorCode.Unauthorized =>
+            controller.Unauthorized(problemDetails),
+
+         ErrorCode.Forbidden =>
+            controller.StatusCode(StatusCodes.Status403Forbidden, problemDetails),
+
+         ErrorCode.NotFound =>
+            controller.NotFound(problemDetails),
+
+         ErrorCode.Conflict =>
+            controller.Conflict(problemDetails),
+
+         ErrorCode.UnsupportedMediaType =>
+            controller.StatusCode(StatusCodes.Status415UnsupportedMediaType, problemDetails),
+
+         ErrorCode.UnprocessableEntity =>
+            controller.UnprocessableEntity(problemDetails),
+
+         _ =>
+            controller.BadRequest(problemDetails)
       };
    }
 
@@ -81,8 +114,8 @@ public static class ResultApiExtensions {
       return controller.CreatedAtRoute(routeName, routeValues, result.Value);
    }
 
-   public static int ToHttpStatusCode(this ErrorCode errorCode) {
-      return errorCode switch {
+   public static int ToHttpStatusCode(this ErrorCode errorCode) =>
+      errorCode switch {
          ErrorCode.BadRequest => StatusCodes.Status400BadRequest,
          ErrorCode.Unauthorized => StatusCodes.Status401Unauthorized,
          ErrorCode.Forbidden => StatusCodes.Status403Forbidden,
@@ -92,5 +125,4 @@ public static class ResultApiExtensions {
          ErrorCode.UnprocessableEntity => StatusCodes.Status422UnprocessableEntity,
          _ => StatusCodes.Status400BadRequest
       };
-   }
 }

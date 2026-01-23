@@ -8,6 +8,7 @@ namespace CarRentalApi.Modules.Cars.Infrastructure.Repositories;
 public sealed class CustomerRepositoryEf(
    CarRentalDbContext _dbContext
 ) : ICustomerRepository {
+   
    public async Task<Customer?> FindByIdAsync(
       Guid id,
       CancellationToken ct
@@ -15,12 +16,15 @@ public sealed class CustomerRepositoryEf(
       .FirstOrDefaultAsync(x => x.Id == id, ct);
 
    public Task<Customer?> FindByIdentitySubjectAsync(
-      IdentitySubject subject, 
+      IdentitySubject subject,
       CancellationToken ct
-   ) {
-      throw new NotImplementedException();
-   }
+   ) => _dbContext.Customers
+      .AsTracking()
+      .FirstOrDefaultAsync(c => c.Subject.Value == subject.Value, ct);
 
    public void Add(Customer customer) =>
       _dbContext.Customers.Add(customer);
 }
+
+
+

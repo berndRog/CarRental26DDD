@@ -34,7 +34,7 @@ public sealed class ConfigCustomer(
       
       b.Property(x => x.CreatedAt).HasConversion(_dtOffToIsoStrConv).IsRequired();
       b.Property(x => x.BlockedAt).HasConversion(_nulDtOffToIsoStrConv).IsRequired(false);
-      b.Property(x => x.IdentitySubject).HasMaxLength(200).IsRequired(false);
+      b.Property(x => x.Subject).HasMaxLength(200).IsRequired(false);
       
       
       // Owned: Address (OPTIONAL)
@@ -46,7 +46,7 @@ public sealed class ConfigCustomer(
       b.Navigation(x => x.Address).IsRequired(false);
       
       // Indexes
-      b.HasIndex(x => x.IdentitySubject);
+      b.HasIndex(x => x.Subject);
 
       //b.HasIndex("Contact_Email").IsUnique();
 

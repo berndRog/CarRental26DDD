@@ -1,5 +1,6 @@
 using CarRentalApi._2_Modules.Customers._3_Domain.Errors;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Entities;
+using CarRentalApi._4_BuildingBlocks._3_Domain.Errors;
 using CarRentalApi._4_BuildingBlocks._3_Domain.ValueObjects;
 using CarRentalApi._4_BuildingBlocks.Domain.ValueObjects;
 using CarRentalApi.BuildingBlocks;
@@ -28,7 +29,7 @@ public sealed class Customer : Entity<Guid> {
    public Email Email { get; private set; } = default!;
    public Address? Address { get; private set; }
 
-   public IdentitySubject IdentitySubject { get; private set; } = default!; // OidvOAuthServer
+   public IdentitySubject Subject { get; private set; } = default!; // OidvOAuthServer
 
    public DateTimeOffset CreatedAt { get; private set; }
    public DateTimeOffset? BlockedAt { get; private set; }
@@ -45,7 +46,7 @@ public sealed class Customer : Entity<Guid> {
       string lastName,
       Email email,
       Address? address,
-      IdentitySubject identitySubject,
+      IdentitySubject subject,
       DateTimeOffset createdAt
    ) {
       Id = id;
@@ -53,7 +54,7 @@ public sealed class Customer : Entity<Guid> {
       LastName = lastName;
       Email = email;
       Address = address;
-      IdentitySubject = identitySubject;
+      Subject = subject;
       CreatedAt = createdAt;
    }
 
@@ -115,7 +116,7 @@ public sealed class Customer : Entity<Guid> {
          firstName: firstName,
          lastName: lastName,
          email: email,
-         identitySubject: identitySubject,
+         subject: identitySubject,
          address: address,
          createdAt: createdAt
       );
@@ -140,13 +141,70 @@ public sealed class Customer : Entity<Guid> {
          email: email,
          address: null,
          createdAt: createdAt,
-         identitySubject: identitySubject
+         subject: identitySubject
       );
 
       return Result<Customer>.Success(customer);
    }
 
    //--- Domain methods ---
+   public Result UpdateProfile(
+      string firstName,
+      string lastName,
+      Email email,
+      string? street,
+      string? postalCode,
+      string? city,
+      string? country
+   ) {
+      // 1) Basic required fields
+      if (string.IsNullOrWhiteSpace(firstName))
+         return Result.Failure(CustomerErrors.FirstNameIsRequired);
+
+      if (string.IsNullOrWhiteSpace(lastName))
+         return Result.Failure(CustomerErrors.LastNameIsRequired);
+
+      // 2) Email (already validated as VO by caller)
+      Email = email;
+
+      // 3) Names
+      FirstName = firstName.Trim();
+      LastName  = lastName.Trim();
+
+      // 4) Address: either fully set or null (no half-addresses)
+      var anyAddress =
+         !string.IsNullOrWhiteSpace(street) ||
+         !string.IsNullOrWhiteSpace(postalCode) ||
+         !string.IsNullOrWhiteSpace(city) ||
+         !string.IsNullOrWhiteSpace(country);
+
+      if (!anyAddress) {
+         Address = null;
+         return Result.Success();
+      }
+
+      // require all address fields if one is present
+      if (string.IsNullOrWhiteSpace(street))
+         return Result.Failure(CommonErrors.StreetIsRequired);
+      if (string.IsNullOrWhiteSpace(postalCode))
+         return Result.Failure(CommonErrors.PostalCodeIsRequired);
+      if (string.IsNullOrWhiteSpace(city))
+         return Result.Failure(CommonErrors.CityIsRequired);
+
+      var addressResult = Address.Create(
+         street.Trim(),
+         postalCode.Trim(),
+         city.Trim(),
+         country?.Trim()
+      );
+      if (addressResult.IsFailure)
+         return Result.Failure(addressResult.Error);
+
+      Address = addressResult.Value;
+      return Result.Success();
+   }
+   
+   
    public Result Block(
       DateTimeOffset blockedAt
    ) {

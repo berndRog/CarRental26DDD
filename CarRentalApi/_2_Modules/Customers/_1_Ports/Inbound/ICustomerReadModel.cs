@@ -1,4 +1,5 @@
 using CarRentalApi._2_Modules.Customers._2_Application.Dtos.ReadModels;
+using CarRentalApi._2_Modules.Customers._2_Application.Dtos.UseCases;
 using CarRentalApi._4_BuildingBlocks._4_Infrastructure.ReadModel;
 using CarRentalApi.BuildingBlocks;
 using CarRentalApi.Modules.Cars.Application.ReadModel.Dto;
@@ -35,6 +36,10 @@ namespace CarRentalApi._2_Modules.Customers._1_Ports.Inbound;
 ///     (e.g. paging/sorting values out of range, invalid search parameters)
 /// </summary>
 public interface ICustomerReadModel {
+
+
+   Task<CustomerDetailDto?> FindProfileAsync(CancellationToken ct);
+   
    /// <summary>
    /// Returns detailed information about a single customer.
    ///

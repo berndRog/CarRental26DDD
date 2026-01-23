@@ -43,7 +43,6 @@
   <ItemGroup>
     <Folder Include="_2_Modules\Bookings\_2_Application\Dtos\Contracts\" />
     <Folder Include="_2_Modules\Cars\_3_Domain\ValueObjects\" />
-    <Folder Include="_2_Modules\Customers\_2_Application\Errors\" />
     <Folder Include="_2_Modules\Customers\_3_Domain\Enums\" />
     <Folder Include="_2_Modules\Customers\_3_Domain\Policies\" />
     <Folder Include="_2_Modules\Customers\_3_Domain\ValueObjects\" />
