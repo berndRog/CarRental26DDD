@@ -1,5 +1,6 @@
 using CarRentalApi._2_Modules.Cars._1_Ports.Inbound;
 using CarRentalApi._2_Modules.Cars._1_Ports.Outbound;
+using CarRentalApi._2_Modules.Cars._2_Application.Pricing;
 using CarRentalApi._2_Modules.Cars._2_Application.UseCases;
 using CarRentalApi._2_Modules.Cars._3_Domain.Policies;
 using CarRentalApi._2_Modules.Cars._4_Infrastructure.Adapters;
@@ -38,6 +39,10 @@ public static class DiAddCarsExtensions {
       // =========================================================
       // Repositories
       services.AddScoped<ICarRepository, CarRepositoryEf>();
+      
+      
+      // Pricing Strategies
+      services.AddScoped<IPricingPolicyCarCategories, PricingPolicyCarCategories>();
       
       return services;
    }

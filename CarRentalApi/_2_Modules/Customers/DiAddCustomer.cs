@@ -23,6 +23,8 @@ public static class DiAddCustomersExtensions {
       
       // WriteModels = Use Cases
       services.AddScoped<CustomerUcCreate>();
+      services.AddScoped<CustomerUcProvisioned>();
+      services.AddScoped<CustomerUcProfile>();
       services.AddScoped<CustomerUcBlock>();
       services.AddScoped<ICustomerUseCases, CustomerUseCases>();
       

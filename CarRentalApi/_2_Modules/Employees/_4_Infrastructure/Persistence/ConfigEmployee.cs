@@ -44,8 +44,14 @@ public sealed class ConfigEmployee(
             .HasMaxLength(32)
             .IsRequired(false);
       });
-
       b.Navigation(x => x.Phone).IsRequired(false);
+      
+      // Subject (OIDC "sub") MUST exist (no legacy DB -> required)
+      b.Property(x => x.Subject)
+         .HasConversion(s => s.Value, v => IdentitySubject.Create(v).Value)
+         .HasMaxLength(200).IsRequired();
+      // Unique constraint: one subject -> one customer
+      b.HasIndex(x => x.Subject).IsUnique();
       
       // Scalar properties (Employee-specific)
       b.Property(x => x.PersonnelNumber).HasMaxLength(32).IsRequired();
@@ -59,10 +65,21 @@ public sealed class ConfigEmployee(
       b.Property(x => x.IsActive).IsRequired();
       b.Property(x => x.CreatedAt).HasConversion(_dtOffToIsoStrConv).IsRequired();
       b.Property(x => x.DeactivatedAt).HasConversion(_nulDtOffToIsoStrConv).IsRequired(false);
-
-
-
       // Helpful index for "active employees"
       b.HasIndex(x => x.DeactivatedAt);
+      
+      // Owned: Address (OPTIONAL)
+      b.OwnsOne(c => c.Address, a => {
+         // OPTIONAL: keeps columns readable & avoids collisions
+         a.Property(p => p.Street)
+            .HasColumnName("Address_Street").HasMaxLength(100).IsRequired(false);
+         a.Property(p => p.PostalCode)
+            .HasColumnName("Address_PostalCode").HasMaxLength(20).IsRequired(false);
+         a.Property(p => p.City)
+            .HasColumnName("Address_City").HasMaxLength(50).IsRequired(false);
+         a.Property(p => p.City)
+            .HasColumnName("Address_Country").HasMaxLength(30).IsRequired(false);
+      });
+      b.Navigation(x => x.Address).IsRequired(false);
    }
 }

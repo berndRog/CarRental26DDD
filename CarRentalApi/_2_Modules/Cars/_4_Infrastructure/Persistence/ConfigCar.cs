@@ -10,13 +10,12 @@ public sealed class ConfigCar: IEntityTypeConfiguration<Car> {
       // Table
       b.ToTable("Car");
 
-      // Primary Key
-      b.HasKey(x => x.Id);
-      b.Property(x => x.Id).ValueGeneratedNever();
-
+      // PK = FK to Vehicles.Id
+      b.HasBaseType<Vehicle>(); 
+      
       // Properties
-      b.Property(x => x.Category).IsRequired();
-      b.Property(x => x.Status).IsRequired();
+      b.Property(x => x.Category).HasConversion<int>().IsRequired();
+      b.Property(x => x.Status).HasConversion<int>().IsRequired();
       b.Ignore(x => x.IsInMaintenance);
       b.Ignore(x => x.IsRetired);
       

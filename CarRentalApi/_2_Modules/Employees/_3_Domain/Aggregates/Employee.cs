@@ -32,7 +32,8 @@ public sealed class Employee : Entity<Guid> {
    public string LastName  { get; private set; } = string.Empty;
    public Email Email     { get; private set; } = default!;
    public Phone? Phone { get; private set; } = null;
-   public Address? Address { get; private set; } = null;
+  
+   public IdentitySubject Subject { get; private set; } = default!; // OidvOAuthServer
    
    public string PersonnelNumber { get; private set; } = string.Empty;
    public AdminRights AdminRights { get; private set; } = AdminRights.ViewReports;
@@ -40,7 +41,9 @@ public sealed class Employee : Entity<Guid> {
    public bool IsActive { get; private set; }
    public DateTimeOffset CreatedAt { get; private set; }
    public DateTimeOffset? DeactivatedAt { get; private set; }
-
+   
+   public Address? Address { get; private set; } = null;
+   
    // EF Core constructor
    private Employee() { }
 

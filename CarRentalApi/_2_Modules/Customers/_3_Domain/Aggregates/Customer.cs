@@ -27,14 +27,15 @@ public sealed class Customer : Entity<Guid> {
    public string FirstName { get; private set; } = string.Empty;
    public string LastName { get; private set; } = string.Empty;
    public Email Email { get; private set; } = default!;
-   public Address? Address { get; private set; }
-
+   
    public IdentitySubject Subject { get; private set; } = default!; // OidvOAuthServer
-
+   
+   public Address? Address { get; private set; }
    public DateTimeOffset CreatedAt { get; private set; }
    public DateTimeOffset? BlockedAt { get; private set; }
    public bool IsBlocked => BlockedAt is not null;
 
+   
    // EF Core ctor
    private Customer() {
    }
