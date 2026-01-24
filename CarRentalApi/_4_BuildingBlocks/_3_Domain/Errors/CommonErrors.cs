@@ -19,8 +19,8 @@ public static class CommonErrors {
    public static readonly DomainErrors InvalidIdentitySubject =
       new(
          ErrorCode.BadRequest,
-         Title: "Invalid phone number",
-         Message: "The provided phone number is not valid."
+         Title: "Invalid IdentitySubject",
+         Message: "The provided subject (sub) is not valid."
       );
 
    public static readonly DomainErrors Forbidden =

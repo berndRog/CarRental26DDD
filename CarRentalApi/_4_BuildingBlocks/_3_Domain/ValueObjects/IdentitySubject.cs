@@ -16,6 +16,10 @@ public sealed record IdentitySubject {
    public static Result<IdentitySubject> Create(string input) {
       if (string.IsNullOrWhiteSpace(input))
          return Result<IdentitySubject>.Failure(CommonErrors.InvalidIdentitySubject);
+      if (input.Length > 200)
+         return Result<IdentitySubject>.Failure(CommonErrors.InvalidIdentitySubject);
+
+      /// Identity subject as issued by IAM (opaque, not interpreted).
       return Result<IdentitySubject>.Success(new IdentitySubject(input));
    }
 
