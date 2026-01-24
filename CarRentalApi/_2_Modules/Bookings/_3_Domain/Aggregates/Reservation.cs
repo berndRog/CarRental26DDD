@@ -1,10 +1,10 @@
 using CarRentalApi._2_Modules.Bookings._3_Domain.Enums;
 using CarRentalApi._2_Modules.Bookings._3_Domain.Errors;
 using CarRentalApi._2_Modules.Bookings._3_Domain.ValueObjects;
+using CarRentalApi._4_BuildingBlocks;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Entities;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Enums;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Errors;
-using CarRentalApi.BuildingBlocks;
 namespace CarRentalApi._2_Modules.Bookings._3_Domain.Aggregates;
 
 public sealed class Reservation: Entity<Guid> {

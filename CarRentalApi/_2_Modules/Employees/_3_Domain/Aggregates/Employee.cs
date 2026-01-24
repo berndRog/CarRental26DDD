@@ -1,9 +1,9 @@
 using CarRentalApi._2_Modules.Employees._3_Domain.Enums;
 using CarRentalApi._2_Modules.Employees._3_Domain.Errors;
+using CarRentalApi._4_BuildingBlocks;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Entities;
 using CarRentalApi._4_BuildingBlocks._3_Domain.ValueObjects;
 using CarRentalApi._4_BuildingBlocks.Domain.ValueObjects;
-using CarRentalApi.BuildingBlocks;
 namespace CarRentalApi._2_Modules.Employees._3_Domain.Aggregates;
 
 /// <summary>
@@ -32,6 +32,7 @@ public sealed class Employee : Entity<Guid> {
    public string LastName  { get; private set; } = string.Empty;
    public Email Email     { get; private set; } = default!;
    public Phone? Phone { get; private set; } = null;
+   public Address? Address { get; private set; } = null;
    
    public string PersonnelNumber { get; private set; } = string.Empty;
    public AdminRights AdminRights { get; private set; } = AdminRights.ViewReports;

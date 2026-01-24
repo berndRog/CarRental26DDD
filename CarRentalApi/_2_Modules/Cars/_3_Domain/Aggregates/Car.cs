@@ -1,26 +1,17 @@
 using System.Text.RegularExpressions;
 using CarRentalApi._2_Modules.Cars._3_Domain.Enums;
 using CarRentalApi._2_Modules.Cars._3_Domain.Errors;
+using CarRentalApi._4_BuildingBlocks;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Entities;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Enums;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Errors;
-using CarRentalApi.BuildingBlocks;
 namespace CarRentalApi._2_Modules.Cars._3_Domain.Aggregates;
 
-public sealed class Car : Entity<Guid> {
+public sealed class Car : Vehicle {
    
-   // Guid Id is inherited from Entity<T>
-   
-   public string Manufacturer { get; private set; } = string.Empty;
-   public string Model { get; private set; } = string.Empty;
-   public string LicensePlate { get; private set; } = string.Empty;
-
    // CarCategory is used for booking and capacity calculation.
    public CarCategory Category { get; private set; }
    public CarStatus Status { get; private set; }
-
-   public DateTimeOffset CreatedAt { get; private set; }
-   public DateTimeOffset? RetiredAt { get; private set; }
    public bool IsInMaintenance => Status == CarStatus.Maintenance;
    public bool IsRetired => Status == CarStatus.Retired;
 
@@ -35,14 +26,9 @@ public sealed class Car : Entity<Guid> {
       string licensePlate,
       CarCategory category,
       DateTimeOffset createdAt
-   ) {
-      Id = id;
-      Manufacturer = manufacturer;
-      Model = model;
-      LicensePlate = licensePlate;
+   ) :base(id, manufacturer, model, licensePlate, createdAt) {
       Category = category;
       Status = CarStatus.Available;
-      CreatedAt = createdAt;
    }
 
    // ---------- Factory (Result-based) ----------

@@ -1,5 +1,4 @@
 using CarRentalApi._2_Modules.Customers._2_Application.Dtos.Contracts;
-using CarRentalApi.BuildingBlocks;
 namespace CarRentalApi._2_Modules.Customers._1_Ports.Inbound;
 
 /// <summary>

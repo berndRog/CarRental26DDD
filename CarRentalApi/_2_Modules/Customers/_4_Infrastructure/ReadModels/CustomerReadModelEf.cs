@@ -4,12 +4,12 @@ using CarRentalApi._2_Modules.Customers._2_Application.Dtos.UseCases;
 using CarRentalApi._2_Modules.Customers._2_Application.Mappings;
 using CarRentalApi._2_Modules.Customers._3_Domain.Aggregates;
 using CarRentalApi._2_Modules.Customers._3_Domain.Errors;
+using CarRentalApi._4_BuildingBlocks;
 using CarRentalApi._4_BuildingBlocks._1_Ports.Outbound;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Enums;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Errors;
 using CarRentalApi._4_BuildingBlocks._3_Domain.ValueObjects;
 using CarRentalApi._4_BuildingBlocks._4_Infrastructure.ReadModel;
-using CarRentalApi.BuildingBlocks;
 using CarRentalApi.Data.Database;
 using CarRentalApi.Modules.Cars.Application.ReadModel.Dto;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +21,7 @@ public sealed class CustomerReadModelEf(
 ) : ICustomerReadModel {
    
    public async Task<CustomerDetailDto?> FindProfileAsync(CancellationToken ct) {
+      
       // 1) Subject aus Gateway
       var subjectResult = IdentitySubject.Create(_identityGateway.Subject);
       if (subjectResult.IsFailure)

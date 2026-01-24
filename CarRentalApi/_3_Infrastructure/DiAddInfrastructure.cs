@@ -3,8 +3,8 @@ using CarRentalApi.Data.Database;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApi.Data.Extensions;
 
-public static class DiAddDataExtensions {
-   public static IServiceCollection AddData(
+public static class DiAddInfrastructureExtensions {
+   public static IServiceCollection AddInfrastructure(
       this IServiceCollection services,
       IConfiguration configuration
    ) {
@@ -20,9 +20,7 @@ public static class DiAddDataExtensions {
       Console.WriteLine("---> Using SQLite connection string: " + dbPath);
       
       services.AddDbContext<CarRentalDbContext>(options =>
-         options.UseSqlite(
-            configuration.GetConnectionString("BankingDb"))
-      );
+         options.UseSqlite(connectionString));
 
       // Unit of Work
       services.AddScoped<IUnitOfWork, UnitOfWork>();

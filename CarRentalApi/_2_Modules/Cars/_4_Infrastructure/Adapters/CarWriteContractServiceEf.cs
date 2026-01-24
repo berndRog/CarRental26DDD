@@ -1,8 +1,8 @@
 using CarRentalApi._2_Modules.Cars._1_Ports.Inbound;
 using CarRentalApi._2_Modules.Cars._1_Ports.Outbound;
 using CarRentalApi._2_Modules.Cars._3_Domain.Errors;
+using CarRentalApi._4_BuildingBlocks;
 using CarRentalApi._4_BuildingBlocks.Infrastructure.Persistence;
-using CarRentalApi.BuildingBlocks;
 namespace CarRentalApi._2_Modules.Cars._4_Infrastructure.Adapters;
 
 public sealed class CarWriteContractServiceEf(

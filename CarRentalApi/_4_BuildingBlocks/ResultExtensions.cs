@@ -1,5 +1,4 @@
-using CarRentalApi.BuildingBlocks;
-namespace CarRentalApi.BuildingBlocks;
+namespace CarRentalApi._4_BuildingBlocks;
 
 /// <summary>
 /// Centralized logging extensions for Result and Result&lt;T&gt;.

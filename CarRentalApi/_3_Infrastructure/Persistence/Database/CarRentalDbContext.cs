@@ -1,5 +1,6 @@
 using CarRentalApi._2_Modules.Bookings._3_Domain.Aggregates;
 using CarRentalApi._2_Modules.Bookings._4_Infrastructure.Persistence;
+using CarRentalApi._2_Modules.Cars._2_Infrastructure.Persistence.Configurations;
 using CarRentalApi._2_Modules.Cars._3_Domain.Aggregates;
 using CarRentalApi._2_Modules.Cars._4_Infrastructure.Persistence;
 using CarRentalApi._2_Modules.Customers._3_Domain.Aggregates;
@@ -37,8 +38,10 @@ public sealed class CarRentalDbContext(
       // Entity Employee -> Table Employees
       modelBuilder.ApplyConfiguration(new ConfigEmployee(dtOffToIsoStrConv, nulDtOfConv));
       
-      // Entity Car -> Table Car
-      modelBuilder.ApplyConfiguration(new ConfigCar(dtOffToIsoStrConv, nulDtOfConv));
+      // Entity Vehicle -> Table Vehicle
+      modelBuilder.ApplyConfiguration(new ConfigVehicle(dtOffToIsoStrConv, nulDtOfConv));
+      // Entity Car: Vehicle -> Table Car
+      modelBuilder.ApplyConfiguration(new ConfigCar());
       // Entity Reservation -> Table Reservation
       modelBuilder.ApplyConfiguration(new ConfigReservation(dtOffToIsoStrConv, nulDtOfConv));
       // Entity Rental -> Table Rental

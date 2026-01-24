@@ -1,5 +1,5 @@
 using CarRentalApi._2_Modules.Bookings._2_Application.Dtos.UseCases;
-using CarRentalApi.BuildingBlocks;
+using CarRentalApi._4_BuildingBlocks;
 using CarRentalApi.Modules.Rentals.Application.UseCases;
 namespace CarRentalApi._2_Modules.Bookings._2_Application.UseCases.Rental;
 

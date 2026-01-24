@@ -1,6 +1,6 @@
+using CarRentalApi._4_BuildingBlocks;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Errors;
 using CarRentalApi._4_BuildingBlocks.Infrastructure.Persistence;
-using CarRentalApi.BuildingBlocks;
 using CarRentalApi.Domain;
 namespace CarRentalApi._2_Modules.Customers._2_Application.UseCases;
 

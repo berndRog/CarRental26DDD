@@ -3,8 +3,8 @@
 using CarRentalApi._2_Modules.Bookings._2_Application.Dtos.ReadModels;
 using CarRentalApi._2_Modules.Bookings._2_Application.Dtos.UseCases;
 using CarRentalApi._2_Modules.Bookings._2_Application.Errors;
+using CarRentalApi._4_BuildingBlocks;
 using CarRentalApi._4_BuildingBlocks._1_Ports.Inbound;
-using CarRentalApi.BuildingBlocks;
 using CarRentalApi.Modules.Cars.Application.ReadModel.Dto;
 using CarRentalApi.Modules.Rentals;
 using CarRentalApi.Modules.Rentals.Application.ReadModel;

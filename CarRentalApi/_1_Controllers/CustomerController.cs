@@ -2,13 +2,13 @@ using CarRentalApi._2_Modules.Customers._1_Ports.Inbound;
 using CarRentalApi._2_Modules.Customers._2_Application.Dtos.ReadModels;
 using CarRentalApi._2_Modules.Customers._2_Application.Dtos.UseCases;
 using CarRentalApi._2_Modules.Customers._2_Application.UseCases;
-using CarRentalApi.BuildingBlocks;
+using CarRentalApi._4_BuildingBlocks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace CarRentalApi._2_Modules.Customers._1_Presentation.Controllers;
 
 [ApiController]
-[Route("api")]
+[Route("carrentalapi/v1/")]
 public sealed class CustomersController(
    ICustomerReadModel _readModel,
    CustomerUcProvisioned _ucProvisioned,
@@ -31,7 +31,7 @@ public sealed class CustomersController(
       return this.ToActionResult<Guid>(
          result,
          _logger,
-         context: "POST /customers/provisioned",
+         context: "POST /carrentalapi/v1/customers/provisioned",
          args: new { }
       );
    }
@@ -65,7 +65,7 @@ public sealed class CustomersController(
       return this.ToActionResult<CustomerProfileDto>(
          result,
          _logger,
-         context: "PUT /customers/profile",
+         context: "PUT /carrentalapi/v1/customers/profile",
          args: dto
       );
    }
@@ -94,7 +94,7 @@ public sealed class CustomersController(
       return this.ToActionResult<CustomerDetailDto>(
          result,
          _logger,
-         context: "GET /customers/{id}",
+         context: "GET /carrentalapi/v1/carrentalapi/v1/customers/{id}",
          args: new { id }
       );
    }
@@ -112,7 +112,7 @@ public sealed class CustomersController(
       return this.ToActionResult<CustomerDetailDto>(
          result,
          _logger,
-         context: "GET /customers/email/{email}",
+         context: "GET /carrentalapi/v1/customers/email/{email}",
          args: new { email }
       );
    }
@@ -130,7 +130,7 @@ public sealed class CustomersController(
       return this.ToActionResult<IReadOnlyList<CustomerDetailDto>>(
          result,
          _logger,
-         context: "GET /customers/name",
+         context: "GET /carrentalapi/v1/customers/name",
          args: new { firstName, lastName }
       );
    }

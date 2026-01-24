@@ -1,6 +1,6 @@
 using CarRentalApi._2_Modules.Customers._2_Application.Dtos.UseCases;
 using CarRentalApi._2_Modules.Customers._3_Domain.Aggregates;
-using CarRentalApi.BuildingBlocks;
+using CarRentalApi._4_BuildingBlocks;
 using CarRentalApi.Modules.Customers._1_Ports.Inbound;
 namespace CarRentalApi._2_Modules.Customers._2_Application.UseCases;
 

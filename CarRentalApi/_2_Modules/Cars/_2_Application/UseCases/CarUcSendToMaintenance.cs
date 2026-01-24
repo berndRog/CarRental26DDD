@@ -1,7 +1,7 @@
 using CarRentalApi._2_Modules.Cars._1_Ports.Outbound;
 using CarRentalApi._2_Modules.Cars._3_Domain.Errors;
+using CarRentalApi._4_BuildingBlocks;
 using CarRentalApi._4_BuildingBlocks.Infrastructure.Persistence;
-using CarRentalApi.BuildingBlocks;
 namespace CarRentalApi._2_Modules.Cars._2_Application.UseCases;
 
 public sealed class CarUcSendToMaintenance(

@@ -1,5 +1,4 @@
 using CarRentalApi._4_BuildingBlocks._3_Domain.Errors;
-using CarRentalApi.BuildingBlocks;
 namespace CarRentalApi._4_BuildingBlocks.Utils;
 
 public static class GuidExtensions {

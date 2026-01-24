@@ -1,5 +1,5 @@
 using CarRentalApi._2_Modules.Bookings._2_Application.Dtos.ReadModels;
-using CarRentalApi.BuildingBlocks;
+using CarRentalApi._4_BuildingBlocks;
 
 namespace CarRentalApi.Modules.Rentals.Application.ReadModel;
 

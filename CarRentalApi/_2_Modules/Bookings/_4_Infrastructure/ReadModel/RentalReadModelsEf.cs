@@ -1,7 +1,7 @@
 using CarRentalApi._2_Modules.Bookings._2_Application.Dtos.ReadModels;
 using CarRentalApi._2_Modules.Bookings._2_Application.Errors;
 using CarRentalApi._2_Modules.Bookings._2_Application.Mappings;
-using CarRentalApi.BuildingBlocks;
+using CarRentalApi._4_BuildingBlocks;
 using CarRentalApi.Data.Database;
 using CarRentalApi.Modules.Rentals.Application.ReadModel;
 using Microsoft.EntityFrameworkCore;

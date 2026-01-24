@@ -1,9 +1,9 @@
 using CarRentalApi._2_Modules.Customers._3_Domain.Errors;
+using CarRentalApi._4_BuildingBlocks;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Entities;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Errors;
 using CarRentalApi._4_BuildingBlocks._3_Domain.ValueObjects;
 using CarRentalApi._4_BuildingBlocks.Domain.ValueObjects;
-using CarRentalApi.BuildingBlocks;
 namespace CarRentalApi._2_Modules.Customers._3_Domain.Aggregates;
 
 public sealed class Customer : Entity<Guid> {

@@ -1,7 +1,7 @@
+using CarRentalApi._4_BuildingBlocks;
 using CarRentalApi._4_BuildingBlocks._1_Ports.Inbound;
 using CarRentalApi._4_BuildingBlocks.Infrastructure.Persistence;
 using CarRentalApi._4_BuildingBlocks.Utils;
-using CarRentalApi.BuildingBlocks;
 using CarRentalApi.Modules.Bookings.Domain;
 namespace CarRentalApi._2_Modules.Bookings._2_Application.UseCases.Reservation;
 

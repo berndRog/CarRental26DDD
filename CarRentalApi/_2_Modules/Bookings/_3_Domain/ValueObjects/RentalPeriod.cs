@@ -1,5 +1,5 @@
 using CarRentalApi._2_Modules.Bookings._3_Domain.Errors;
-using CarRentalApi.BuildingBlocks;
+using CarRentalApi._4_BuildingBlocks;
 namespace CarRentalApi._2_Modules.Bookings._3_Domain.ValueObjects;
 
 public sealed record class RentalPeriod {

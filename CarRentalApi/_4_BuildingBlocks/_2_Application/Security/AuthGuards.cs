@@ -1,6 +1,5 @@
 using CarRentalApi._4_BuildingBlocks._1_Ports.Outbound;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Errors;
-using CarRentalApi.BuildingBlocks;
 namespace CarRentalApi._4_BuildingBlocks._2_Application.Security;
 
 public static class AuthGuards {

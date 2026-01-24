@@ -1,23 +1,5 @@
 using CarRentalApi._4_BuildingBlocks._3_Domain.Errors;
-namespace CarRentalApi.BuildingBlocks;
-
-// Nicht-generisches Result für Operationen ohne Rückgabewert
-// public readonly struct Result {
-//
-//    public bool IsFailure { get; }
-//    public bool IsSuccess => !IsFailure;
-//    public DomainErrors Error { get; }
-//
-//    private Result(bool isFailure, DomainErrors error) {
-//       IsFailure = isFailure;
-//       Error = error;
-//    }
-//
-//    public static Result Success() => new(false, DomainErrors.None);
-//    public static Result Failure(DomainErrors error) => new(true, error);
-//
-// }
-
+namespace CarRentalApi._4_BuildingBlocks;
 
 public sealed class Result {
 

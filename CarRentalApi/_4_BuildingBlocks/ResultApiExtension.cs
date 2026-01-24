@@ -1,7 +1,6 @@
 using CarRentalApi._4_BuildingBlocks._3_Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
-
-namespace CarRentalApi.BuildingBlocks;
+namespace CarRentalApi._4_BuildingBlocks;
 
 public static class ResultApiExtensions {
 

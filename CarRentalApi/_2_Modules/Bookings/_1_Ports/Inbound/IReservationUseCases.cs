@@ -1,5 +1,5 @@
+using CarRentalApi._4_BuildingBlocks;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Enums;
-using CarRentalApi.BuildingBlocks;
 namespace CarRentalApi.Modules.Bookings;
 
 /// <summary>

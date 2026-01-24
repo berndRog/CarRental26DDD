@@ -1,7 +1,7 @@
 using CarRentalApi._2_Modules.Employees._3_Domain.Enums;
 using CarRentalApi._2_Modules.Employees._3_Domain.Errors;
+using CarRentalApi._4_BuildingBlocks;
 using CarRentalApi._4_BuildingBlocks.Infrastructure.Persistence;
-using CarRentalApi.BuildingBlocks;
 using CarRentalApi.Modules.Employees.Domain;
 namespace CarRentalApi._2_Modules.Employees._2_Application.UseCases;
 

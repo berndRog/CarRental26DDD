@@ -1,6 +1,5 @@
 using CarRentalApi._4_BuildingBlocks._3_Domain.Errors;
 using CarRentalApi._4_BuildingBlocks.Utils;
-using CarRentalApi.BuildingBlocks;
 namespace CarRentalApi._4_BuildingBlocks._3_Domain.Entities;
 
 // Shared id generation/parsing for all entities.

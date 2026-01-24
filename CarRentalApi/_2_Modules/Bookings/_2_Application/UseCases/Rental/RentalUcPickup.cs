@@ -2,8 +2,8 @@ using CarRentalApi._2_Modules.Bookings._2_Application.Dtos.UseCases;
 using CarRentalApi._2_Modules.Bookings._2_Application.Errors;
 using CarRentalApi._2_Modules.Bookings._3_Domain.Enums;
 using CarRentalApi._2_Modules.Cars._1_Ports.Inbound;
+using CarRentalApi._4_BuildingBlocks;
 using CarRentalApi._4_BuildingBlocks.Infrastructure.Persistence;
-using CarRentalApi.BuildingBlocks;
 using CarRentalApi.Modules.Bookings.Domain;
 namespace CarRentalApi._2_Modules.Bookings._2_Application.UseCases.Rental;
 

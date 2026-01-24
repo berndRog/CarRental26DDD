@@ -1,6 +1,6 @@
 using CarRentalApi._2_Modules.Cars._2_Application.Dtos.Contracts;
+using CarRentalApi._4_BuildingBlocks;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Enums;
-using CarRentalApi.BuildingBlocks;
 namespace CarRentalApi._2_Modules.Cars._1_Ports.Inbound;
 
 /// <summary>

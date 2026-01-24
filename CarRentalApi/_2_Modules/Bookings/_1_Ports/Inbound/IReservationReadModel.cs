@@ -1,6 +1,6 @@
 using CarRentalApi._2_Modules.Bookings._2_Application.Dtos.ReadModels;
+using CarRentalApi._4_BuildingBlocks;
 using CarRentalApi._4_BuildingBlocks._4_Infrastructure.ReadModel;
-using CarRentalApi.BuildingBlocks;
 using CarRentalApi.Modules.Cars.Application.ReadModel.Dto;
 namespace CarRentalApi.Modules.Bookings.Application.ReadModel;
 
