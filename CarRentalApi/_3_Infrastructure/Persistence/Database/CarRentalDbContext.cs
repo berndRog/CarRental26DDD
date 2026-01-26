@@ -9,9 +9,8 @@ using CarRentalApi._2_Modules.Employees._3_Domain.Aggregates;
 using CarRentalApi._2_Modules.Employees._4_Infrastructure.Persistence;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Entities;
 using CarRentalApi.Modules.Bookings.Infrastructure.Persistence;
-using CarRentalApi.Persistence.Database;
 using Microsoft.EntityFrameworkCore;
-namespace CarRentalApi.Data.Database;
+namespace CarRentalApi._3_Infrastructure.Persistence.Database;
 
 public sealed class CarRentalDbContext(
    DbContextOptions<CarRentalDbContext> options

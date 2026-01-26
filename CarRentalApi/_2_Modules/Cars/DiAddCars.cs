@@ -5,6 +5,7 @@ using CarRentalApi._2_Modules.Cars._2_Application.UseCases;
 using CarRentalApi._2_Modules.Cars._3_Domain.Policies;
 using CarRentalApi._2_Modules.Cars._4_Infrastructure.Adapters;
 using CarRentalApi._2_Modules.Cars._4_Infrastructure.ReadModel;
+using CarRentalApi._2_Modules.Cars._4_Infrastructure.Repositories;
 using CarRentalApi.Modules.Cars.Infrastructure.Repositories;
 namespace CarRentalApi._2_Modules.Cars;
 

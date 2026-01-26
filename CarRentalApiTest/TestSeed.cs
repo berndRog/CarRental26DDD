@@ -1,11 +1,12 @@
-using CarRentalApi.BuildingBlocks.Enums;
-using CarRentalApi.BuildingBlocks.Utils;
-using CarRentalApi.Modules.Cars.Domain.Aggregates;
-using CarRentalApi.Modules.Customers.Domain.Aggregates;
-using CarRentalApi.Modules.Customers.Domain.ValueObjects;
-using CarRentalApi.Modules.Rentals.Domain.Aggregates;
-using CarRentalApi.Modules.Bookings.Domain.Aggregates;
-using CarRentalApi.Modules.Bookings.Domain.ValueObjects;
+using CarRentalApi._2_Modules.Bookings._3_Domain.Aggregates;
+using CarRentalApi._2_Modules.Bookings._3_Domain.Enums;
+using CarRentalApi._2_Modules.Bookings._3_Domain.ValueObjects;
+using CarRentalApi._2_Modules.Cars._3_Domain.Aggregates;
+using CarRentalApi._2_Modules.Customers._3_Domain.Aggregates;
+using CarRentalApi._4_BuildingBlocks._3_Domain.Enums;
+using CarRentalApi._4_BuildingBlocks._3_Domain.ValueObjects;
+using CarRentalApi._4_BuildingBlocks.Domain.ValueObjects;
+using CarRentalApi._4_BuildingBlocks.Utils;
 namespace CarRentalApiTest;
 
 public sealed class TestSeed {
@@ -18,11 +19,17 @@ public sealed class TestSeed {
    public Address Address3 { get; private set;} = null!; 
    
    //---------- Test data for customers ----------
-   public string Customer1Id = "00000000-0001-0000-0000-000000000000";
-   public string Customer2Id = "00000000-0002-0000-0000-000000000000";
-   public string Customer3Id = "00000000-0003-0000-0000-000000000000";
-   public string Customer4Id = "00000000-0004-0000-0000-000000000000";
-   public string Customer5Id = "00000000-0005-0000-0000-000000000000";
+   public string Customer1Id = "00000001-0000-0000-0000-000000000000";
+   public string Customer2Id = "00000002-0000-0000-0000-000000000000";
+   public string Customer3Id = "00000003-0000-0000-0000-000000000000";
+   public string Customer4Id = "00000004-0000-0000-0000-000000000000";
+   public string Customer5Id = "00000005-0000-0000-0000-000000000000";
+   public string IdentityCu1 = "00000001-0000-0000-0000-000000000000";
+   public string IdentityCu2 = "00000002-0000-0000-0000-000000000000";
+   public string IdentityCu3 = "00000003-0000-0000-0000-000000000000";
+   public string IdentityCu4 = "00000004-0000-0000-0000-000000000000";
+   public string IdentityCu5 = "00000005-0000-0000-0000-000000000000";
+   
    
    public Customer Customer1 { get; private set; } = null!;
    public Customer Customer2 { get; private set; } = null!;
@@ -162,41 +169,41 @@ public sealed class TestSeed {
 
    public TestSeed() {
       //---------- Addresses ----------
-      Address1 = Address.Create("Hauptstr. 23", "29556", "Suderburg").GetValueOrThrow();
+      Address1 = Address.Create("Hauptstr. 23", "29556", "Suderburg", "DE").GetValueOrThrow();
       Address2 = Address.Create("Bahnhofstr.10", "10115", "Berlin").GetValueOrThrow();
-      Address3 = Address.Create("Schillerstr. 1", "30123", "Hannover").GetValueOrThrow();
+      Address3 = Address.Create("Schillerstr. 1", "30123", "Hannover", "DE").GetValueOrThrow();
       
       //---------- Customers ----------
-      Customer1 = CreateCustomer(Customer1Id, "Erika", "Mustermann","e.mustermann@t-line.de",FixedNow, Address1);
-      Customer2 = CreateCustomer(Customer2Id, "Max", "Mustermann","m.mustermann@gmail.com",FixedNow);
-      Customer3 = CreateCustomer(Customer3Id, "Arne", "Arndt", "a.arndt@icloud.com", FixedNow, Address2);
-      Customer4 = CreateCustomer(Customer4Id, "Benno", "Bauer", "b.bauer@t-online.de", FixedNow);
-      Customer5 = CreateCustomer(Customer5Id, "Chrisitine","Conrad", "c.conrad@gmx.de", FixedNow, Address3);
+      Customer1 = CreateCustomer(Customer1Id, "Erika", "Mustermann","e.mustermann@t-line.de", IdentityCu1, FixedNow, Address1);
+      Customer2 = CreateCustomer(Customer2Id, "Max", "Mustermann","m.mustermann@gmail.com", IdentityCu2, FixedNow, null);
+      Customer3 = CreateCustomer(Customer3Id, "Arne", "Arndt", "a.arndt@icloud.com", IdentityCu3, FixedNow, Address2);
+      Customer4 = CreateCustomer(Customer4Id, "Benno", "Bauer", "b.bauer@t-online.de", IdentityCu4, FixedNow, null);
+      Customer5 = CreateCustomer(Customer5Id, "Chrisitine","Conrad", "c.conrad@gmx.de", IdentityCu5, FixedNow, Address3);
       
       //---------- Cars ----------
-      Car1 = CreateCar(Car1Id, CarCategory.Economy, "VW", "Polo", "ECO-001");
-      Car2 = CreateCar(Car2Id, CarCategory.Economy, "VW", "Polo", "ECO-002");
-      Car3 = CreateCar(Car3Id, CarCategory.Economy, "VW", "Polo", "ECO-003");
-      Car4 = CreateCar(Car4Id, CarCategory.Economy, "VW", "Polo", "ECO-004");
-      Car5 = CreateCar(Car5Id, CarCategory.Economy, "VW", "Polo", "ECO-005");
+      Car1 = CreateCar(Car1Id, CarCategory.Economy, "VW", "Polo", "ECO-001", FixedNow);
+      Car2 = CreateCar(Car2Id, CarCategory.Economy, "VW", "Polo", "ECO-002", FixedNow);
+      Car3 = CreateCar(Car3Id, CarCategory.Economy, "VW", "Polo", "ECO-003", FixedNow);
+      Car4 = CreateCar(Car4Id, CarCategory.Economy, "VW", "Polo", "ECO-004", FixedNow);
+      Car5 = CreateCar(Car5Id, CarCategory.Economy, "VW", "Polo", "ECO-005", FixedNow);
 
-      Car6 = CreateCar(Car6Id, CarCategory.Compact, "VW", "Golf", "COM-001");
-      Car7 = CreateCar(Car7Id, CarCategory.Compact, "VW", "Golf", "COM-002");
-      Car8 = CreateCar(Car8Id, CarCategory.Compact, "VW", "Golf", "COM-003");
-      Car9 = CreateCar(Car9Id, CarCategory.Compact, "VW", "Golf", "COM-004");
-      Car10 = CreateCar(Car10Id, CarCategory.Compact, "VW", "Golf", "COM-005");
+      Car6 = CreateCar(Car6Id, CarCategory.Compact, "VW", "Golf", "COM-001", FixedNow);
+      Car7 = CreateCar(Car7Id, CarCategory.Compact, "VW", "Golf", "COM-002", FixedNow);
+      Car8 = CreateCar(Car8Id, CarCategory.Compact, "VW", "Golf", "COM-003", FixedNow);
+      Car9 = CreateCar(Car9Id, CarCategory.Compact, "VW", "Golf", "COM-004", FixedNow);
+      Car10 = CreateCar(Car10Id, CarCategory.Compact, "VW", "Golf", "COM-005", FixedNow);
 
-      Car11 = CreateCar(Car11Id, CarCategory.Midsize, "BMW", "3 Series", "MID-001");
-      Car12 = CreateCar(Car12Id, CarCategory.Midsize, "BMW", "3 Series", "MID-002");
-      Car13 = CreateCar(Car13Id, CarCategory.Midsize, "BMW", "3 Series", "MID-003");
-      Car14 = CreateCar(Car14Id, CarCategory.Midsize, "BMW", "3 Series", "MID-004");
-      Car15 = CreateCar(Car15Id, CarCategory.Midsize, "BMW", "3 Series", "MID-005");
+      Car11 = CreateCar(Car11Id, CarCategory.Midsize, "BMW", "3 Series", "MID-001", FixedNow);
+      Car12 = CreateCar(Car12Id, CarCategory.Midsize, "BMW", "3 Series", "MID-002", FixedNow);
+      Car13 = CreateCar(Car13Id, CarCategory.Midsize, "BMW", "3 Series", "MID-003", FixedNow);
+      Car14 = CreateCar(Car14Id, CarCategory.Midsize, "BMW", "3 Series", "MID-004", FixedNow);
+      Car15 = CreateCar(Car15Id, CarCategory.Midsize, "BMW", "3 Series", "MID-005", FixedNow);
 
-      Car16 = CreateCar(Car16Id, CarCategory.Suv, "Audi", "Q5", "SUV-001");
-      Car17 = CreateCar(Car17Id, CarCategory.Suv, "Audi", "Q5", "SUV-002");
-      Car18 = CreateCar(Car18Id, CarCategory.Suv, "Audi", "Q5", "SUV-003");
-      Car19 = CreateCar(Car19Id, CarCategory.Suv, "Audi", "Q5", "SUV-004");
-      Car20 = CreateCar(Car20Id, CarCategory.Suv, "Audi", "Q5", "SUV-005");
+      Car16 = CreateCar(Car16Id, CarCategory.Suv, "Audi", "Q5", "SUV-001", FixedNow);
+      Car17 = CreateCar(Car17Id, CarCategory.Suv, "Audi", "Q5", "SUV-002", FixedNow);
+      Car18 = CreateCar(Car18Id, CarCategory.Suv, "Audi", "Q5", "SUV-003", FixedNow);
+      Car19 = CreateCar(Car19Id, CarCategory.Suv, "Audi", "Q5", "SUV-004", FixedNow);
+      Car20 = CreateCar(Car20Id, CarCategory.Suv, "Audi", "Q5", "SUV-005", FixedNow);
       
       //---------- Reservations ----------
       // Reservations (raw):
@@ -254,7 +261,7 @@ public sealed class TestSeed {
          customer: Customer1,
          car: Car6,              // Compact
          pickupAt: pickupAt,
-         fuelOut: 80,
+         fuelOut: RentalFuelLevel.Half,
          kmOut: 10_000
       );
 
@@ -264,7 +271,7 @@ public sealed class TestSeed {
          customer: Customer1,
          car: Car7,
          pickupAt: pickupAt.AddHours(1),
-         fuelOut: 70,
+         fuelOut: RentalFuelLevel.Full,
          kmOut: 20_000
       );
 
@@ -274,7 +281,7 @@ public sealed class TestSeed {
          customer: Customer2,
          car: Car8,
          pickupAt: pickupAt.AddHours(2),
-         fuelOut: 90,
+         fuelOut: RentalFuelLevel.Full,
          kmOut: 30_000
       );
 
@@ -283,31 +290,24 @@ public sealed class TestSeed {
    // ---------- Helper ----------
    private static Customer CreateCustomer(
       string id,
-      string firstName,
-      string lastName,
-      string email,
-      DateTimeOffset createdAt
-   ) {
-      var result = Customer.Create(
-         createdAt: createdAt,
-         id: id
-      );
-
-      Assert.True(result.IsSuccess);
-      return result.Value!;
-   }
-
-   private static Customer CreateCustomer(
-      string id,
-      string firstName,
-      string lastName,
-      string email,
+      string firstname,
+      string lastname,
+      string emailString,
+      string subjectString,
       DateTimeOffset createdAt,
       Address? address
    ) {
       var result = Customer.Create(
+         firstname: firstname,
+         lastname: lastname,
+         emailString: emailString,
+         subjectValue: subjectString,
          createdAt: createdAt,
-         id: id
+         id: id,
+         street: address?.Street,
+         postalCode: address?.PostalCode,
+         city:  address?.City, 
+         country:  address?.Country 
       );
 
       Assert.True(result.IsSuccess);
@@ -319,13 +319,15 @@ public sealed class TestSeed {
       CarCategory category,
       string manufacturer,
       string model,
-      string licensePlate
+      string licensePlate,
+      DateTimeOffset createdAt
    ) {
       var result = Car.Create(
-         category: category,
          manufacturer: manufacturer,
          model: model,
          licensePlate: licensePlate,
+         category: category,
+         createdAt: createdAt,
          id: id
       );
 
@@ -361,7 +363,7 @@ public sealed class TestSeed {
       Customer customer,
       Car car,
       DateTimeOffset pickupAt,
-      int fuelOut,
+      RentalFuelLevel fuelOut,
       int kmOut
    ) {
       var result = Rental.CreateAtPickup(
@@ -369,7 +371,7 @@ public sealed class TestSeed {
          customerId: customer.Id,
          carId: car.Id,
          pickupAt: pickupAt,
-         fuelLevelOut: fuelOut,
+         fuelOut: fuelOut,
          kmOut: kmOut,
          id: id
       );

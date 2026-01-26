@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-
-namespace CarRentalApi.Data.Database;
+namespace CarRentalApi._3_Infrastructure.Persistence.Database;
 
 public class CarRentalDbContextFactory : IDesignTimeDbContextFactory<CarRentalDbContext> {
    public CarRentalDbContext CreateDbContext(string[] args) {

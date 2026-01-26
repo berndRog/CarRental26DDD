@@ -36,8 +36,8 @@ public interface ICustomerReadContract {
    );
    
    Task<IReadOnlyList<CustomerContractDto>> SelectByNameAsync(
-      string firstName, 
-      string lastName, 
+      string firstname, 
+      string lastname, 
       CancellationToken ct
    );
 }

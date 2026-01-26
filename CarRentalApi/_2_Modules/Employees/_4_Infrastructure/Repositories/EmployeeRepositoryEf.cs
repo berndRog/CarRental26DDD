@@ -1,6 +1,6 @@
 using CarRentalApi._2_Modules.Employees._3_Domain.Aggregates;
 using CarRentalApi._2_Modules.Employees._3_Domain.Enums;
-using CarRentalApi.Data.Database;
+using CarRentalApi._3_Infrastructure.Persistence.Database;
 using CarRentalApi.Modules.Employees.Domain;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApi._2_Modules.Employees._4_Infrastructure.Repositories;
@@ -33,7 +33,7 @@ public sealed class EmployeeRepositoryEf(
       await _dbContext.Employees
          .AsNoTracking()
          .Where(e => e.AdminRights != AdminRights.None)
-         .OrderBy(e => e.LastName)
+         .OrderBy(e => e.Lastname)
          .ToListAsync(ct);
 
    public void Add(Employee employee) =>

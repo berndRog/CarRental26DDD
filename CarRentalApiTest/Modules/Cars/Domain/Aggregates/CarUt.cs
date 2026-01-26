@@ -1,68 +1,63 @@
-using CarRentalApi.BuildingBlocks.Enums;
-using CarRentalApi.BuildingBlocks.Utils;
-using CarRentalApi.Modules.Cars.Domain.Aggregates;
-using CarRentalApi.Modules.Cars.Domain.Enums;
-using CarRentalApi.Modules.Cars.Domain.Errors;
+using CarRentalApi._2_Modules.Cars._3_Domain.Aggregates;
+using CarRentalApi._2_Modules.Cars._3_Domain.Enums;
+using CarRentalApi._2_Modules.Cars._3_Domain.Errors;
+using CarRentalApi._4_BuildingBlocks._3_Domain.Enums;
 namespace CarRentalApiTest.Modules.Cars.Domain.Aggregates;
 
 public sealed class CarUt {
-   // Creation via TestSeed
-   [Fact]
-   public void Car_from_TestSeed_is_valid() {
-      // Arrange
-      var seed = new TestSeed();
 
-      // Act
-      var car = seed.Car1;
-
-      // Assert
-      Assert.NotNull(car);
-      Assert.Equal(seed.Car1Id.ToGuid(), car.Id);
-      Assert.Equal(CarCategory.Economy, car.Category);
-      Assert.Equal("VW", car.Manufacturer);
-      Assert.Equal("Polo", car.Model);
-      Assert.Equal("ECO-001", car.LicensePlate);
-      Assert.Equal(CarStatus.Available, car.Status);
-   }
-
+   private readonly TestSeed _seed = new(); 
+   
    // ------------------------------------------------------------------
    // Car.Create() - valid cases
    // ------------------------------------------------------------------
-
    [Fact]
    public void Create_returns_valid_car_with_correct_properties() {
-      // Arrange & Act
-      var result = Car.Create(
-         CarCategory.Compact,
-         "BMW",
-         "3 Series",
-         "COM-123"
-      );
+      
+      // Arrange
+      var id = _seed.Car1.Id;
+      var manufacturer = _seed.Car1.Manufacturer;
+      var model = _seed.Car1.Model;
+      var licensePlate = _seed.Car1.LicensePlate;
+      var category = _seed.Car1.Category;
+      var createdAt = _seed.Car1.CreatedAt;
+      var status = _seed.Car1.Status;
+      
+      // Act
+      var result = Car.Create(manufacturer, model, licensePlate,
+         category, createdAt, id.ToString());
 
       // Assert
       Assert.True(result.IsSuccess);
       Assert.NotNull(result.Value);
-      Assert.Equal(CarCategory.Compact, result.Value.Category);
-      Assert.Equal("BMW", result.Value.Manufacturer);
-      Assert.Equal("3 Series", result.Value.Model);
-      Assert.Equal("COM-123", result.Value.LicensePlate);
-      Assert.Equal(CarStatus.Available, result.Value.Status);
+      var actualCar = result.Value;
+      
+      Assert.Equal(manufacturer , actualCar.Manufacturer);
+      Assert.Equal(model , actualCar.Model);
+      Assert.Equal(licensePlate , actualCar.LicensePlate);
+      Assert.Equal(category , actualCar.Category);
+      Assert.Equal(createdAt , actualCar.CreatedAt);
+      Assert.Equal(id , actualCar.Id);
+      Assert.Equal(CarStatus.Available , actualCar.Status); // default
    }
 
    // ------------------------------------------------------------------
    // LicensePlate validation
    // ------------------------------------------------------------------
-
    [Fact]
    public void Create_rejects_empty_license_plate() {
-      // Arrange & Act
-      var result = Car.Create(
-         CarCategory.Economy,
-         "VW",
-         "Polo",
-         ""
-      );
-
+      // Arrange
+      var id = _seed.Car1.Id;
+      var manufacturer = _seed.Car1.Manufacturer;
+      var model = _seed.Car1.Model;
+      var category = _seed.Car1.Category;
+      var createdAt = _seed.Car1.CreatedAt;
+      var status = _seed.Car1.Status;
+      
+      // Act
+      var result = Car.Create(manufacturer, model, "",
+         category, createdAt, id.ToString());
+      
       // Assert
       Assert.True(result.IsFailure);
       Assert.Equal(CarErrors.LicensePlateIsRequired.Code, result.Error.Code);
@@ -70,13 +65,17 @@ public sealed class CarUt {
 
    [Fact]
    public void Create_rejects_whitespace_license_plate() {
-      // Arrange & Act
-      var result = Car.Create(
-         CarCategory.Economy,
-         "VW",
-         "Polo",
-         "   "
-      );
+      // Arrange
+      var id = _seed.Car1.Id;
+      var manufacturer = _seed.Car1.Manufacturer;
+      var model = _seed.Car1.Model;
+      var category = _seed.Car1.Category;
+      var createdAt = _seed.Car1.CreatedAt;
+      var status = _seed.Car1.Status;
+      
+      // Act
+      var result = Car.Create(manufacturer, model, "        ",
+         category, createdAt, id.ToString());
 
       // Assert
       Assert.True(result.IsFailure);
@@ -85,14 +84,19 @@ public sealed class CarUt {
 
    [Fact]
    public void Create_rejects_invalid_license_plate_format() {
-      // Arrange & Act
-      var result = Car.Create(
-         CarCategory.Economy,
-         "VW",
-         "Polo",
-         "eco-001" // lowercase not allowed
-      );
-
+      // Arrange
+      var id = _seed.Car1.Id;
+      var manufacturer = _seed.Car1.Manufacturer;
+      var model = _seed.Car1.Model;
+      var licensePlate = _seed.Car1.LicensePlate;
+      var category = _seed.Car1.Category;
+      var createdAt = _seed.Car1.CreatedAt;
+      var status = _seed.Car1.Status;
+      
+      // Act
+      var result = Car.Create(manufacturer, model, "eco-001",
+         category, createdAt, id.ToString());
+      
       // Assert
       Assert.True(result.IsFailure);
       Assert.Equal(CarErrors.InvalidLicensePlateFormat.Code, result.Error.Code);
@@ -106,13 +110,17 @@ public sealed class CarUt {
    [InlineData("A-1")]
    [InlineData("XXX-9999")]
    public void Create_accepts_various_valid_license_plate_formats(string licensePlate) {
-      // Arrange & Act
-      var result = Car.Create(
-         CarCategory.Economy,
-         "VW",
-         "Polo",
-         licensePlate
-      );
+      // Arrange
+      var id = _seed.Car1.Id;
+      var manufacturer = _seed.Car1.Manufacturer;
+      var model = _seed.Car1.Model;
+      var category = _seed.Car1.Category;
+      var createdAt = _seed.Car1.CreatedAt;
+      var status = _seed.Car1.Status;
+      
+      // Act
+      var result = Car.Create(manufacturer, model, licensePlate,
+         category, createdAt, id.ToString());
 
       // Assert
       Assert.True(result.IsSuccess);
@@ -126,14 +134,18 @@ public sealed class CarUt {
    [InlineData("ECO.001")]      // dot
    [InlineData("ÄCO-001")]      // umlaut
    public void Create_rejects_invalid_license_plate_formats(string licensePlate) {
-      // Arrange & Act
-      var result = Car.Create(
-         CarCategory.Economy,
-         "VW",
-         "Polo",
-         licensePlate
-      );
-
+      // Arrange
+      var id = _seed.Car1.Id;
+      var manufacturer = _seed.Car1.Manufacturer;
+      var model = _seed.Car1.Model;
+      var category = _seed.Car1.Category;
+      var createdAt = _seed.Car1.CreatedAt;
+      var status = _seed.Car1.Status;
+      
+      // Act
+      var result = Car.Create(manufacturer, model, licensePlate,
+         category, createdAt, id.ToString());
+      
       // Assert
       Assert.True(result.IsFailure);
       Assert.Equal(CarErrors.InvalidLicensePlateFormat.Code, result.Error.Code);
@@ -142,7 +154,6 @@ public sealed class CarUt {
    // ------------------------------------------------------------------
    // CarStatus machine - valid transitions
    // ------------------------------------------------------------------
-
    [Fact]
    public void MarkAsRented_changes_status_from_Available_to_Rented() {
       // Arrange

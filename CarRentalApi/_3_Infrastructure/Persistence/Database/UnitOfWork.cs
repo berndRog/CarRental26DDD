@@ -1,6 +1,5 @@
 using CarRentalApi._4_BuildingBlocks.Infrastructure.Persistence;
-using CarRentalApi.Domain;
-namespace CarRentalApi.Data.Database;
+namespace CarRentalApi._3_Infrastructure.Persistence.Database;
 
 public sealed class UnitOfWork(
    CarRentalDbContext _dbContext,

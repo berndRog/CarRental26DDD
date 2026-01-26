@@ -55,8 +55,8 @@ public interface IEmployeeUseCases {
    /// - Conflict if personnel number or email already exists
    /// </summary>
    Task<Result<Guid>> CreateAsync(
-      string firstName,
-      string lastName,
+      string firstname,
+      string lastname,
       string emailString,
       string phoneString,
       string personnelNumber,

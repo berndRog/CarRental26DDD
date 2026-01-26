@@ -11,28 +11,28 @@ public static class CustomerErrors {
          Message: "The provided customer id is invalid."
       );
    
-   public static readonly DomainErrors FirstNameIsRequired =
+   public static readonly DomainErrors FirstnameIsRequired =
       new(
          ErrorCode.BadRequest,
          Title: "First name required",
          Message: "A first name must be provided."
       );
 
-   public static readonly DomainErrors InvalidFirstName =
+   public static readonly DomainErrors InvalidFirstname =
       new(
          ErrorCode.BadRequest,
          Title: "Invalid first name",
          Message: "The provided first name is too short or too long (2–100 characters)."
       );
 
-   public static readonly DomainErrors LastNameIsRequired =
+   public static readonly DomainErrors LastnameIsRequired =
       new(
          ErrorCode.BadRequest,
          Title: "Last name required",
          Message: "A last name must be provided."
       );
 
-   public static readonly DomainErrors InvalidLastName =
+   public static readonly DomainErrors InvalidLastname =
       new(
          ErrorCode.BadRequest,
          Title: "Invalid last name",
@@ -58,6 +58,13 @@ public static class CustomerErrors {
          ErrorCode.NotFound,
          Title: "Customer not found",
          Message: "No customer with the given email address exists."
+      );
+   
+   public static readonly DomainErrors UserNameIsRequired =
+      new(
+         ErrorCode.BadRequest,
+         Title: "Preferred Username required",
+         Message: "A Username must be provided."
       );
 
    public static readonly DomainErrors NotFound =

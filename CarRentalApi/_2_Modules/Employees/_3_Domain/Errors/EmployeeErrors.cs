@@ -6,32 +6,32 @@ namespace CarRentalApi._2_Modules.Employees._3_Domain.Errors;
 /// Domain-level error definitions for employee-related validation and business rules.
 /// </summary>
 public static class EmployeeErrors {
-   public static readonly DomainErrors FirstNameIsRequired =
+   public static readonly DomainErrors FirstnameIsRequired =
       new(
          ErrorCode.BadRequest,
          Title: "First Name Is Required",
          Message: "A First Name Must Be Provided."
       );
 
-   public static readonly DomainErrors InvalidFirstName =
+   public static readonly DomainErrors InvalidFirstname =
       new(
          ErrorCode.BadRequest,
-         Title: "Invalid FirstName",
-         Message: "The Provided FirstName is too shot or too long (2-100 chars)."
+         Title: "Invalid Firstname",
+         Message: "The Provided Firstname is too shot or too long (2-100 chars)."
       );
 
-   public static readonly DomainErrors LastNameIsRequired =
+   public static readonly DomainErrors LastnameIsRequired =
       new(
          ErrorCode.BadRequest,
          Title: "Last Name Is Required",
          Message: "A Last Name Must Be Provided."
       );
 
-   public static readonly DomainErrors InvalidLastName =
+   public static readonly DomainErrors InvalidLastname =
       new(
          ErrorCode.BadRequest,
-         Title: "Invalid LastName",
-         Message: "The Provided LastName is too shot or too long (2-100 chars)."
+         Title: "Invalid Lastname",
+         Message: "The Provided Lastname is too shot or too long (2-100 chars)."
       );
 
    public static readonly DomainErrors EmailIsRequired =

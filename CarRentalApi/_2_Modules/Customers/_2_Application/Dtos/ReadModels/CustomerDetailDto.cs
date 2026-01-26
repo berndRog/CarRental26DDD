@@ -5,8 +5,8 @@ namespace CarRentalApi._2_Modules.Customers._2_Application.Dtos.ReadModels;
 /// </summary>
 public sealed record CustomerDetailDto(
    Guid Id,
-   string FirstName,
-   string LastName,
+   string Firstname,
+   string Lastname,
    string Email,
    string? Street,
    string? PostalCode,

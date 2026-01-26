@@ -5,8 +5,8 @@ namespace CarRentalApi._2_Modules.Customers._2_Application.Dtos.ReadModels;
 /// </summary>
 public sealed record CustomerListItemDto(
    Guid Id,
-   string FirstName,
-   string LastName,
+   string Firstname,
+   string Lastname,
    string Email,
    bool IsBlocked
 );

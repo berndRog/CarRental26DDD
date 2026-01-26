@@ -1,11 +1,11 @@
 using CarRentalApi._2_Modules.Cars._1_Ports.Outbound;
 using CarRentalApi._2_Modules.Cars._3_Domain.Aggregates;
 using CarRentalApi._2_Modules.Cars._3_Domain.Enums;
+using CarRentalApi._3_Infrastructure.Persistence.Database;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Enums;
 using CarRentalApi._4_BuildingBlocks.Utils;
-using CarRentalApi.Data.Database;
 using Microsoft.EntityFrameworkCore;
-namespace CarRentalApi.Modules.Cars.Infrastructure.Repositories;
+namespace CarRentalApi._2_Modules.Cars._4_Infrastructure.Repositories;
 
 public sealed class CarRepositoryEf(
    CarRentalDbContext _dbContext,

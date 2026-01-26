@@ -26,6 +26,12 @@ public sealed class CustomersController(
    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
    [ProducesResponseType<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")]
    public async Task<ActionResult<Guid>> Provisioned(CancellationToken ct) {
+      
+      _logger.LogWarning("IsAuthenticated={auth}, Claims=[{claims}]",
+         User.Identity?.IsAuthenticated,
+         string.Join(", ", User.Claims.Select(c => $"{c.Type}={c.Value}"))
+      );
+      
       var result = await _ucProvisioned.ExecuteAsync(ct);
       
       return this.ToActionResult<Guid>(
@@ -122,16 +128,16 @@ public sealed class CustomersController(
    [EndpointSummary("Get customers by name")]
    [ProducesResponseType<IReadOnlyList<CustomerDetailDto>>(StatusCodes.Status200OK)]
    public async Task<ActionResult<IReadOnlyList<CustomerDetailDto>>> GetCustomersByName(
-      [FromQuery] string firstName,
-      [FromQuery] string lastName,
+      [FromQuery] string firstname,
+      [FromQuery] string lastname,
       CancellationToken ct
    ) {
-      var result = await _readModel.SelectByNameAsync(firstName, lastName, ct);
+      var result = await _readModel.SelectByNameAsync(firstname, lastname, ct);
       return this.ToActionResult<IReadOnlyList<CustomerDetailDto>>(
          result,
          _logger,
          context: "GET /carrentalapi/v1/customers/name",
-         args: new { firstName, lastName }
+         args: new { firstname, lastname }
       );
    }
 
@@ -206,16 +212,16 @@ public sealed class CustomersController(
    [EndpointSummary("Get customers by name")]
    [ProducesResponseType<IReadOnlyList<CustomerDetailDto>>(StatusCodes.Status200OK)]
    public async Task<ActionResult<IReadOnlyList<CustomerDetailDto>>> GetCustomersByName(
-      [FromQuery] string firstName,
-      [FromQuery] string lastName,
+      [FromQuery] string firstname,
+      [FromQuery] string lastname,
       CancellationToken ct
    ) {
-      var result = await _customerReadApi.SelectByNameAsync(firstName, lastName, ct);
+      var result = await _customerReadApi.SelectByNameAsync(firstname, lastname, ct);
       return this.ToActionResult<IReadOnlyList<CustomerDetailDto>>(
          result,
          _logger,
          context: "GET /customers/name",
-         args: new { firstName, lastName }
+         args: new { firstname, lastname }
       );
    }
 }
@@ -247,8 +253,8 @@ public sealed class CustomersController(
 //       CancellationToken ct
 //    ) {
 //       var result = await _customerUseCases.CreateAsync(
-//          customerDto.FirstName,
-//          customerDto.LastName,
+//          customerDto.Firstname,
+//          customerDto.Lastname,
 //          customerDto.Email,
 //          customerDto.CreatedAt,
 //          customerDto.Street,

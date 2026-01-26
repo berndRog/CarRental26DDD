@@ -24,18 +24,18 @@ public sealed class Customer : Entity<Guid> {
    #error "Define either OOP_MODE or DDD_MODE in .csproj"
 #endif
 
-   public string FirstName { get; private set; } = string.Empty;
-   public string LastName { get; private set; } = string.Empty;
+   public string Firstname { get; private set; } = string.Empty;
+   public string Lastname { get; private set; } = string.Empty;
    public Email Email { get; private set; } = default!;
    
    public IdentitySubject Subject { get; private set; } = default!; // OidvOAuthServer
    
-   public Address? Address { get; private set; }
    public DateTimeOffset CreatedAt { get; private set; }
    public DateTimeOffset? BlockedAt { get; private set; }
    public bool IsBlocked => BlockedAt is not null;
 
-   
+   public Address? Address { get; private set; }
+
    // EF Core ctor
    private Customer() {
    }
@@ -43,88 +43,100 @@ public sealed class Customer : Entity<Guid> {
    // Domain ctor
    private Customer(
       Guid id,
-      string firstName,
-      string lastName,
+      string firstname,
+      string lastname,
       Email email,
-      Address? address,
       IdentitySubject subject,
-      DateTimeOffset createdAt
+      DateTimeOffset createdAt,
+      Address? address
    ) {
       Id = id;
-      FirstName = firstName;
-      LastName = lastName;
+      Firstname = firstname;
+      Lastname = lastname;
       Email = email;
-      Address = address;
       Subject = subject;
       CreatedAt = createdAt;
+      Address = address;
    }
 
    // ---------- Factory (Result-based) ----------
    public static Result<Customer> Create(
-      string firstName,
-      string lastName,
+      string firstname,
+      string lastname,
       string emailString,
-      string? phoneString = null,
+      string subjectValue = "",
+      DateTimeOffset createdAt = default,
+      string? id = null,
       string? street = null,
       string? postalCode = null,
       string? city = null,
-      DateTimeOffset createdAt = default,
-      string? id = null
+      string? country = null
    ) {
       // Normalize input early
-      firstName = firstName.Trim();
-      lastName = lastName.Trim();
+      firstname = firstname.Trim();
+      lastname = lastname.Trim();
       emailString = emailString.Trim();
+      subjectValue = subjectValue.Trim();
 
-      if (string.IsNullOrWhiteSpace(firstName))
-         return Result<Customer>.Failure(CustomerErrors.FirstNameIsRequired);
-      if (firstName.Length is < 2 or > 100)
-         return Result<Customer>.Failure(CustomerErrors.InvalidFirstName);
+      if (string.IsNullOrWhiteSpace(firstname))
+         return Result<Customer>.Failure(CustomerErrors.FirstnameIsRequired);
+      if (firstname.Length is < 2 or > 100)
+         return Result<Customer>.Failure(CustomerErrors.InvalidFirstname);
 
-      if (string.IsNullOrWhiteSpace(lastName))
-         return Result<Customer>.Failure(CustomerErrors.LastNameIsRequired);
-      if (lastName.Length is < 2 or > 100)
-         return Result<Customer>.Failure(CustomerErrors.InvalidLastName);
+      if (string.IsNullOrWhiteSpace(lastname))
+         return Result<Customer>.Failure(CustomerErrors.LastnameIsRequired);
+      if (lastname.Length is < 2 or > 100)
+         return Result<Customer>.Failure(CustomerErrors.InvalidLastname);
 
+      // create Email value object
       if (string.IsNullOrWhiteSpace(emailString))
          return Result<Customer>.Failure(CustomerErrors.EmailIsRequired);
       var resultEmail = Email.Create(emailString);
-
-      if (!resultEmail.IsFailure)
+      if (resultEmail.IsFailure)
          return Result<Customer>.Failure(resultEmail.Error);
       var email = resultEmail.Value!;
+      
+      // create IdentitySubject value object
+      var identitySubject = IdentitySubject.System();
+      if (!string.IsNullOrWhiteSpace(subjectValue)) {
+         var resultIdentitySubject = IdentitySubject.Create(subjectValue);
+         if (resultIdentitySubject.IsFailure)
+            return Result<Customer>.Failure(resultIdentitySubject.Error);
+         identitySubject = resultIdentitySubject.Value;
+      }
 
+      // create Id:Guid required
+      var result = EntityId.Resolve(id, CustomerErrors.InvalidId);
+      if (result.IsFailure)
+         return Result<Customer>.Failure(result.Error);
+      var customerId = result.Value;
+      
+      // create Address value object (optional)
       Address? address = null;
       if (!string.IsNullOrWhiteSpace(street) &&
           !string.IsNullOrWhiteSpace(postalCode) &&
           !string.IsNullOrWhiteSpace(city)
          ) {
-         var addressResult = Address.Create(street, postalCode, city);
+         var addressResult = Address.Create(street, postalCode, city, country);
          if (addressResult.IsFailure)
             return Result<Customer>.Failure(addressResult.Error);
          address = addressResult.Value;
       }
-
-      var result = EntityId.Resolve(id, CustomerErrors.InvalidId);
-      if (result.IsFailure)
-         return Result<Customer>.Failure(result.Error);
-      var customerId = result.Value;
-
-      var identitySubject = IdentitySubject.System();
-
+      
+      // create new Customer aggregate
       var customer = new Customer(
          id: customerId,
-         firstName: firstName,
-         lastName: lastName,
+         firstname: firstname,
+         lastname: lastname,
          email: email,
          subject: identitySubject,
-         address: address,
-         createdAt: createdAt
+         createdAt: createdAt,
+         address: address
       );
 
       return Result<Customer>.Success(customer);
    }
-
+   
    public static Result<Customer> CreateProvisioned(
       IdentitySubject identitySubject,
       Email email,
@@ -137,8 +149,8 @@ public sealed class Customer : Entity<Guid> {
       // identitySubject/email sind bereits VOs => valid
       var customer = new Customer(
          id ?? Guid.NewGuid(),
-         firstName: string.Empty,
-         lastName: string.Empty,
+         firstname: string.Empty,
+         lastname: string.Empty,
          email: email,
          address: null,
          createdAt: createdAt,
@@ -150,29 +162,28 @@ public sealed class Customer : Entity<Guid> {
 
    //--- Domain methods ---
    public Result UpdateProfile(
-      string firstName,
-      string lastName,
+      string firstname,
+      string lastname,
       Email email,
       string? street,
       string? postalCode,
       string? city,
       string? country
    ) {
-      // 1) Basic required fields
-      if (string.IsNullOrWhiteSpace(firstName))
-         return Result.Failure(CustomerErrors.FirstNameIsRequired);
+      Firstname = firstname.Trim();
+      Lastname  = lastname.Trim();
+      
+      // Basic required fields
+      if (string.IsNullOrWhiteSpace(firstname))
+         return Result.Failure(CustomerErrors.FirstnameIsRequired);
 
-      if (string.IsNullOrWhiteSpace(lastName))
-         return Result.Failure(CustomerErrors.LastNameIsRequired);
-
-      // 2) Email (already validated as VO by caller)
+      if (string.IsNullOrWhiteSpace(lastname))
+         return Result.Failure(CustomerErrors.LastnameIsRequired);
+      
+      // Email (already validated as value object by caller)
       Email = email;
-
-      // 3) Names
-      FirstName = firstName.Trim();
-      LastName  = lastName.Trim();
-
-      // 4) Address: either fully set or null (no half-addresses)
+      
+      // Address: either fully set or null (no half-addresses)
       var anyAddress =
          !string.IsNullOrWhiteSpace(street) ||
          !string.IsNullOrWhiteSpace(postalCode) ||

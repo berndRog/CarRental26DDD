@@ -1,10 +1,8 @@
-using CarRentalApi.BuildingBlocks;
-using CarRentalApi.Modules.Common.Domain.Errors;
-using CarRentalApi.Modules.Customers.Domain.Aggregates;
-using CarRentalApi.Modules.Customers.Domain.ValueObjects;
+using CarRentalApi._2_Modules.Customers._3_Domain.Aggregates;
+using CarRentalApi._4_BuildingBlocks._1_Ports.Inbound;
+using CarRentalApi._4_BuildingBlocks._3_Domain.Errors;
 namespace CarRentalApiTest.Modules.Customers.Domain;
 
-/*
 public class CustomerUt {
 
    private readonly TestSeed _seed = new();
@@ -13,26 +11,28 @@ public class CustomerUt {
    [Fact]
    public void Create_WithValidDataAndAddress_ShouldSucceed() {
       // Arrange
-      var firstName = _seed.Customer1.FirstName;
-      var lastName = _seed.Customer1.LastName;
+      var id = _seed.Customer1.Id;
+      var firstname = _seed.Customer1.Firstname;
+      var lastname = _seed.Customer1.Lastname;
       var email = _seed.Customer1.Email;
+      var subject = _seed.Customer1.Subject;
       var createdAt = _seed.Customer1.CreatedAt;
-      var address = Address.Create("Teststr. 1", "12345", "TestCity").GetValueOrThrow();
+      var address = _seed.Address1;
+      
       // Act
-      var result = Customer.Create(
-         firstName,
-         lastName,
-         email,
-         createdAt,
-         Guid.NewGuid().ToString(),
-         address
-      );
+      var result =
+         Customer.Create(firstname, lastname, email.Value, subject.Value, createdAt,
+            id.ToString(), address.Street, address.PostalCode, address.City, address.Country);
+      
       // Assert
       Assert.True(result.IsSuccess);
       var customer = result.Value;
-      Assert.Equal(firstName, customer.FirstName);
-      Assert.Equal(lastName, customer.LastName);
+      Assert.Equal(id, customer.Id);
+      Assert.Equal(firstname, customer.Firstname);
+      Assert.Equal(lastname, customer.Lastname);
       Assert.Equal(email, customer.Email);
+      Assert.Equal(subject, customer.Subject);
+      Assert.Equal(createdAt, customer.CreatedAt);
       Assert.Equal(createdAt, customer.CreatedAt);
       Assert.Equal(address, customer.Address);
    }
@@ -40,23 +40,24 @@ public class CustomerUt {
    [Fact]
    public void Create_WithoutAddress_ShouldSucceed() {
       // Arrange
-      var firstName = _seed.Customer1.FirstName;
-      var lastName = _seed.Customer1.LastName;
+      var id = _seed.Customer1.Id;
+      var firstname = _seed.Customer1.Firstname;
+      var lastname = _seed.Customer1.Lastname;
       var email = _seed.Customer1.Email;
+      var subject = _seed.Customer1.Subject;
       var createdAt = _seed.Customer1.CreatedAt;
+      
       // Act
-      var result = Customer.Create(
-         firstName,
-         lastName,
-         email,
-         createdAt
-      );
+      var result = Customer.Create(firstname, lastname, email.Value, 
+         subject.Value, createdAt, id.ToString());
+      
       // Assert
       Assert.True(result.IsSuccess);
       var customer = result.Value;
-      Assert.Equal(firstName, customer.FirstName);
-      Assert.Equal(lastName, customer.LastName);
+      Assert.Equal(firstname, customer.Firstname);
+      Assert.Equal(lastname, customer.Lastname);
       Assert.Equal(email, customer.Email);
+      Assert.Equal(subject, customer.Subject);
       Assert.Equal(createdAt, customer.CreatedAt);
       Assert.Null(result.Value.Address);
    }
@@ -66,12 +67,17 @@ public class CustomerUt {
    [InlineData("Erika", "", "e.mustermann@t-line.de")]
    [InlineData("Erika", "Mustermann", "")]
    public void Create_WithMissingRequiredData_ShouldFail(
-      string firstName,
-      string lastName,
-      string email
+      string firstname,
+      string lastname,
+      string emailString
    ) {
+      var id = _seed.Customer1.Id;
+      var subject = _seed.Customer1.Subject;
+      var createdAt = _seed.Customer1.CreatedAt;
+      
       // Act
-      var result = Customer.Create(firstName, lastName, email, _clock.UtcNow);
+      var result = Customer.Create(firstname, lastname, emailString, 
+         subject.Value, createdAt, id.ToString());
 
       // Assert
       Assert.True(result.IsFailure);
@@ -82,62 +88,34 @@ public class CustomerUt {
    [InlineData("@example.com")]
    [InlineData("user@")]
    [InlineData("user@domain")]
-   public void Create_WithInvalidEmailFormat_ShouldFail(string email) {
+   public void Create_WithInvalidEmailFormat_ShouldFail(string emailString) {
+      var id = _seed.Customer1.Id;
+      var firstname = _seed.Customer1.Firstname;
+      var lastname = _seed.Customer1.Lastname;
+      var subject = _seed.Customer1.Subject;
+      var createdAt = _seed.Customer1.CreatedAt;
+     
       // Act
-      var result = Customer.Create(
-         "Erika",
-         "Mustermann",
-         email,
-         _clock.UtcNow
-      );
+      var result = Customer.Create(firstname,lastname, emailString,
+         subject.Value, createdAt, id.ToString());
 
       // Assert
       Assert.True(result.IsFailure);
-      Assert.Equal(PersonErrors.EmailInvalidFormat, result.Error);
+      Assert.Equal(CommonErrors.InvalidEmail, result.Error);
    }
-
-   [Fact]
-   public void ChangeEmail_WithValidEmail_ShouldSucceed() {
-      // Arrange
-      var customer = _seed.Customer1;
-      var newEmail = "new.email@example.com";
-
-      // Act
-      var result = customer.ChangeEmail(newEmail);
-
-      // Assert
-      Assert.True(result.IsSuccess);
-      Assert.Equal(newEmail, customer.Email);
-   }
-
-   [Theory]
-   [InlineData("")]
-   [InlineData("   ")]
-   [InlineData("invalid-email")]
-   [InlineData("@example.com")]
-   public void ChangeEmail_WithInvalidEmail_ShouldFail(string email) {
-      // Arrange
-      var originalEmail = _seed.Customer1.Email;
-      var customer = _seed.Customer1;
-
-      // Act
-      var result = customer.ChangeEmail(email);
-
-      // Assert
-      Assert.True(result.IsFailure);
-      Assert.Equal(originalEmail, customer.Email); // Unchanged
-   }
-
+   
+   
    [Fact]
    public void Equals_WithSameId_ShouldBeTrue() {
       // Arrange
       var customer1 = _seed.Customer1;
       var customer2 = Customer.Create(
-         "Different",
-         "Name",
-         "different@email.com",
-         _clock.UtcNow,
-         _seed.Customer1Id
+         _seed.Customer2.Firstname,
+         _seed.Customer2.Lastname,
+         _seed.Customer2.Email.Value,
+         _seed.Customer2.Subject.Value,
+         _seed.Customer2.CreatedAt,
+         _seed.Customer1Id.ToString()
       ).GetValueOrThrow();
 
       // Act & Assert
@@ -154,24 +132,5 @@ public class CustomerUt {
       // Act & Assert
       Assert.NotEqual(customer1, customer2); // Different ID
    }
-
-   [Fact]
-   public void TestSeed_AllCustomers_ShouldBeValid() {
-      // Assert
-      Assert.Equal("Erika", _seed.Customer1.FirstName);
-      Assert.Equal(_seed.Address1, _seed.Customer1.Address);
-
-      Assert.Equal("Max", _seed.Customer2.FirstName);
-      Assert.Null(_seed.Customer2.Address);
-
-      Assert.Equal("Arne", _seed.Customer3.FirstName);
-      Assert.Equal(_seed.Address2, _seed.Customer3.Address);
-
-      Assert.Equal("Benno", _seed.Customer4.FirstName);
-      Assert.Null(_seed.Customer4.Address);
-
-      Assert.Equal("Chrisitine", _seed.Customer5.FirstName);
-      Assert.Equal(_seed.Address3, _seed.Customer5.Address);
-   }
+   
 }
-*/

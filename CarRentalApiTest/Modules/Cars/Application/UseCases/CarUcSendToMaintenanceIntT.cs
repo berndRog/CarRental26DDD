@@ -1,18 +1,20 @@
-using CarRentalApi.BuildingBlocks.Enums;
-using CarRentalApi.BuildingBlocks.Persistence;
-using CarRentalApi.Data.Database;
-using CarRentalApi.Modules.Cars.Application.UseCases;
-using CarRentalApi.Modules.Cars.Domain.Aggregates;
-using CarRentalApi.Modules.Cars.Domain.Enums;
-using CarRentalApi.Modules.Cars.Domain.Errors;
-using CarRentalApi.Modules.Cars.Infrastructure;
-using CarRentalApi.Modules.Cars.Infrastructure.Repositories;
-using CarRentalApi.Modules.Cars.Ports.Outbound;
+using CarRentalApi._2_Modules.Cars._1_Ports.Outbound;
+using CarRentalApi._2_Modules.Cars._2_Application.UseCases;
+using CarRentalApi._2_Modules.Cars._3_Domain.Aggregates;
+using CarRentalApi._2_Modules.Cars._3_Domain.Enums;
+using CarRentalApi._2_Modules.Cars._3_Domain.Errors;
+using CarRentalApi._2_Modules.Cars._4_Infrastructure.Repositories;
+using CarRentalApi._3_Infrastructure.Persistence.Database;
+using CarRentalApi._4_BuildingBlocks._3_Domain.Enums;
+using CarRentalApi._4_BuildingBlocks.Infrastructure.Persistence;
+
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApiTest.Modules.Cars.Application.UseCases;
 
 public sealed class CarUcSendToMaintenanceIntT : TestBase, IAsyncLifetime {
+
+   private TestSeed _seed = null!;
    private SqliteConnection _dbConnection = null!;
    private CarRentalDbContext _dbContext = null!;
    private ICarRepository _repository = null!;
@@ -23,6 +25,9 @@ public sealed class CarUcSendToMaintenanceIntT : TestBase, IAsyncLifetime {
    private Car _retiredCar = null!;
 
    public async Task InitializeAsync() {
+      
+      _seed = new TestSeed();
+      
       _dbConnection = new SqliteConnection("Filename=:memory:");
       await _dbConnection.OpenAsync();
 
@@ -45,21 +50,25 @@ public sealed class CarUcSendToMaintenanceIntT : TestBase, IAsyncLifetime {
 
       // Seed: one available car
       _availableCar = Car.Create(
-         category: CarCategory.Compact,
          manufacturer: "VW",
          model: "Golf",
          licensePlate: "BS-CR-1001",
+         category: CarCategory.Compact,
+         createdAt: _seed.FixedNow,
          id: "00000000-0100-0000-0000-000000000000"
       ).Value!;
 
       // Seed: one retired car
       _retiredCar = Car.Create(
-         category: CarCategory.Compact,
          manufacturer: "VW",
          model: "Passat",
          licensePlate: "BS-CR-9999",
+         category: CarCategory.Compact,
+         createdAt: _seed.FixedNow,
          id: "00000000-0999-0000-0000-000000000000"
       ).Value!;
+      _retiredCar.Retire();
+      
       Assert.True(_retiredCar.Retire().IsSuccess);
 
       _dbContext.Cars.AddRange(_availableCar, _retiredCar);

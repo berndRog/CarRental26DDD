@@ -11,19 +11,20 @@ public class CustomerUseCases(
    CustomerUcBlock blockUc
 ): ICustomerUseCases {
    
-   public Task<Result<Customer>> CreateAsync(
-      string firstName,
-      string lastName,
+   public Task<Result<Guid>> CreateAsync(
+      string firstname,
+      string lastname,
       string email,
+      string subject,
       DateTimeOffset createdAt,
+      string? id,
       string? street,
       string? postalCode,
       string? city,
       string? country,
-      string? id,
       CancellationToken ct
-   ) => createUc.ExecuteAsync(firstName, lastName, email, createdAt, 
-      street, postalCode, city, country, id, ct);
+   ) => createUc.ExecuteAsync(firstname, lastname, email, subject, 
+      createdAt, id, street, postalCode, city, country, ct);
    
    
    public Task<Result<Guid>> Provisioned(

@@ -15,7 +15,7 @@ namespace CarRentalApi._2_Modules.Customers._2_Application.Dtos.ReadModels;
 /// Typical usage:
 /// - SearchText: free search across name + email
 /// - Email: exact lookup or partial match (implementation-defined)
-/// - FirstName/LastName: case-insensitive partial match
+/// - Firstname/Lastname: case-insensitive partial match
 /// - IsBlocked: derived state based on BlockedAt != null
 /// </summary>
 public sealed record CustomerSearchFilter(
@@ -25,8 +25,8 @@ public sealed record CustomerSearchFilter(
    /// Business meaning:
    /// - Used by search boxes in list views
    /// - Typical implementation matches:
-   ///   - FirstName
-   ///   - LastName
+   ///   - Firstname
+   ///   - Lastname
    ///   - Email
    ///
    /// Notes:
@@ -56,7 +56,7 @@ public sealed record CustomerSearchFilter(
    /// Notes:
    /// - Case-insensitive partial match recommended
    /// </summary>
-   string? FirstName = null,
+   string? Firstname = null,
 
    /// <summary>
    /// Last name filter.
@@ -67,7 +67,7 @@ public sealed record CustomerSearchFilter(
    /// Notes:
    /// - Case-insensitive partial match recommended
    /// </summary>
-   string? LastName = null,
+   string? Lastname = null,
 
    /// <summary>
    /// Blocked flag filter.

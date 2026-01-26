@@ -1,6 +1,6 @@
 using CarRentalApi._2_Modules.Employees._3_Domain.Aggregates;
+using CarRentalApi._3_Infrastructure.Persistence.Database;
 using CarRentalApi._4_BuildingBlocks._3_Domain.ValueObjects;
-using CarRentalApi.Persistence.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 // falls Email/Address/Phone hier liegen
@@ -21,8 +21,8 @@ public sealed class ConfigEmployee(
       b.Property(x => x.Id).ValueGeneratedNever();
       
       // Scalar properties
-      b.Property(x => x.FirstName).HasMaxLength(100).IsRequired();
-      b.Property(x => x.LastName).HasMaxLength(100).IsRequired();
+      b.Property(x => x.Firstname).HasMaxLength(100).IsRequired();
+      b.Property(x => x.Lastname).HasMaxLength(100).IsRequired();
       b.Property(x => x.Email)
          .HasConversion(
             e => e.Value,
@@ -48,10 +48,18 @@ public sealed class ConfigEmployee(
       
       // Subject (OIDC "sub") MUST exist (no legacy DB -> required)
       b.Property(x => x.Subject)
-         .HasConversion(s => s.Value, v => IdentitySubject.Create(v).Value)
-         .HasMaxLength(200).IsRequired();
+         .HasConversion(
+            s => s.Value, 
+            v => IdentitySubject.Create(v).Value
+         )
+         .HasColumnName("Subject")
+         .HasMaxLength(200)
+         .IsRequired();
       // Unique constraint: one subject -> one customer
       b.HasIndex(x => x.Subject).IsUnique();
+      
+
+      
       
       // Scalar properties (Employee-specific)
       b.Property(x => x.PersonnelNumber).HasMaxLength(32).IsRequired();

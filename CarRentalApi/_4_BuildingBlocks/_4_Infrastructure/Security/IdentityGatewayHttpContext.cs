@@ -23,25 +23,31 @@ public sealed class IdentityGatewayHttpContext(
    /// as IdentitySubject.
    /// </summary>
    public string Subject =>
-      User?.FindFirstValue(IdentityClaims.Subject) ?? "";
+      accessor.HttpContext?.User.FindFirstValue("sub")
+      ?? accessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier)
+      ?? throw new InvalidOperationException("Missing claim: sub");
 
    /// <summary>
-   /// Email claim as provided by the IdP.
+   /// Preferred Username interpreted as initial Email provided by the IdP.
    /// Used ONLY for initial provisioning of a Customer.
-   /// After that, email is handled purely inside the domain.
    /// </summary>
-   public string? Email =>
-      User?.FindFirstValue(IdentityClaims.Email);
+   public string Username =>
+      User?.FindFirstValue(IdentityClaims.PreferredUsername)
+      ?? throw new InvalidOperationException("Missing claim: preferred_username");
+
 
    /// <summary>
    /// Optional creation timestamp of the identity.
    /// If present, it can be used as the Customer.CreatedAt value
    /// during provisioning.
    /// </summary>
-   public DateTimeOffset? CreatedAt {
+   public DateTimeOffset CreatedAt {
       get {
          var v = User?.FindFirstValue(IdentityClaims.CreatedAt);
-         return DateTimeOffset.TryParse(v, out var dt) ? dt : null;
+         return DateTimeOffset.TryParse(v, out var dt) 
+            ? dt 
+            : throw new InvalidOperationException("Missing claim: created_at");
+         
       }
    }
 

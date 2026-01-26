@@ -1,11 +1,11 @@
-using CarRentalApi.BuildingBlocks.Enums;
-using CarRentalApi.BuildingBlocks.Persistence;
-using CarRentalApi.Data.Database;
-using CarRentalApi.Modules.Cars.Domain.Aggregates;
-using CarRentalApi.Modules.Cars.Domain.Enums;
-using CarRentalApi.Modules.Cars.Infrastructure;
+using CarRentalApi._2_Modules.Cars._1_Ports.Outbound;
+using CarRentalApi._2_Modules.Cars._3_Domain.Aggregates;
+using CarRentalApi._2_Modules.Cars._3_Domain.Enums;
+using CarRentalApi._2_Modules.Cars._4_Infrastructure.Repositories;
+using CarRentalApi._3_Infrastructure.Persistence.Database;
+using CarRentalApi._4_BuildingBlocks._3_Domain.Enums;
+using CarRentalApi._4_BuildingBlocks.Infrastructure.Persistence;
 using CarRentalApi.Modules.Cars.Infrastructure.Repositories;
-using CarRentalApi.Modules.Cars.Ports.Outbound;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApiTest.Modules.Cars.Infrastructure;
@@ -243,14 +243,21 @@ public sealed class CarRepositoryIntT : TestBase, IAsyncLifetime {
 
    #region Add
    [Fact]
-   public async Task Add_persists_car() {
+   public async Task Add_persists_car() { 
+      // Assert
+      var id = _seed.Car1.Id;
+      var manufacturer = _seed.Car1.Manufacturer;
+      var model = _seed.Car1.Model;
+      var licensePlate = _seed.Car1.LicensePlate;
+      var category = _seed.Car1.Category;
+      var createdAt = _seed.Car1.CreatedAt;
+      var status = _seed.Car1.Status;
+      
       // Arrange
-      var carResult = Car.Create(
-         CarCategory.Economy,
-         "Test Manufacturer",
-         "Test Model",
-         "TEST-001"
-      );
+      var carResult = Car.Create(manufacturer, model, licensePlate, category, 
+         createdAt, id.ToString());
+      
+      // Assert
       Assert.True(carResult.IsSuccess);
       var car = carResult.Value;
 
@@ -260,19 +267,23 @@ public sealed class CarRepositoryIntT : TestBase, IAsyncLifetime {
       _dbContext.ChangeTracker.Clear();
 
       // Assert
-      var saved = await _repository.FindByIdAsync(car.Id, CancellationToken.None);
-      Assert.NotNull(saved);
-      Assert.Equal(car.Id, saved!.Id);
-      Assert.Equal(car.Category, saved.Category);
-      Assert.Equal(car.LicensePlate, saved.LicensePlate);
+      var actual = await _repository.FindByIdAsync(car.Id, CancellationToken.None);
+      Assert.NotNull(actual);
+      Assert.Equal(id, actual.Id);
+      Assert.Equal(manufacturer, actual.Manufacturer);
+      Assert.Equal(model, actual.Model);
+      Assert.Equal(licensePlate, actual.LicensePlate);
+      Assert.Equal(category, actual.Category);
+      Assert.Equal(createdAt, actual.CreatedAt);
+      Assert.Equal(status, actual.Status);
    }
 
    [Fact]
    public async Task Add_multiple_cars_persists_all() {
       // Arrange
-      var car1 = Car.Create(CarCategory.Economy, "Make1", "Model1", "TEST-001").Value;
-      var car2 = Car.Create(CarCategory.Compact, "Make2", "Model2", "TEST-002").Value;
-      var car3 = Car.Create(CarCategory.Midsize, "Make3", "Model3", "TEST-003").Value;
+      var car1 = _seed.Car1;
+      var car2 = _seed.Car2;
+      var car3 = _seed.Car3;
 
       // Act
       _repository.Add(car1);

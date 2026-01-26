@@ -20,7 +20,14 @@ public static class CommonErrors {
       new(
          ErrorCode.BadRequest,
          Title: "Invalid IdentitySubject",
-         Message: "The provided subject (sub) is not valid."
+         Message: "The provided sub is not valid."
+      );
+   
+   public static readonly DomainErrors IdentityClaimsMissing =
+      new(
+         ErrorCode.BadRequest,
+         Title: "Invalid IdentityClaims",
+         Message: "The provided username or createdAt are not valid."
       );
 
    public static readonly DomainErrors Forbidden =

@@ -1,6 +1,6 @@
 using System.Globalization;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-namespace CarRentalApi.Persistence.Database;
+namespace CarRentalApi._3_Infrastructure.Persistence.Database;
 
 
 public sealed class DateTimeOffsetToIsoStringConverter() 

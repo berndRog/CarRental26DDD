@@ -8,8 +8,8 @@ public static class CustomerReadModelsMappings {
    // Read Model Mappings 
    public static CustomerDetailDto ToCustomerDetailDto(this Customer customer) => new(
       Id: customer.Id,
-      FirstName: customer.FirstName,
-      LastName: customer.LastName,
+      Firstname: customer.Firstname,
+      Lastname: customer.Lastname,
       Email: customer.Email.Value,
       Street: customer.Address?.Street,
       PostalCode: customer.Address?.PostalCode,
@@ -22,8 +22,8 @@ public static class CustomerReadModelsMappings {
    
    public static CustomerListItemDto ToCustomerListItemDto(this Customer customer) => new(
       Id: customer.Id,
-      FirstName: customer.FirstName,
-      LastName: customer.LastName,
+      Firstname: customer.Firstname,
+      Lastname: customer.Lastname,
       Email: customer.Email.Value,
       IsBlocked: customer.IsBlocked
    );

@@ -7,7 +7,7 @@ public abstract class Vehicle : Entity<Guid> {
    public string Model { get; private set; } = string.Empty;
    public string LicensePlate { get; private set; } = string.Empty;
    public DateTimeOffset CreatedAt { get; private set; }
-   public DateTimeOffset? RetiredAt { get; private set; }
+   public DateTimeOffset? RetiredAt { get; protected set; }
 
    // EF Core ctor
    protected Vehicle() {

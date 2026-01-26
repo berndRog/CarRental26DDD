@@ -2,8 +2,8 @@ using CarRentalApi._2_Modules.Bookings._3_Domain.Enums;
 using CarRentalApi._2_Modules.Bookings._3_Domain.ValueObjects;
 using CarRentalApi._2_Modules.Cars._3_Domain.Aggregates;
 using CarRentalApi._2_Modules.Cars._3_Domain.Enums;
+using CarRentalApi._3_Infrastructure.Persistence.Database;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Enums;
-using CarRentalApi.Data.Database;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApi._2_Modules.Cars._4_Infrastructure.ReadModel;
 

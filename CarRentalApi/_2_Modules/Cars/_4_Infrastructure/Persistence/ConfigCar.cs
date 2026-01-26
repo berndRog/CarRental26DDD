@@ -1,5 +1,4 @@
 using CarRentalApi._2_Modules.Cars._3_Domain.Aggregates;
-using CarRentalApi.Persistence.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace CarRentalApi._2_Modules.Cars._4_Infrastructure.Persistence;

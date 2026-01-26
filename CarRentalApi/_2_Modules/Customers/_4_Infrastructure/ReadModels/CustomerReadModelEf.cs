@@ -4,13 +4,13 @@ using CarRentalApi._2_Modules.Customers._2_Application.Dtos.UseCases;
 using CarRentalApi._2_Modules.Customers._2_Application.Mappings;
 using CarRentalApi._2_Modules.Customers._3_Domain.Aggregates;
 using CarRentalApi._2_Modules.Customers._3_Domain.Errors;
+using CarRentalApi._3_Infrastructure.Persistence.Database;
 using CarRentalApi._4_BuildingBlocks;
 using CarRentalApi._4_BuildingBlocks._1_Ports.Outbound;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Enums;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Errors;
 using CarRentalApi._4_BuildingBlocks._3_Domain.ValueObjects;
 using CarRentalApi._4_BuildingBlocks._4_Infrastructure.ReadModel;
-using CarRentalApi.Data.Database;
 using CarRentalApi.Modules.Cars.Application.ReadModel.Dto;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApi._2_Modules.Customers._4_Infrastructure.ReadModels;
@@ -68,28 +68,28 @@ public sealed class CustomerReadModelEf(
    }
 
    public async Task<Result<IReadOnlyList<CustomerDetailDto>>> SelectByNameAsync(
-      string firstName,
-      string lastName,
+      string firstname,
+      string lastname,
       CancellationToken ct
    ) {
-      firstName = (firstName ?? "").Trim();
-      lastName  = (lastName  ?? "").Trim();
-      if (firstName.Length == 0 && lastName.Length == 0)
-         return Result<IReadOnlyList<CustomerDetailDto>>.Failure(CustomerErrors.FirstNameIsRequired);
+      firstname = (firstname ?? "").Trim();
+      lastname  = (lastname  ?? "").Trim();
+      if (firstname.Length == 0 && lastname.Length == 0)
+         return Result<IReadOnlyList<CustomerDetailDto>>.Failure(CustomerErrors.FirstnameIsRequired);
       
-      var patternFirstName = $"%{firstName}%";
-      var patternLastName = $"%{lastName}%";
+      var patternFirstname = $"%{firstname}%";
+      var patternLastname = $"%{lastname}%";
 
       var customerDetailDtos = await _dbContext.Customers
          .AsNoTracking()
          // both parts must match &&
          .Where(c =>                   
-            EF.Functions.Like(c.FirstName, patternFirstName) &&
-            EF.Functions.Like(c.LastName,  patternLastName))
+            EF.Functions.Like(c.Firstname, patternFirstname) &&
+            EF.Functions.Like(c.Lastname,  patternLastname))
          // Limit to 50 results to avoid overload
          .Take(50) 
-         .OrderBy(c => c.LastName)
-         .ThenBy(c => c.FirstName)
+         .OrderBy(c => c.Lastname)
+         .ThenBy(c => c.Firstname)
          .Select(c => c.ToCustomerDetailDto())
          .ToListAsync(ct);
 
@@ -125,21 +125,21 @@ public sealed class CustomerReadModelEf(
          query = query.Where(c => c.Email.Value.ToUpperInvariant() == email);
       }
    
-      if (!string.IsNullOrWhiteSpace(filter.FirstName)) {
-         var fn = filter.FirstName.Trim().ToUpperInvariant();
-         query = query.Where(c => c.FirstName.ToUpperInvariant().Contains(fn));
+      if (!string.IsNullOrWhiteSpace(filter.Firstname)) {
+         var fn = filter.Firstname.Trim().ToUpperInvariant();
+         query = query.Where(c => c.Firstname.ToUpperInvariant().Contains(fn));
       }
    
-      if (!string.IsNullOrWhiteSpace(filter.LastName)) {
-         var ln = filter.LastName.Trim().ToUpperInvariant();
-         query = query.Where(c => c.LastName.ToUpperInvariant().Contains(ln));
+      if (!string.IsNullOrWhiteSpace(filter.Lastname)) {
+         var ln = filter.Lastname.Trim().ToUpperInvariant();
+         query = query.Where(c => c.Lastname.ToUpperInvariant().Contains(ln));
       }
    
       // Total BEFORE paging
       var total = await query.CountAsync(ct);
    
-      // Sorting (fallback: LastName, FirstName)
-      query = query.OrderBy(c => c.LastName).ThenBy(c => c.FirstName);
+      // Sorting (fallback: Lastname, Firstname)
+      query = query.OrderBy(c => c.Lastname).ThenBy(c => c.Firstname);
    
       // Paging + projection
       var items = await query

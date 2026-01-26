@@ -128,12 +128,19 @@ public sealed class Car : Vehicle {
       );
 
    //---------- Retire car (User Story 1.4) ----------
-   public Result Retire() {
+   public Result Retire(
+      DateTimeOffset? retiredAt = null
+   ) {
       // strong invariant: once removed, lifecycle ends (idempotent)
       if (Status == CarStatus.Retired)
          return Result.Success();
 
       Status = CarStatus.Retired;
+      if (retiredAt.HasValue)
+         RetiredAt = retiredAt.Value;
+      else
+         RetiredAt = DateTimeOffset.UtcNow;
+      
       return Result.Success();
    }
 }

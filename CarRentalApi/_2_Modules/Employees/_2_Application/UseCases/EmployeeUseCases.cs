@@ -29,8 +29,8 @@ public sealed class EmployeeUseCases(
    EmployeeUcSetAdminRights setRightsUc
 ) : IEmployeeUseCases {
    public Task<Result<Guid>> CreateAsync(
-      string firstName,
-      string lastName,
+      string firstname,
+      string lastname,
       string emailString,
       string phoneString,
       string personnelNumber,
@@ -40,8 +40,8 @@ public sealed class EmployeeUseCases(
       Address? address = null,
       CancellationToken ct = default
    ) => createUc.ExecuteAsync(
-      firstName: firstName,
-      lastName: lastName,
+      firstname: firstname,
+      lastname: lastname,
       emailString: emailString,
       phoneString: phoneString,
       personnelNumber: personnelNumber,

@@ -7,8 +7,8 @@ public static class CustomerContractsMappings {
 
    public static CustomerContractDto ToCustomerContractDto(this Customer customer) => new(
       Id: customer.Id,
-      FirstName: customer.FirstName,
-      LastName: customer.LastName,
+      Firstname: customer.Firstname,
+      Lastname: customer.Lastname,
       Email: customer.Email.Value
    );
 }

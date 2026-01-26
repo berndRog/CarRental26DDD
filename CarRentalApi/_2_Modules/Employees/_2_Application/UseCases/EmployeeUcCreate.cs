@@ -26,8 +26,8 @@ public sealed class EmployeeUcCreate(
    ILogger<EmployeeUcCreate> _logger
 ) {
    public async Task<Result<Guid>> ExecuteAsync(
-      string firstName,
-      string lastName,
+      string firstname,
+      string lastname,
       string emailString,
       string phoneString,
       string personnelNumber,
@@ -60,8 +60,8 @@ public sealed class EmployeeUcCreate(
 
       // ---- Domain factory (invariants) ----
       var result = Employee.Create(
-         firstName: firstName,
-         lastName: lastName,
+         firstname: firstname,
+         lastname: lastname,
          emailString: emailString,
          phoneString:phoneString,
          personnelNumber: personnelNumber,

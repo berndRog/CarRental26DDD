@@ -1,8 +1,8 @@
 using CarRentalApi._2_Modules.Customers._1_Ports.Inbound;
+using CarRentalApi._2_Modules.Customers._1_Ports.Outbound;
 using CarRentalApi._2_Modules.Customers._2_Application.UseCases;
 using CarRentalApi._2_Modules.Customers._4_Infrastructure.Adapters;
 using CarRentalApi._2_Modules.Customers._4_Infrastructure.ReadModels;
-using CarRentalApi.Domain;
 using CarRentalApi.Modules.Cars.Infrastructure.Repositories;
 using CarRentalApi.Modules.Customers._1_Ports.Inbound;
 namespace CarRentalApi._2_Modules.Customers;

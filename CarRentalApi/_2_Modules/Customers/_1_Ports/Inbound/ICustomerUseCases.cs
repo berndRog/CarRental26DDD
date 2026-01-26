@@ -52,16 +52,17 @@ public interface ICustomerUseCases {
    /// - Invalid if input data is invalid
    /// - Conflict if a customer with the same email already exists
    /// </summary>
-   Task<Result<Customer>> CreateAsync(
-      string firstName,
-      string lastName,
+   Task<Result<Guid>> CreateAsync(
+      string firstname,
+      string lastname,
       string email,
+      string subject,
       DateTimeOffset createdAt,
+      string? id,
       string? street,
       string? postalCode,
       string? city,
       string? country,
-      string? id,
       CancellationToken ct
    );
 

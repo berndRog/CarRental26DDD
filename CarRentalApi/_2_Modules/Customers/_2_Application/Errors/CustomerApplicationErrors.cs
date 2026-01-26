@@ -20,5 +20,11 @@ public static class CustomerApplicationErrors {
          Message: "The customer profile is blocked against employees access."
       );
    
+   public static readonly DomainErrors EmailAlreadyInUse =
+      new(
+         ErrorCode.Conflict,
+         Title: "Customer email already used",
+         Message: "The customer email is already in use by another customer."
+      );
    
 }

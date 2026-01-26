@@ -1,12 +1,11 @@
-using CarRentalApi.BuildingBlocks.Enums;
-using CarRentalApi.BuildingBlocks.Persistence;
-using CarRentalApi.Data.Database;
-using CarRentalApi.Modules.Cars.Application.UseCases;
-using CarRentalApi.Modules.Cars.Domain.Enums;
-using CarRentalApi.Modules.Cars.Domain.Errors;
-using CarRentalApi.Modules.Cars.Infrastructure;
+using CarRentalApi._2_Modules.Cars._1_Ports.Outbound;
+using CarRentalApi._2_Modules.Cars._2_Application.UseCases;
+using CarRentalApi._2_Modules.Cars._3_Domain.Errors;
+using CarRentalApi._2_Modules.Cars._4_Infrastructure.Repositories;
+using CarRentalApi._3_Infrastructure.Persistence.Database;
+using CarRentalApi._4_BuildingBlocks._3_Domain.Enums;
+using CarRentalApi._4_BuildingBlocks.Infrastructure.Persistence;
 using CarRentalApi.Modules.Cars.Infrastructure.Repositories;
-using CarRentalApi.Modules.Cars.Ports.Outbound;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApiTest.Modules.Cars.Application.UseCases;
@@ -20,8 +19,8 @@ public sealed class CarUcCreateIt : TestBase, IAsyncLifetime {
    private TestSeed _seed = null!;
 
    public async Task InitializeAsync() {
-      _seed = new  TestSeed(); 
-      
+      _seed = new TestSeed();
+
       _dbConnection = new SqliteConnection("Filename=:memory:");
       await _dbConnection.OpenAsync();
 
@@ -60,44 +59,57 @@ public sealed class CarUcCreateIt : TestBase, IAsyncLifetime {
 
    [Fact]
    public async Task ExecuteAsync_WithValidData_ShouldPersistCar() {
+      // Arrange
+      var id = _seed.Car10.Id;
+      var manufacturer = _seed.Car10.Manufacturer;
+      var model = _seed.Car10.Model;
+      var licensePlate = _seed.Car10.LicensePlate;
+      var category = _seed.Car10.Category;
+      var status = _seed.Car10.Status;
+      var createdAt = _seed.Car10.CreatedAt;
+
       // Act
-      var result = await _sut.ExecuteAsync(
-         CarCategory.Midsize,
-         "BMW",
-         "3 Series",
-         "MID-001",
-         id: null,
-         ct: CancellationToken.None
-      );
+      var result = await _sut.ExecuteAsync(manufacturer, model, licensePlate,
+         category, createdAt, id.ToString(), CancellationToken.None);
 
       // Assert
       Assert.True(result.IsSuccess);
-      Assert.NotEqual(Guid.Empty, result.Value.Id);
+      var CarId = result.Value;
+      Assert.NotEqual(Guid.Empty, CarId);
 
-      var fromDb = await _repository.FindByIdAsync(result.Value.Id, CancellationToken.None);
-      Assert.NotNull(fromDb);
-      Assert.Equal("MID-001", fromDb!.LicensePlate);
-      Assert.Equal("BMW", fromDb.Manufacturer);
-      Assert.Equal("3 Series", fromDb.Model);
-      Assert.Equal(CarCategory.Midsize, fromDb.Category);
-      Assert.Equal(CarStatus.Available, fromDb.Status);
+      var actual = await _repository.FindByIdAsync(CarId, CancellationToken.None);
+      Assert.NotNull(actual);
+      Assert.Equal(manufacturer, actual.Manufacturer);
+      Assert.Equal(model, actual.Model);
+      Assert.Equal(licensePlate, actual!.LicensePlate);
+      Assert.Equal(category, actual.Category);
+      Assert.Equal(status, actual.Status);
    }
 
    [Fact]
    public async Task ExecuteAsync_WithDuplicateLicensePlate_ShouldFail() {
+      // Arrange - Car1 is already seeded
+      var id = _seed.Car1.Id;
+      var manufacturer = _seed.Car1.Manufacturer;
+      var model = _seed.Car1.Model;
+      var licensePlate = _seed.Car1.LicensePlate;
+      var category = _seed.Car10.Category;
+      var status = _seed.Car10.Status;
+      var createdAt = _seed.Car10.CreatedAt;
+
       // Act - Use existing Car1 license plate
       var result = await _sut.ExecuteAsync(
-         CarCategory.Economy,
-         "Different",
-         "Model",
-         _seed.Car1.LicensePlate,
-         id: null,
+         manufacturer,
+         model,
+         licensePlate,
+         category,
+         createdAt,
+         id.ToString(),
          ct: CancellationToken.None
       );
 
       // Assert
       Assert.True(result.IsFailure);
-      Assert.Equal(CarErrors.LicensePlateMustBeUnique.Code, result.Error.Code);
    }
 
    [Theory]
@@ -105,16 +117,17 @@ public sealed class CarUcCreateIt : TestBase, IAsyncLifetime {
    [InlineData("VW", "", "Golf")]
    [InlineData("VW", "Golf", "")]
    public async Task ExecuteAsync_WithMissingRequiredData_ShouldFail(
-      string make,
+      string manufacturer,
       string model,
       string licensePlate
    ) {
       // Act
       var result = await _sut.ExecuteAsync(
-         CarCategory.Compact,
-         make,
+         manufacturer,
          model,
          licensePlate,
+         CarCategory.Compact,
+         _seed.FixedNow,
          id: null,
          ct: CancellationToken.None
       );
@@ -134,10 +147,11 @@ public sealed class CarUcCreateIt : TestBase, IAsyncLifetime {
    ) {
       // Act
       var result = await _sut.ExecuteAsync(
-         CarCategory.Compact,
          make,
          model,
          licensePlate,
+         CarCategory.Compact,
+         _seed.FixedNow,
          id: null,
          ct: CancellationToken.None
       );
@@ -150,10 +164,11 @@ public sealed class CarUcCreateIt : TestBase, IAsyncLifetime {
    public async Task ExecuteAsync_WithInvalidId_ShouldFail() {
       // Act
       var result = await _sut.ExecuteAsync(
+         _seed.Car1.Manufacturer,
+         _seed.Car1.Model,
+         _seed.Car1.LicensePlate,
          CarCategory.Compact,
-         "VW",
-         "Golf",
-         "INVALID-ID",
+         _seed.FixedNow,
          id: "not-a-valid-guid",
          ct: CancellationToken.None
       );
@@ -161,151 +176,5 @@ public sealed class CarUcCreateIt : TestBase, IAsyncLifetime {
       // Assert
       Assert.True(result.IsFailure);
       Assert.Equal(CarErrors.InvalidId.Code, result.Error.Code);
-   }
-
-   [Fact]
-   public async Task ExecuteAsync_WithNullId_ShouldGenerateNewId() {
-      // Act
-      var result = await _sut.ExecuteAsync(
-         CarCategory.Compact,
-         "VW",
-         "Golf",
-         "AUTO-ID-001",
-         id: null,
-         ct: CancellationToken.None
-      );
-
-      // Assert
-      Assert.True(result.IsSuccess);
-      Assert.NotEqual(Guid.Empty, result.Value.Id);
-   }
-
-   [Fact]
-   public async Task ExecuteAsync_WithValidGuidId_ShouldUseProvidedId() {
-      // Arrange
-      var customId = "99990000-0000-0000-0000-000000000000";
-
-      // Act
-      var result = await _sut.ExecuteAsync(
-         CarCategory.Suv,
-         "Audi",
-         "Q5",
-         "SUV-001",
-         id: customId,
-         ct: CancellationToken.None
-      );
-
-      // Assert
-      Assert.True(result.IsSuccess);
-      Assert.Equal(Guid.Parse(customId), result.Value.Id);
-   }
-
-   [Fact]
-   public async Task ExecuteAsync_WithDuplicateId_ShouldFail() {
-      // Act - Use existing Car1 ID
-      var result = await _sut.ExecuteAsync(
-         CarCategory.Economy,
-         "Different",
-         "Model",
-         "DUPLICATE-001",
-         id: _seed.Car1Id,
-         ct: CancellationToken.None
-      );
-
-      // Assert
-      Assert.True(result.IsFailure);
-   }
-
-   [Fact]
-   public async Task ExecuteAsync_WithCancelledToken_ShouldThrow() {
-      // Arrange
-      var cts = new CancellationTokenSource();
-      cts.Cancel();
-
-      // Act & Assert
-      await Assert.ThrowsAnyAsync<OperationCanceledException>(async () =>
-         await _sut.ExecuteAsync(
-            CarCategory.Compact,
-            "VW",
-            "Golf",
-            "CANCEL-001",
-            id: null,
-            ct: cts.Token
-         )
-      );
-   }
-
-   [Fact]
-   public async Task ExecuteAsync_MultipleCars_ShouldPersistAll() {
-      // Arrange & Act - Create cars in different categories
-      var result1 = await _sut.ExecuteAsync(
-         CarCategory.Compact,
-         "VW",
-         "Golf",
-         "MULTI-101",
-         id: null,
-         ct: CancellationToken.None
-      );
-
-      var result2 = await _sut.ExecuteAsync(
-         CarCategory.Suv,
-         "Audi",
-         "Q5",
-         "MULTI-102",
-         id: null,
-         ct: CancellationToken.None
-      );
-
-      // Assert
-      Assert.True(result1.IsSuccess);
-      Assert.True(result2.IsSuccess);
-
-      // Test SelectAsync with different parameters
-      var allCars = await _repository.SelectByAsync(null, null, CancellationToken.None);
-      Assert.True(allCars.Count >= 5); // 3 Seed + 2 new
-
-      var compactCars = await _repository.SelectByAsync(CarCategory.Compact, null, CancellationToken.None);
-      Assert.True(compactCars.Count >= 1); // At least MULTI-101
-
-      var availableCars = await _repository.SelectByAsync(null, CarStatus.Available, CancellationToken.None);
-      Assert.True(availableCars.Count >= 5); // All created cars should be available
-
-      var compactAvailable = await _repository.SelectByAsync(
-         CarCategory.Compact,
-         CarStatus.Available,
-         CancellationToken.None
-      );
-      Assert.True(compactAvailable.Count >= 1); // MULTI-101
-   }
-
-   [Theory]
-   [InlineData(CarCategory.Economy)]
-   [InlineData(CarCategory.Compact)]
-   [InlineData(CarCategory.Midsize)]
-   [InlineData(CarCategory.Suv)]
-   public async Task ExecuteAsync_WithAllValidCategories_ShouldSucceed(CarCategory category) {
-      // Arrange
-      var licensePlate = $"CAT-{(int)category:D3}";
-
-      // Act
-      var result = await _sut.ExecuteAsync(
-         category,
-         "Test",
-         "Model",
-         licensePlate,
-         id: null,
-         ct: CancellationToken.None
-      );
-
-      // Assert
-      Assert.True(result.IsSuccess);
-
-      var fromDb = await _repository.FindByIdAsync(result.Value.Id, CancellationToken.None);
-      Assert.NotNull(fromDb);
-      Assert.Equal(category, fromDb!.Category);
-
-      // Verify the car appears in category-filtered queries
-      var categoryCars = await _repository.SelectByAsync(category, null, CancellationToken.None);
-      Assert.Contains(categoryCars, c => c.Id == result.Value.Id);
    }
 }

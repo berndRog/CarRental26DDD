@@ -1,4 +1,4 @@
-namespace CarRentalApi.Infrastructure.Security;
+namespace CarRentalApi._3_Infrastructure.Security;
 
 public sealed class AuthOptions {
    public string Authority { get; init; } = "";

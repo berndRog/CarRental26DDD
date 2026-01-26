@@ -5,7 +5,7 @@ namespace CarRentalApi._2_Modules.Customers._2_Application.Dtos.Contracts;
 /// </summary>
 public sealed record class CustomerContractDto(
    Guid   Id,
-   string FirstName,
-   string LastName,
+   string Firstname,
+   string Lastname,
    string Email
 );

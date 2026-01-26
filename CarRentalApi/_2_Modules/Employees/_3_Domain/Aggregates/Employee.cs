@@ -28,8 +28,8 @@ namespace CarRentalApi._2_Modules.Employees._3_Domain.Aggregates;
 /// </summary>
 public sealed class Employee : Entity<Guid> {
    
-   public string FirstName { get; private set; } = string.Empty;
-   public string LastName  { get; private set; } = string.Empty;
+   public string Firstname { get; private set; } = string.Empty;
+   public string Lastname  { get; private set; } = string.Empty;
    public Email Email     { get; private set; } = default!;
    public Phone? Phone { get; private set; } = null;
   
@@ -50,8 +50,8 @@ public sealed class Employee : Entity<Guid> {
    // Domain constructor
    private Employee(
       Guid id,
-      string firstName,
-      string lastName,
+      string firstname,
+      string lastname,
       Email email,
       Phone? phone,
       string personnelNumber,
@@ -60,8 +60,8 @@ public sealed class Employee : Entity<Guid> {
       Address? address = null
    ) {
       Id = id;
-      FirstName = firstName;
-      LastName  = lastName;
+      Firstname = firstname;
+      Lastname  = lastname;
       Email     = email;
       Phone = phone;
       PersonnelNumber = personnelNumber;
@@ -73,10 +73,10 @@ public sealed class Employee : Entity<Guid> {
    // ---------- Factory (Result-based) ----------
    /// </summary>
    public static Result<Employee> Create(
-      string firstName,
-      string lastName,
+      string firstname,
+      string lastname,
       string emailString,
-      string phoneString,
+      string? phoneString,
       string personnelNumber,
       AdminRights adminRights = AdminRights.None,
       DateTimeOffset createdAt = default,
@@ -84,21 +84,21 @@ public sealed class Employee : Entity<Guid> {
       Address? address = null
    ) {
       // Normalize input early
-      firstName = firstName?.Trim() ?? string.Empty;
-      lastName = lastName?.Trim() ?? string.Empty;
-      emailString = emailString?.Trim() ?? string.Empty;
-      phoneString = phoneString?.Trim() ?? string.Empty;
-      personnelNumber = personnelNumber?.Trim() ?? string.Empty;
+      firstname = firstname.Trim();
+      lastname = lastname.Trim();
+      emailString = emailString.Trim();
+      phoneString = phoneString?.Trim();
+      personnelNumber = personnelNumber.Trim();
 
-      if (string.IsNullOrWhiteSpace(firstName))
-         return Result<Employee>.Failure(EmployeeErrors.FirstNameIsRequired);
-      if (firstName.Length is < 2 or > 100)
-         return Result<Employee>.Failure(EmployeeErrors.InvalidFirstName);
+      if (string.IsNullOrWhiteSpace(firstname))
+         return Result<Employee>.Failure(EmployeeErrors.FirstnameIsRequired);
+      if (firstname.Length is < 2 or > 100)
+         return Result<Employee>.Failure(EmployeeErrors.InvalidFirstname);
       
-      if (string.IsNullOrWhiteSpace(lastName))
-         return Result<Employee>.Failure(EmployeeErrors.LastNameIsRequired);
-      if (lastName.Length is < 2 or > 100)
-         return Result<Employee>.Failure(EmployeeErrors.InvalidFirstName);
+      if (string.IsNullOrWhiteSpace(lastname))
+         return Result<Employee>.Failure(EmployeeErrors.LastnameIsRequired);
+      if (lastname.Length is < 2 or > 100)
+         return Result<Employee>.Failure(EmployeeErrors.InvalidFirstname);
 
       if (string.IsNullOrWhiteSpace(emailString))
          return Result<Employee>.Failure(EmployeeErrors.EmailIsRequired);
@@ -107,13 +107,11 @@ public sealed class Employee : Entity<Guid> {
          return Result<Employee>.Failure(EmployeeErrors.InvalidEmail);
       var email = resultEmail.Value!;
       
-      Phone? phone = null;
-      if (!string.IsNullOrWhiteSpace(phoneString)) {
-         var resultPhone = Phone.Create(phoneString);
-         if (!resultPhone.IsFailure)
-            return Result<Employee>.Failure(resultPhone.Error);
-         phone = resultPhone.Value!;
-      }
+
+      var resultPhone = Phone.Create(phoneString);
+      if (!resultPhone.IsFailure) 
+         return Result<Employee>.Failure(resultPhone.Error);
+      var phone = resultPhone.Value!;
       
       if (string.IsNullOrWhiteSpace(personnelNumber))
          return Result<Employee>.Failure(EmployeeErrors.PersonnelNumberIsRequired);
@@ -127,8 +125,8 @@ public sealed class Employee : Entity<Guid> {
 
       var employee = new Employee(
          result.Value,
-         firstName,
-         lastName,
+         firstname,
+         lastname,
          email,
          phone,
          personnelNumber,

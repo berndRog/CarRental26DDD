@@ -94,8 +94,8 @@ public interface ICustomerReadModel {
    /// - Success with a list of matching customers (may be empty)
    /// </summary>
    Task<Result<IReadOnlyList<CustomerDetailDto>>> SelectByNameAsync(
-      string firstName,
-      string lastName,
+      string firstname,
+      string lastname,
       CancellationToken ct
    );
 

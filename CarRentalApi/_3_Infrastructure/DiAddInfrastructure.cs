@@ -1,5 +1,5 @@
+using CarRentalApi._3_Infrastructure.Persistence.Database;
 using CarRentalApi._4_BuildingBlocks.Infrastructure.Persistence;
-using CarRentalApi.Data.Database;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApi.Data.Extensions;
 

@@ -6,7 +6,7 @@ namespace CarRentalApi._4_BuildingBlocks._4_Infrastructure.Security;
 /// </summary>
 public static class IdentityClaims {
    public const string Subject = "sub";
-   public const string Email = "email";
+   public const string PreferredUsername = "preferred_username";
    public const string CreatedAt = "created_at";
    public const string AdminRights = "admin_rights";
 }
