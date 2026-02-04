@@ -11,7 +11,7 @@ namespace CarRentalApi._2_Modules.Customers._1_Presentation.Controllers;
 [Route("carrentalapi/v1/")]
 public sealed class CustomersController(
    ICustomerReadModel _readModel,
-   CustomerUcProvisioned _ucProvisioned,
+   CustomerUcProvision ucProvision,
    CustomerUcProfile _ucUpdateProfile,
    ILogger<CustomersController> _logger
 ) : ControllerBase {
@@ -32,7 +32,7 @@ public sealed class CustomersController(
          string.Join(", ", User.Claims.Select(c => $"{c.Type}={c.Value}"))
       );
       
-      var result = await _ucProvisioned.ExecuteAsync(ct);
+      var result = await ucProvision.ExecuteAsync(null, ct);
       
       return this.ToActionResult<Guid>(
          result,

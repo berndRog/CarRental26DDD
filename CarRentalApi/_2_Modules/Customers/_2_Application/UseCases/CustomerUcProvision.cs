@@ -3,27 +3,31 @@ using CarRentalApi._2_Modules.Customers._3_Domain.Aggregates;
 using CarRentalApi._2_Modules.Customers._3_Domain.Errors;
 using CarRentalApi._4_BuildingBlocks;
 using CarRentalApi._4_BuildingBlocks._1_Ports.Outbound;
+using CarRentalApi._4_BuildingBlocks._3_Domain;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Errors;
 using CarRentalApi._4_BuildingBlocks._3_Domain.ValueObjects;
 using CarRentalApi._4_BuildingBlocks.Infrastructure.Persistence;
 namespace CarRentalApi._2_Modules.Customers._2_Application.UseCases;
 
-public sealed class CustomerUcProvisioned(
+public sealed class CustomerUcProvision(
    IIdentityGateway _identityGateway,
    ICustomerRepository _repository,
    IUnitOfWork _unitOfWork,
-   ILogger<CustomerUcProvisioned> _logger
+   ILogger<CustomerUcProvision> _logger
 ) {
-   public async Task<Result<Guid>> ExecuteAsync(CancellationToken ct) {
+   public async Task<Result<Guid>> ExecuteAsync(
+      string? id, 
+      CancellationToken ct
+   ) {
 
       // 1) subject required
-      var subjectResult = IdentitySubject.Create(_identityGateway.Subject);
-      if (subjectResult.IsFailure)
-         return Result<Guid>.Failure(subjectResult.Error);
-      var subject = subjectResult.Value;
+      var result = IdentitySubject.Check(_identityGateway.Subject);
+      if (result.IsFailure)
+         return Result<Guid>.Failure(result.Error);
+      var subject = result.Value;
 
       // 2) idempotent lookup
-      var existing = await _repository.FindByIdentitySubjectAsync(subject, ct);
+      var existing = await _repository.FindByIdentitySubjectAsync(subject, false, ct);
       if (existing is not null)
          return Result<Guid>.Success(existing.Id);
 
@@ -35,12 +39,12 @@ public sealed class CustomerUcProvisioned(
          createdAt = _identityGateway.CreatedAt; // created_at
       }
       catch (InvalidOperationException ex) {
-         _logger.LogWarning(ex, "Provisioning failed: required identity claim missing (sub={sub})", subject.Value);
+         _logger.LogWarning(ex, "Provisioning failed: required identity claim missing (sub={sub})", subject);
          return Result<Guid>.Failure(CommonErrors.IdentityClaimsMissing);
       }
 
       // interpret preferred_username as initial email
-      var emailResult = Email.Create(username);
+      var emailResult = EmailAddress.Check(username);
       if (emailResult.IsFailure)
          return Result<Guid>.Failure(emailResult.Error);
       var email = emailResult.Value;
@@ -51,7 +55,7 @@ public sealed class CustomerUcProvisioned(
          return Result<Guid>.Failure(CustomerApplicationErrors.EmailAlreadyInUse);
       
       // 4) create aggregate
-      var customerResult = Customer.CreateProvisioned(subject, email, createdAt);
+      var customerResult = Customer.CreateProvisioned(subject, email, createdAt, id);
       if (customerResult.IsFailure)
          return Result<Guid>.Failure(customerResult.Error);
 
@@ -64,7 +68,7 @@ public sealed class CustomerUcProvisioned(
 
       _logger.LogInformation(
          "Customer provisioned subject={sub} customerId={id} savedRows={rows}",
-         subject.Value, customer.Id, savedRows
+         subject, customer.Id, savedRows
       );
       return Result<Guid>.Success(customer.Id);
    }

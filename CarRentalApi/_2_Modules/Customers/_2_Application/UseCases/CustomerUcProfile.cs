@@ -4,6 +4,7 @@ using CarRentalApi._2_Modules.Customers._2_Application.Mappings;
 using CarRentalApi._2_Modules.Customers._3_Domain.Errors;
 using CarRentalApi._4_BuildingBlocks;
 using CarRentalApi._4_BuildingBlocks._1_Ports.Outbound;
+using CarRentalApi._4_BuildingBlocks._3_Domain;
 using CarRentalApi._4_BuildingBlocks._3_Domain.ValueObjects;
 using CarRentalApi._4_BuildingBlocks.Infrastructure.Persistence;
 namespace CarRentalApi._2_Modules.Customers._2_Application.UseCases;
@@ -20,13 +21,13 @@ public class CustomerUcProfile(
       CancellationToken ct
    ) {
       // subject from gateway
-      var subjectResult = IdentitySubject.Create(_identityGateway.Subject);
+      var subjectResult = IdentitySubject.Check(_identityGateway.Subject);
       if (subjectResult.IsFailure)
          return Result<CustomerProfileDto>.Failure(subjectResult.Error);
       var subject = subjectResult.Value;
 
       // must be provisioned
-      var customer = await _repository.FindByIdentitySubjectAsync(subject, ct);
+      var customer = await _repository.FindByIdentitySubjectAsync(subject, false, ct);
       if (customer is null)
          return Result<CustomerProfileDto>.Failure(CustomerApplicationErrors.NotProvisioned);
 
@@ -37,18 +38,17 @@ public class CustomerUcProfile(
 
       // override email address (if changed) 
       var email = customer.Email;
-      if (!string.Equals(email.Value, dto.EmailString, StringComparison.OrdinalIgnoreCase)) {
+      if (!string.Equals(email, dto.Email, StringComparison.OrdinalIgnoreCase)) {
          // create new email value object from dto.Email
-         var resultDtoEmail = Email.Create(dto.EmailString);
+         var resultDtoEmail = EmailAddress.Check(dto.Email);
          if (resultDtoEmail.IsFailure)
             return Result<CustomerProfileDto>.Failure(resultDtoEmail.Error);
          // check uniqueness
-         var dtoEmail = resultDtoEmail.Value;
-         var existingByEmail = await _repository.FindByEmailAsync(dtoEmail, ct);
+         var existingByEmail = await _repository.FindByEmailAsync(dto.Email, ct);
          if (existingByEmail is not null && existingByEmail.Id != customer.Id)
             return Result<CustomerProfileDto>.Failure(CustomerApplicationErrors.EmailAlreadyInUse);
          // override previous email
-         email = dtoEmail;
+         email = dto.Email;
       }
 
       // domain update (now includes country)
@@ -69,7 +69,7 @@ public class CustomerUcProfile(
 
       _logger.LogInformation(
          "Customer profile subject={sub} customerId={id} savedRows={rows}",
-         subject.Value, customer.Id, savedRows
+         subject, customer.Id, savedRows
       );
       
       return Result<CustomerProfileDto>.Success(customer.ToCustomerProfileDto());

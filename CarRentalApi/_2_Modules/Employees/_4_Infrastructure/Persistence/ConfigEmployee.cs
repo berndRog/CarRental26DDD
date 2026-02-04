@@ -1,5 +1,6 @@
 using CarRentalApi._2_Modules.Employees._3_Domain.Aggregates;
 using CarRentalApi._3_Infrastructure.Persistence.Database;
+using CarRentalApi._4_BuildingBlocks._3_Domain;
 using CarRentalApi._4_BuildingBlocks._3_Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -21,58 +22,47 @@ public sealed class ConfigEmployee(
       b.Property(x => x.Id).ValueGeneratedNever();
       
       // Scalar properties
-      b.Property(x => x.Firstname).HasMaxLength(100).IsRequired();
-      b.Property(x => x.Lastname).HasMaxLength(100).IsRequired();
+      b.Property(x => x.Firstname)
+         .HasMaxLength(100).IsRequired();
+      b.Property(x => x.Lastname)
+         .HasMaxLength(100)
+         .IsRequired();
+      
       b.Property(x => x.Email)
-         .HasConversion(
-            e => e.Value,
-            v => Email.Create(v).Value
-         )
          .HasMaxLength(200)
          .IsRequired();
+      b.HasIndex(x => x.Email).IsUnique();
       
-      // Owned: Phone (nullable)
-      // (stored in Employees table)
-      b.OwnsOne(x => x.Phone, pb => {
-         pb.WithOwner();
-         pb.Property(p => p.Number)
-            .HasColumnName("PhoneNumber")
-            .HasMaxLength(32)
-            .IsRequired(false);
-         pb.Property(p => p.Normalized)
-            .HasColumnName("PhoneNormalized")
-            .HasMaxLength(32)
-            .IsRequired(false);
-      });
-      b.Navigation(x => x.Phone).IsRequired(false);
+      b.Property(x => x.Phone)
+         .HasMaxLength(32)
+         .IsRequired();
       
-      // Subject (OIDC "sub") MUST exist (no legacy DB -> required)
       b.Property(x => x.Subject)
-         .HasConversion(
-            s => s.Value, 
-            v => IdentitySubject.Create(v).Value
-         )
-         .HasColumnName("Subject")
          .HasMaxLength(200)
          .IsRequired();
-      // Unique constraint: one subject -> one customer
       b.HasIndex(x => x.Subject).IsUnique();
       
-
-      
-      
       // Scalar properties (Employee-specific)
-      b.Property(x => x.PersonnelNumber).HasMaxLength(32).IsRequired();
+      b.Property(x => x.PersonnelNumber)
+         .HasMaxLength(32)
+         .IsRequired();
       b.HasIndex(x => x.PersonnelNumber).IsUnique();
 
       // AdminRights enum -> int (SQLite friendly)
-      b.Property(x => x.AdminRights).HasConversion<int>().IsRequired();
+      b.Property(x => x.AdminRights)
+         .HasConversion<int>()
+         .IsRequired();
       // IsAdmin is computed => not persisted
       b.Ignore(x => x.IsAdmin);
 
-      b.Property(x => x.IsActive).IsRequired();
-      b.Property(x => x.CreatedAt).HasConversion(_dtOffToIsoStrConv).IsRequired();
-      b.Property(x => x.DeactivatedAt).HasConversion(_nulDtOffToIsoStrConv).IsRequired(false);
+      b.Property(x => x.IsActive)
+         .IsRequired();
+      b.Property(x => x.CreatedAt)
+         .HasConversion(_dtOffToIsoStrConv)
+         .IsRequired();
+      b.Property(x => x.DeactivatedAt)
+         .HasConversion(_nulDtOffToIsoStrConv)
+         .IsRequired(false);
       // Helpful index for "active employees"
       b.HasIndex(x => x.DeactivatedAt);
       

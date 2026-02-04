@@ -62,8 +62,8 @@ public sealed class EmployeeUcCreate(
       var result = Employee.Create(
          firstname: firstname,
          lastname: lastname,
-         emailString: emailString,
-         phoneString:phoneString,
+         email: emailString,
+         phone:phoneString,
          personnelNumber: personnelNumber,
          adminRights: adminRights,
          createdAt: createdAt,

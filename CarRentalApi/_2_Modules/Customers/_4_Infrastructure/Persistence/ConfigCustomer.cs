@@ -1,5 +1,6 @@
 using CarRentalApi._2_Modules.Customers._3_Domain.Aggregates;
 using CarRentalApi._3_Infrastructure.Persistence.Database;
+using CarRentalApi._4_BuildingBlocks._3_Domain;
 using CarRentalApi._4_BuildingBlocks._3_Domain.ValueObjects;
 using CarRentalApi._4_BuildingBlocks.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
@@ -20,19 +21,19 @@ public sealed class ConfigCustomer(
       b.Property(x => x.Id).ValueGeneratedNever();
 
       // Scalar properties
-      b.Property(x => x.Firstname).HasMaxLength(100).IsRequired();
-      b.Property(x => x.Lastname).HasMaxLength(100).IsRequired();
+      b.Property(x => x.Firstname)
+         .HasMaxLength(100)
+         .IsRequired();
+      b.Property(x => x.Lastname)
+         .HasMaxLength(100)
+         .IsRequired();
 
       b.Property(x => x.Email)
-         .HasConversion(e => e.Value, v => Email.Create(v).Value)
-         .HasMaxLength(200).IsRequired();
+         .HasMaxLength(200)
+         .IsRequired();
 
       // Subject (OIDC "sub") MUST exist (no legacy DB -> required)
       b.Property(x => x.Subject)
-         .HasConversion(
-            s => s.Value, 
-            v => IdentitySubject.Create(v).Value
-         )
          .HasColumnName("Subject")
          .HasMaxLength(200)
          .IsRequired();
@@ -48,13 +49,21 @@ public sealed class ConfigCustomer(
       b.OwnsOne(c => c.Address, a => {
          // OPTIONAL: keeps columns readable & avoids collisions
          a.Property(p => p.Street)
-            .HasColumnName("Address_Street").HasMaxLength(100).IsRequired(false);
+            .HasColumnName("Street")
+            .HasMaxLength(100)
+            .IsRequired(false);
          a.Property(p => p.PostalCode)
-            .HasColumnName("Address_PostalCode").HasMaxLength(20).IsRequired(false);
+            .HasColumnName("PostalCode")
+            .HasMaxLength(20)
+            .IsRequired(false);
          a.Property(p => p.City)
-            .HasColumnName("Address_City").HasMaxLength(50).IsRequired(false);
-         a.Property(p => p.City)
-            .HasColumnName("Address_Country").HasMaxLength(30).IsRequired(false);
+            .HasColumnName("City")
+            .HasMaxLength(50)
+            .IsRequired(false);
+         a.Property(p => p.Country)
+            .HasColumnName("Country")
+            .HasMaxLength(30)
+            .IsRequired(false);
       });
       b.Navigation(x => x.Address).IsRequired(false);
    }

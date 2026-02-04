@@ -1,23 +1,20 @@
 namespace CarRentalApiTest;
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 public static class TestLogger {
    
-   public static ILogger<T> Create<T>(bool enabled) {
-      
-      if (!enabled)
-         return Microsoft.Extensions.Logging.Abstractions.NullLogger<T>.Instance;
-
-      var factory = LoggerFactory.Create(b => {
-         b.ClearProviders();
-         b.AddSimpleConsole(o => {
-            o.SingleLine = true;
-            o.TimestampFormat = "HH:mm:ss ";
-         });
-         b.SetMinimumLevel(LogLevel.Debug);
+   private static readonly ILoggerFactory Factory = LoggerFactory.Create(b => {
+      b.ClearProviders();
+      b.AddSimpleConsole(o =>
+      {
+         o.SingleLine = false;           // keep real newlines
+         o.TimestampFormat = "HH:mm:ss ";
       });
+      b.SetMinimumLevel(LogLevel.Debug);
+   });
 
-      return factory.CreateLogger<T>();
-   }
+   public static ILogger<T> Create<T>(bool enabled)
+      => enabled ? Factory.CreateLogger<T>() : NullLogger<T>.Instance;
 }

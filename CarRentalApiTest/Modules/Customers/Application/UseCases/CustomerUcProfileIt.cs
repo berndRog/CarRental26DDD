@@ -16,9 +16,18 @@ public sealed class CustomerUcProfileIt : TestBase, IAsyncLifetime {
    private ICustomerRepository _repository = null!;
    private IUnitOfWork _unitOfWork = null!;
    private IIdentityGateway _identityGateway = null!;
+   private CustomerUcProvision _customerUcProvision = null!;
    private CustomerUcProfile _sut = null!;
    private TestSeed _seed = null!;
    private string _dbPath = null!;
+   
+   private Guid _customerId;
+   private string _id = default!;
+   private string _subject = default!;
+   private string _username = default!;
+   private DateTimeOffset _createdAt;
+   private int _adminRights;
+   
 
    public async Task InitializeAsync() {
       _seed = new TestSeed();
@@ -51,14 +60,27 @@ public sealed class CustomerUcProfileIt : TestBase, IAsyncLifetime {
       _repository.Add(_seed.Customer3);
       await _unitOfWork.SaveAllChangesAsync("Seed customers", CancellationToken.None);
 
-      // default gateway for success tests: subject of Customer1, not an employee/admin
+      // default gateway for success tests: subject of Customer5, not an employee/admin
+      _customerId = _seed.Customer5.Id;
+      _id = _customerId.ToString();
+      _subject = _seed.Customer5.Subject;
+      _username = _seed.Customer5.Email;
+      _createdAt = _seed.Customer5.CreatedAt;
+      _adminRights = 0;
       _identityGateway = new FakeIdentityGateway(
-         subject: _seed.Customer1.Subject.Value,
-         username: _seed.Customer1.Email.Value,
-         createdAt: _seed.Customer1.CreatedAt,
-         adminRights: 0
+         subject: _subject,
+         username: _username,
+         createdAt: _createdAt,
+         adminRights: _adminRights
       );
 
+      _customerUcProvision = new CustomerUcProvision(
+         _identityGateway,
+         _repository,
+         _unitOfWork,
+         CreateLogger<CustomerUcProvision>()
+      );
+      
       // system under test
       _sut = new CustomerUcProfile(
          _identityGateway,
@@ -83,18 +105,19 @@ public sealed class CustomerUcProfileIt : TestBase, IAsyncLifetime {
 
    [Fact]
    public async Task ExecuteAsync_WithValidData_ShouldUpdateProfile() {
-      // Assert
-      var id = _seed.Customer5.Id;
+      // Arrange
+      // ensure provisioned
+      await _customerUcProvision.ExecuteAsync(_id,CancellationToken.None);
+
+      // new profile data    
       var firstname = _seed.Customer5.Firstname;
       var lastname = _seed.Customer5.Lastname;
-      var emailString = _seed.Customer5.Email.Value;
-      var subjectValue = _seed.Customer5.Subject.Value;
+      var email = "neue.mail@mail.local";
       var street = _seed.Customer5.Address?.Street;
       var postalCode = _seed.Customer5.Address?.PostalCode;
       var city = _seed.Customer5.Address?.City;
       var country = _seed.Customer5.Address?.Country;
-      
-      var dto = new CustomerProfileDto(firstname, lastname, emailString,
+      var dto = new CustomerProfileDto(firstname, lastname, email,
          street, postalCode, city, country);
 
       // Act
@@ -102,13 +125,20 @@ public sealed class CustomerUcProfileIt : TestBase, IAsyncLifetime {
 
       // Assert
       Assert.True(resultProfile.IsSuccess);
-      var subject = IdentitySubject.Create(_identityGateway.Subject).Value;
-      var reloaded = await _repository.FindByIdentitySubjectAsync(subject, CancellationToken.None);
+      var actual = await _repository.FindByIdAsync(_customerId, CancellationToken.None);
       
-      Assert.NotNull(reloaded);
-      Assert.Equal("Max", reloaded!.Firstname);
-      Assert.Equal("Mustermann", reloaded.Lastname);
-      Assert.Equal("max.mustermann@example.com", reloaded.Email.Value);
+      Assert.NotNull(actual);
+      Assert.Equal(_customerId, actual.Id);
+      Assert.Equal(firstname, actual!.Firstname);
+      Assert.Equal(lastname, actual.Lastname);
+      Assert.Equal(email, actual.Email);
+      Assert.Equal(_subject, actual.Subject);
+      Assert.Equal(_createdAt, actual.CreatedAt);
+      Assert.Equal(street, actual.Address?.Street);
+      Assert.Equal(postalCode, actual.Address?.PostalCode);
+      Assert.Equal(city, actual.Address?.City);
+      Assert.Equal(country, actual.Address?.Country);
+      
    }
 /*
    [Fact]

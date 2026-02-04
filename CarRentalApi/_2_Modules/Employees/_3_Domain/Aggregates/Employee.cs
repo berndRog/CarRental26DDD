@@ -1,6 +1,7 @@
 using CarRentalApi._2_Modules.Employees._3_Domain.Enums;
 using CarRentalApi._2_Modules.Employees._3_Domain.Errors;
 using CarRentalApi._4_BuildingBlocks;
+using CarRentalApi._4_BuildingBlocks._3_Domain;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Entities;
 using CarRentalApi._4_BuildingBlocks._3_Domain.ValueObjects;
 using CarRentalApi._4_BuildingBlocks.Domain.ValueObjects;
@@ -28,12 +29,12 @@ namespace CarRentalApi._2_Modules.Employees._3_Domain.Aggregates;
 /// </summary>
 public sealed class Employee : Entity<Guid> {
    
-   public string Firstname { get; private set; } = string.Empty;
-   public string Lastname  { get; private set; } = string.Empty;
-   public Email Email     { get; private set; } = default!;
-   public Phone? Phone { get; private set; } = null;
+   public string  Firstname { get; private set; } = string.Empty;
+   public string  Lastname  { get; private set; } = string.Empty;
+   public string  Email     { get; private set; } = default!;
+   public string? Phone { get; private set; } = null;
   
-   public IdentitySubject Subject { get; private set; } = default!; // OidvOAuthServer
+   public string  Subject { get; private set; } = default!; // OidvOAuthServer
    
    public string PersonnelNumber { get; private set; } = string.Empty;
    public AdminRights AdminRights { get; private set; } = AdminRights.ViewReports;
@@ -52,8 +53,8 @@ public sealed class Employee : Entity<Guid> {
       Guid id,
       string firstname,
       string lastname,
-      Email email,
-      Phone? phone,
+      string email,
+      string? phone,
       string personnelNumber,
       AdminRights adminRights,
       DateTimeOffset createdAt,
@@ -75,8 +76,8 @@ public sealed class Employee : Entity<Guid> {
    public static Result<Employee> Create(
       string firstname,
       string lastname,
-      string emailString,
-      string? phoneString,
+      string email,
+      string? phone,
       string personnelNumber,
       AdminRights adminRights = AdminRights.None,
       DateTimeOffset createdAt = default,
@@ -86,33 +87,38 @@ public sealed class Employee : Entity<Guid> {
       // Normalize input early
       firstname = firstname.Trim();
       lastname = lastname.Trim();
-      emailString = emailString.Trim();
-      phoneString = phoneString?.Trim();
+      email= email.Trim();
+      phone = phone?.Trim();
       personnelNumber = personnelNumber.Trim();
 
+      // required firstname
       if (string.IsNullOrWhiteSpace(firstname))
          return Result<Employee>.Failure(EmployeeErrors.FirstnameIsRequired);
       if (firstname.Length is < 2 or > 100)
          return Result<Employee>.Failure(EmployeeErrors.InvalidFirstname);
       
+      // required lastname
       if (string.IsNullOrWhiteSpace(lastname))
          return Result<Employee>.Failure(EmployeeErrors.LastnameIsRequired);
       if (lastname.Length is < 2 or > 100)
          return Result<Employee>.Failure(EmployeeErrors.InvalidFirstname);
 
-      if (string.IsNullOrWhiteSpace(emailString))
+      // required email
+      if (string.IsNullOrWhiteSpace(email))
          return Result<Employee>.Failure(EmployeeErrors.EmailIsRequired);
-      var resultEmail = Email.Create(emailString);
+      var resultEmail = EmailAddress.Check(email);
       if(!resultEmail.IsFailure) 
          return Result<Employee>.Failure(EmployeeErrors.InvalidEmail);
-      var email = resultEmail.Value!;
-      
 
-      var resultPhone = Phone.Create(phoneString);
-      if (!resultPhone.IsFailure) 
-         return Result<Employee>.Failure(resultPhone.Error);
-      var phone = resultPhone.Value!;
-      
+      // optional phone
+      if (!string.IsNullOrWhiteSpace(phone)) {
+         var resultPhone = PhoneNumber.Check(phone);
+         if (!resultPhone.IsFailure)
+            return Result<Employee>.Failure(resultPhone.Error);
+         phone = resultPhone.Value!;
+      }
+
+      // required personnel number
       if (string.IsNullOrWhiteSpace(personnelNumber))
          return Result<Employee>.Failure(EmployeeErrors.PersonnelNumberIsRequired);
 

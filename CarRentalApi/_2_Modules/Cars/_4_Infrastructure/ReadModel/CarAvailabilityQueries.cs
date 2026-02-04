@@ -18,15 +18,22 @@ public sealed class CarAvailabilityQueries(
    /// <summary>
    /// Pick-up: one car (first) or up to N cars (alternatives).
    /// </summary>
-   public Task<Car?> FindAvailableCarEntityAsync(CarCategory category, DateTimeOffset start, DateTimeOffset end,
-      CancellationToken ct)
-      => AvailableCarsQuery(category, start, end)
+   public Task<Car?> FindAvailableCarEntityAsync(
+      CarCategory category, 
+      DateTimeOffset start, 
+      DateTimeOffset end,
+      CancellationToken ct
+   ) => AvailableCarsQuery(category, start, end)
          .OrderBy(c => c.Id)
          .FirstOrDefaultAsync(ct);
 
-   public Task<List<Car>> SelectAvailableCarEntitiesAsync(CarCategory category, DateTimeOffset start,
-      DateTimeOffset end, int limit, CancellationToken ct)
-      => AvailableCarsQuery(category, start, end)
+   public Task<List<Car>> SelectAvailableCarEntitiesAsync(
+      CarCategory category, 
+      DateTimeOffset start,
+      DateTimeOffset end, 
+      int limit, 
+      CancellationToken ct
+   ) => AvailableCarsQuery(category, start, end)
          .OrderBy(c => c.Id)
          .Take(limit)
          .ToListAsync(ct);

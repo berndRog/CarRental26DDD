@@ -292,16 +292,16 @@ public sealed class TestSeed {
       string id,
       string firstname,
       string lastname,
-      string emailString,
-      string subjectString,
+      string email,
+      string subject,
       DateTimeOffset createdAt,
       Address? address
    ) {
       var result = Customer.Create(
          firstname: firstname,
          lastname: lastname,
-         emailString: emailString,
-         subjectValue: subjectString,
+         email: email,
+         subject: subject,
          createdAt: createdAt,
          id: id,
          street: address?.Street,

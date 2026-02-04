@@ -7,7 +7,7 @@ public static class CustomerUseCasesMappings {
    public static CustomerProfileDto ToCustomerProfileDto(this Customer customer) => new(
       Firstname: customer.Firstname,
       Lastname: customer.Lastname,
-      EmailString: customer.Email.Value,
+      Email: customer.Email,
       Street: customer.Address?.Street,
       PostalCode: customer.Address?.PostalCode,
       City: customer.Address?.City,

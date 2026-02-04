@@ -6,7 +6,7 @@ namespace CarRentalApi._2_Modules.Customers._2_Application.UseCases;
 
 public class CustomerUseCases(
    CustomerUcCreate createUc,
-   CustomerUcProvisioned provisionedUc,
+   CustomerUcProvision provisionUc,
    CustomerUcProfile profileUc,
    CustomerUcBlock blockUc
 ): ICustomerUseCases {
@@ -28,8 +28,9 @@ public class CustomerUseCases(
    
    
    public Task<Result<Guid>> Provisioned(
+      string? id,
       CancellationToken ct
-   ) => provisionedUc.ExecuteAsync(ct);
+   ) => provisionUc.ExecuteAsync(id, ct);
    
    public Task<Result<CustomerProfileDto>> Profile(
       CustomerProfileDto customerProfileDto,

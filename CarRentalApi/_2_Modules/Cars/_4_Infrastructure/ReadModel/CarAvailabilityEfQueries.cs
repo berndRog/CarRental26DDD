@@ -16,7 +16,6 @@ internal static class CarAvailabilityEfQueries {
    ) {
       var start = period.Start;
       var end = period.End;
-
       
       // LINQ query syntax
       var blockedCarIds = db.Rentals

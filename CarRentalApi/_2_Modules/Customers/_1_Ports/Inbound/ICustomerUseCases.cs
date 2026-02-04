@@ -67,6 +67,7 @@ public interface ICustomerUseCases {
    );
 
    public Task<Result<Guid>> Provisioned(
+      string? id,
       CancellationToken ct
    );
    

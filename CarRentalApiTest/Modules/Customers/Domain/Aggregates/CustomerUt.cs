@@ -21,7 +21,7 @@ public class CustomerUt {
       
       // Act
       var result =
-         Customer.Create(firstname, lastname, email.Value, subject.Value, createdAt,
+         Customer.Create(firstname, lastname, email, subject, createdAt,
             id.ToString(), address.Street, address.PostalCode, address.City, address.Country);
       
       // Assert
@@ -48,8 +48,8 @@ public class CustomerUt {
       var createdAt = _seed.Customer1.CreatedAt;
       
       // Act
-      var result = Customer.Create(firstname, lastname, email.Value, 
-         subject.Value, createdAt, id.ToString());
+      var result = Customer.Create(firstname, lastname, email, 
+         subject, createdAt, id.ToString());
       
       // Assert
       Assert.True(result.IsSuccess);
@@ -77,7 +77,7 @@ public class CustomerUt {
       
       // Act
       var result = Customer.Create(firstname, lastname, emailString, 
-         subject.Value, createdAt, id.ToString());
+         subject, createdAt, id.ToString());
 
       // Assert
       Assert.True(result.IsFailure);
@@ -97,7 +97,7 @@ public class CustomerUt {
      
       // Act
       var result = Customer.Create(firstname,lastname, emailString,
-         subject.Value, createdAt, id.ToString());
+         subject, createdAt, id.ToString());
 
       // Assert
       Assert.True(result.IsFailure);
@@ -112,8 +112,8 @@ public class CustomerUt {
       var customer2 = Customer.Create(
          _seed.Customer2.Firstname,
          _seed.Customer2.Lastname,
-         _seed.Customer2.Email.Value,
-         _seed.Customer2.Subject.Value,
+         _seed.Customer2.Email,
+         _seed.Customer2.Subject,
          _seed.Customer2.CreatedAt,
          _seed.Customer1Id.ToString()
       ).GetValueOrThrow();

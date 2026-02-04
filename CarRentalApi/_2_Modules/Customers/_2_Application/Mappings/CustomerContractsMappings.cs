@@ -9,6 +9,6 @@ public static class CustomerContractsMappings {
       Id: customer.Id,
       Firstname: customer.Firstname,
       Lastname: customer.Lastname,
-      Email: customer.Email.Value
+      Email: customer.Email
    );
 }

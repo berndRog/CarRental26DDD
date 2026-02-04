@@ -27,16 +27,16 @@ public sealed class CustomerReadContractServiceEf(
    }
 
    public async Task<CustomerContractDto?> FindByEmailAsync(
-      string emailString,
+      string email,
       CancellationToken ct
    ) {
-      if (string.IsNullOrWhiteSpace(emailString))
+      if (string.IsNullOrWhiteSpace(email))
          return null;
 
-      var normalizedEmail = emailString.Trim().ToUpperInvariant();
+      var normalizedEmail = email.Trim().ToUpperInvariant();
       var customer = await _dbContext.Customers
          .AsNoTracking()
-         .FirstOrDefaultAsync(c => c.Email.Value.ToUpperInvariant() == normalizedEmail, ct);
+         .FirstOrDefaultAsync(c => c.Email.ToUpperInvariant() == normalizedEmail, ct);
 
       return customer?.ToCustomerContractDto();
    }

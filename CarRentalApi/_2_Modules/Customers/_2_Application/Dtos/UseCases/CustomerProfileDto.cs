@@ -3,7 +3,7 @@ namespace CarRentalApi._2_Modules.Customers._2_Application.Dtos.UseCases;
 public sealed record CustomerProfileDto(
    string Firstname,
    string Lastname,
-   string EmailString,
+   string Email,
    
    string? Street,
    string? PostalCode,

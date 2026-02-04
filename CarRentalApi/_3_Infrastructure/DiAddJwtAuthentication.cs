@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace CarRentalApi.Infrastructure.Security;
 
 public static class DiAddJwtAuthentication {
+   
    public static IServiceCollection AddJwtAuthentication(
       this IServiceCollection services,
       IConfiguration config

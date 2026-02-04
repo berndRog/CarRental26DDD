@@ -10,7 +10,7 @@ public static class CustomerReadModelsMappings {
       Id: customer.Id,
       Firstname: customer.Firstname,
       Lastname: customer.Lastname,
-      Email: customer.Email.Value,
+      Email: customer.Email,
       Street: customer.Address?.Street,
       PostalCode: customer.Address?.PostalCode,
       City: customer.Address?.City,
@@ -24,7 +24,7 @@ public static class CustomerReadModelsMappings {
       Id: customer.Id,
       Firstname: customer.Firstname,
       Lastname: customer.Lastname,
-      Email: customer.Email.Value,
+      Email: customer.Email,
       IsBlocked: customer.IsBlocked
    );
    

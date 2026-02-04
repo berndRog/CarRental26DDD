@@ -23,16 +23,15 @@ public sealed class CustomerReadModelEf(
    public async Task<CustomerDetailDto?> FindProfileAsync(CancellationToken ct) {
       
       // 1) Subject aus Gateway
-      var subjectResult = IdentitySubject.Create(_identityGateway.Subject);
+      var subjectResult = IdentitySubject.Check(_identityGateway.Subject);
       if (subjectResult.IsFailure)
          return null; // oder Exception, je nach Stil
-
       var subject = subjectResult.Value;
 
       // 2) Customer laden (NO tracking, read-only)
       return await _dbContext.Customers
          .AsNoTracking()
-         .Where(c => c.Subject.Value == subject.Value)
+         .Where(c => c.Subject == subject)
          .Select(c => c.ToCustomerDetailDto())
          .SingleOrDefaultAsync(ct);
    }
@@ -60,7 +59,7 @@ public sealed class CustomerReadModelEf(
       var normalizedEmail = emailString.Trim().ToUpperInvariant();
       var customer = await _dbContext.Customers
           .AsNoTracking()
-          .FirstOrDefaultAsync(c => c.Email.Value.ToUpperInvariant() == normalizedEmail, ct);
+          .FirstOrDefaultAsync(c => c.Email.ToUpperInvariant() == normalizedEmail, ct);
       
       return customer is null 
           ? Result<CustomerDetailDto>.Failure(CustomerErrors.EmailNotFound) 
@@ -122,7 +121,7 @@ public sealed class CustomerReadModelEf(
       // Filters
       if (!string.IsNullOrWhiteSpace(filter.Email)) {
          var email = filter.Email.Trim().ToUpperInvariant();
-         query = query.Where(c => c.Email.Value.ToUpperInvariant() == email);
+         query = query.Where(c => c.Email.ToUpperInvariant() == email);
       }
    
       if (!string.IsNullOrWhiteSpace(filter.Firstname)) {

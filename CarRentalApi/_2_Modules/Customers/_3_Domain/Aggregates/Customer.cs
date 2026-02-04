@@ -4,6 +4,7 @@ using CarRentalApi._4_BuildingBlocks._3_Domain.Entities;
 using CarRentalApi._4_BuildingBlocks._3_Domain.Errors;
 using CarRentalApi._4_BuildingBlocks._3_Domain.ValueObjects;
 using CarRentalApi._4_BuildingBlocks.Domain.ValueObjects;
+using CarRentalApi._4_BuildingBlocks._3_Domain;
 namespace CarRentalApi._2_Modules.Customers._3_Domain.Aggregates;
 
 public sealed class Customer : Entity<Guid> {
@@ -26,9 +27,9 @@ public sealed class Customer : Entity<Guid> {
 
    public string Firstname { get; private set; } = string.Empty;
    public string Lastname { get; private set; } = string.Empty;
-   public Email Email { get; private set; } = default!;
+   public string Email { get; private set; } = default!;
    
-   public IdentitySubject Subject { get; private set; } = default!; // OidvOAuthServer
+   public string Subject { get; private set; } = default!; // OidvOAuthServer
    
    public DateTimeOffset CreatedAt { get; private set; }
    public DateTimeOffset? BlockedAt { get; private set; }
@@ -45,8 +46,8 @@ public sealed class Customer : Entity<Guid> {
       Guid id,
       string firstname,
       string lastname,
-      Email email,
-      IdentitySubject subject,
+      string email,
+      string subject,
       DateTimeOffset createdAt,
       Address? address
    ) {
@@ -63,8 +64,8 @@ public sealed class Customer : Entity<Guid> {
    public static Result<Customer> Create(
       string firstname,
       string lastname,
-      string emailString,
-      string subjectValue = "",
+      string email,
+      string subject = "system",
       DateTimeOffset createdAt = default,
       string? id = null,
       string? street = null,
@@ -75,8 +76,8 @@ public sealed class Customer : Entity<Guid> {
       // Normalize input early
       firstname = firstname.Trim();
       lastname = lastname.Trim();
-      emailString = emailString.Trim();
-      subjectValue = subjectValue.Trim();
+      email = email.Trim();
+      subject = subject.Trim();
 
       if (string.IsNullOrWhiteSpace(firstname))
          return Result<Customer>.Failure(CustomerErrors.FirstnameIsRequired);
@@ -89,21 +90,18 @@ public sealed class Customer : Entity<Guid> {
          return Result<Customer>.Failure(CustomerErrors.InvalidLastname);
 
       // create Email value object
-      if (string.IsNullOrWhiteSpace(emailString))
+      if (string.IsNullOrWhiteSpace(email))
          return Result<Customer>.Failure(CustomerErrors.EmailIsRequired);
-      var resultEmail = Email.Create(emailString);
+      var resultEmail = EmailAddress.Check(email);
       if (resultEmail.IsFailure)
          return Result<Customer>.Failure(resultEmail.Error);
-      var email = resultEmail.Value!;
       
       // create IdentitySubject value object
-      var identitySubject = IdentitySubject.System();
-      if (!string.IsNullOrWhiteSpace(subjectValue)) {
-         var resultIdentitySubject = IdentitySubject.Create(subjectValue);
-         if (resultIdentitySubject.IsFailure)
-            return Result<Customer>.Failure(resultIdentitySubject.Error);
-         identitySubject = resultIdentitySubject.Value;
-      }
+      if (!string.IsNullOrWhiteSpace(subject)) {
+         var resultSubject = IdentitySubject.Check(subject);
+         if (resultSubject.IsFailure)
+            return Result<Customer>.Failure(resultSubject.Error);
+      } 
 
       // create Id:Guid required
       var result = EntityId.Resolve(id, CustomerErrors.InvalidId);
@@ -129,7 +127,7 @@ public sealed class Customer : Entity<Guid> {
          firstname: firstname,
          lastname: lastname,
          email: email,
-         subject: identitySubject,
+         subject: subject,
          createdAt: createdAt,
          address: address
       );
@@ -138,17 +136,23 @@ public sealed class Customer : Entity<Guid> {
    }
    
    public static Result<Customer> CreateProvisioned(
-      IdentitySubject identitySubject,
-      Email email,
+      string identitySubject,
+      string email,
       DateTimeOffset createdAt,
-      Guid? id = null
+      string? id = null
    ) {
       if (createdAt == default)
          return Result<Customer>.Failure(CustomerErrors.CreatedAtIsRequired);
 
+      // create Id:Guid required
+      var result = EntityId.Resolve(id, CustomerErrors.InvalidId);
+      if (result.IsFailure)
+         return Result<Customer>.Failure(result.Error);
+      var customerId = result.Value;
+      
       // identitySubject/email sind bereits VOs => valid
       var customer = new Customer(
-         id ?? Guid.NewGuid(),
+         customerId,
          firstname: string.Empty,
          lastname: string.Empty,
          email: email,
@@ -164,7 +168,7 @@ public sealed class Customer : Entity<Guid> {
    public Result UpdateProfile(
       string firstname,
       string lastname,
-      Email email,
+      string email,
       string? street,
       string? postalCode,
       string? city,

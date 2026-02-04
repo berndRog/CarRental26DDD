@@ -1,6 +1,7 @@
 using CarRentalApi._2_Modules.Customers._1_Ports.Outbound;
 using CarRentalApi._2_Modules.Customers._3_Domain.Aggregates;
 using CarRentalApi._3_Infrastructure.Persistence.Database;
+using CarRentalApi._4_BuildingBlocks._3_Domain;
 using CarRentalApi._4_BuildingBlocks._3_Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 namespace CarRentalApi.Modules.Cars.Infrastructure.Repositories;
@@ -16,25 +17,26 @@ public sealed class CustomerRepositoryEf(
       .FirstOrDefaultAsync(x => x.Id == id, ct);
 
    public Task<Customer?> FindByIdentitySubjectAsync(
-      IdentitySubject subject,
-      CancellationToken ct
-   ) => 
-      _dbContext.Customers
-      //.AsNoTracking()
-      .FirstOrDefaultAsync(c => c.Subject == subject, ct);
+      string subject,
+      bool noTracking = true,
+      CancellationToken ct = default
+   ) {
+      var query = _dbContext.Customers as IQueryable<Customer>;
+      if (noTracking)
+         query = query.AsNoTracking();
 
-   public Task<Customer?> FindByEmailAsync(IdentitySubject subject, CancellationToken ct) {
-      throw new NotImplementedException();
+      return query
+         .FirstOrDefaultAsync(c => c.Subject == subject, ct);
    }
 
+
    public async Task<Customer?> FindByEmailAsync(
-      Email email,
+      string email,
       CancellationToken ct
    ) {
       var customer = await _dbContext.Customers
-         //.AsNoTracking()
+         .AsNoTracking()
          .FirstOrDefaultAsync(c => c.Email == email, ct);
-      
       return customer;
    }
 

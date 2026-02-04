@@ -70,7 +70,7 @@ public sealed class CustomerCreateIt : TestBase, IAsyncLifetime {
       var address = _seed.Customer5.Address;
 
       // Act
-      var result = await _sut.ExecuteAsync(firstname, lastname, email.Value, identitySubject.Value,
+      var result = await _sut.ExecuteAsync(firstname, lastname, email, identitySubject,
          createdAt, id.ToString(), 
          address?.Street, address?.PostalCode, address?.City, address?.Country,
          CancellationToken.None);
@@ -107,7 +107,7 @@ public sealed class CustomerCreateIt : TestBase, IAsyncLifetime {
       var address = _seed.Customer4.Address;
 
       // Act
-      var result = await _sut.ExecuteAsync(firstname, lastname, email.Value, identitySubject.Value,
+      var result = await _sut.ExecuteAsync(firstname, lastname, email, identitySubject,
          createdAt, id.ToString(), 
          address?.Street, address?.PostalCode, address?.City, address?.Country,
          CancellationToken.None);

@@ -1,5 +1,6 @@
 using CarRentalApi._2_Modules.Customers._1_Ports.Outbound;
 using CarRentalApi._2_Modules.Customers._2_Application.UseCases;
+using CarRentalApi._2_Modules.Employees._3_Domain.Enums;
 using CarRentalApi._3_Infrastructure.Persistence.Database;
 using CarRentalApi._4_BuildingBlocks._1_Ports.Outbound;
 using CarRentalApi._4_BuildingBlocks.Infrastructure.Persistence;
@@ -14,7 +15,7 @@ public sealed class CustomerProvisinedIt : TestBase, IAsyncLifetime {
    private IIdentityGateway _identityGateway = null!;
    private ICustomerRepository _repository = null!;
    private IUnitOfWork _unitOfWork = null!;
-   private CustomerUcProvisioned _sut = null!;
+   private CustomerUcProvision _sut = null!;
    private TestSeed _seed = null!;
    private string _dbPath = null!;
 
@@ -61,18 +62,18 @@ public sealed class CustomerProvisinedIt : TestBase, IAsyncLifetime {
 
       // Default gateway for success tests: subject of Customer5, not an employee/admin
       _identityGateway = new FakeIdentityGateway(
-         subject: _seed.Customer5.Subject.Value,
-         username: _seed.Customer5.Email.Value,
+         subject: _seed.Customer5.Subject,
+         username: _seed.Customer5.Email,
          createdAt: _seed.Customer5.CreatedAt,
          adminRights: 0
       );
       
       // System under test
-      _sut = new CustomerUcProvisioned(
+      _sut = new CustomerUcProvision(
          _identityGateway,
          _repository,
          _unitOfWork,
-         CreateLogger<CustomerUcProvisioned>()
+         CreateLogger<CustomerUcProvision>()
       );
    }
 
@@ -93,18 +94,21 @@ public sealed class CustomerProvisinedIt : TestBase, IAsyncLifetime {
    }
 
    [Fact]
-   public async Task ExecuteAsync_WithValidData_ShouldPersistCustomer() {
+   public async Task ExecuteAsync_WithValidData_ShouldProvisonCustomer() {
       // Arrange
+      var id = _seed.Customer5.Id.ToString();
+      var subject = _seed.Customer5.Subject;
+      var username = _seed.Customer5.Email;
+      var createdAt = _seed.Customer5.CreatedAt;
       _identityGateway = new FakeIdentityGateway(
-         subject: _seed.Customer5.Subject.Value,
-         username: _seed.Customer5.Email.Value,
+         subject: subject,
+         username: username,
          createdAt: _seed.Customer5.CreatedAt,
          adminRights: 0
       );
       
-      
       // Act
-      var result = await _sut.ExecuteAsync(CancellationToken.None);
+      var result = await _sut.ExecuteAsync(id, CancellationToken.None);
 
       // Assert
       Assert.True(result.IsSuccess);
@@ -113,10 +117,10 @@ public sealed class CustomerProvisinedIt : TestBase, IAsyncLifetime {
 
       var actual = await _repository.FindByIdAsync(CustomerId, CancellationToken.None);
       Assert.NotNull(actual);
-
-      // Assert.Equal(firstname, actual.Firstname);
-      // Assert.Equal(lastname, actual.Lastname);
-      // Assert.Equal(email, actual.Email);
-      // Assert.Equal(identitySubject, actual.Subject);
+      
+      Assert.Equal(username, actual.Email);
+      Assert.Equal(subject, actual.Subject);
+      Assert.Equal(createdAt, actual.CreatedAt);
+      
    }
 }
